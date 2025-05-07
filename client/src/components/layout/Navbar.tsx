@@ -30,7 +30,7 @@ import {
   HelpCircle,
   List,
   Settings,
-  ImageIcon
+  Image as ImageIcon
 } from "lucide-react";
 
 const NavLink = ({ to, label }: { to: string; label: string }) => {
@@ -220,7 +220,7 @@ export default function Navbar() {
                           <MobileNavLink to="/admin/competitions" label="Competitions" icon={Gift} />
                           <MobileNavLink to="/admin/users" label="Users" icon={User} />
                           <MobileNavLink to="/admin/config" label="Configuration" icon={Settings} />
-                          <MobileNavLink to="/admin/site-content" label="Site Content" icon={Image} />
+                          <MobileNavLink to="/admin/site-content" label="Site Content" icon={ImageIcon} />
                         </div>
                       </>
                     )}
