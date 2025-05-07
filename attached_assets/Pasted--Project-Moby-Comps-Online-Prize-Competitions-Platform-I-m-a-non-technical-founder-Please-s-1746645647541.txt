@@ -1,0 +1,154 @@
+🧱 Project: Moby Comps — Online Prize Competitions Platform
+
+I'm a non-technical founder. Please scaffold and build a fully functional full-stack web application with the following requirements. Make everything clean, modular, and production-ready. Use clear comments and create every file and folder that is necessary. Don’t assume anything already exists.
+
+---
+
+📌 GOAL:
+A full-featured competition platform like https://7daysperformance.co.uk/. Users can:
+- Browse live competitions with categories
+- View individual competition detail pages (by ID)
+- Select specific ticket numbers
+- Answer a question to proceed (quiz to enter)
+- Reserve tickets (lock them for a limited time)
+- Add tickets to cart and pay via Stripe
+- Grey out purchased tickets to prevent double booking
+- View their past entries and winnings
+- Admins can manage users, competitions, content, and configuration
+
+---
+
+🧩 TECH STACK:
+
+Frontend:
+- React (TypeScript)
+- Tailwind CSS (Oxford Blue `#002147`, Kiwi Green `#8EE000`, White `#FFFFFF`)
+- UI: shadcn/ui
+- Router: Wouter
+- Forms: React Hook Form + Zod
+- State: TanStack Query
+- Charts: Recharts (for admin stats)
+
+Backend:
+- Node.js with Express (TypeScript)
+- Auth: Passport.js (local strategy, session-based)
+- ORM: Drizzle ORM + Zod validation
+- File Uploads: Multer + Cloudinary
+- Stripe API for payments
+- Sessions: connect-pg-simple with PostgreSQL
+
+Database:
+- PostgreSQL (Render-hosted)
+- Drizzle Migrations
+
+Deployment:
+- Dev: Replit
+- Prod: Render.com with Docker support
+
+---
+
+🗂 FILE STRUCTURE:
+
+/client – React frontend
+  /src/pages – Homepage, Competitions, How to Play, My Entries, My Wins, CompetitionDetail (by ID), Login
+  /src/components – Nav, Footer, CompetitionCard, TicketNumberGrid, Cart, AnswerQuiz, etc.
+  /src/hooks – Custom hooks (e.g. useAuth, useTicketStatus)
+  /src/lib – API wrapper, env utilities
+  /src/styles – Tailwind config (with custom colours)
+
+/server – Express backend
+  /routes – auth, competitions, tickets, admin, uploads, cart
+  /services – TicketService, StripeService, DrawService
+  /db – Drizzle config, schema.ts, migrations
+  /auth – Passport setup, session middleware
+  /utils – ticket-locking, Cloudinary upload logic, quiz validator
+
+/shared – Shared Zod schemas and types used by both front and backend
+
+---
+
+🖥 FEATURES & PAGES:
+
+✅ Public Site:
+- Global Nav: Home, Competitions, How to Play, About, FAQs, My Entries, My Wins
+- Homepage: Hero banner (uploadable via admin), “Enter Now” CTA
+- Competitions Page:
+  - Filterable by category (e.g. Electronics, Travel, Beauty)
+  - Each card shows title, ticket price, progress bar, status
+- Competition Detail Page (e.g. `/competition/:id`)
+  - Show full image, draw info, ticket sales progress, and:
+    - ✅ Ticket selector (choose how many tickets)
+    - ✅ Quiz question (e.g. "What is 4 + 8?")
+    - ✅ Ticket picker modal (with Lucky Dip + clear all)
+    - ✅ Lock selected tickets for 5–10 mins in cart (with countdown)
+    - ✅ Prevent checkout if quiz not answered correctly
+    - ✅ Grey out already purchased numbers
+- How to Play: 3-step journey (Buy Tickets → Reveal Result → Claim Prize)
+- Footer: Company info, legal links, categories, contact
+
+✅ User Dashboard:
+- My Entries: List past and current competitions joined
+- My Wins: List won prizes and delivery status
+
+✅ Admin Dashboard:
+- Admin login/session protection
+- Dashboard: Stats + Recent Activity Feed
+- Competitions:
+  - Create/edit competitions
+  - Image uploads (Cloudinary)
+  - Set ticket price, max tickets, draw date, featured/live toggles
+- Users: View/edit user list, status, roles
+- Site Configuration:
+  - Upload hero banner
+  - Manage footer and marketing banner text
+
+---
+
+🛒 Ticket Functionality:
+- Centralised TicketService:
+  - Manages ticket states: available, reserved (in cart), purchased
+  - Automatically unlocks reserved tickets after timeout
+  - Prevents double-booking
+- Cart system:
+  - Add reserved tickets to cart
+  - Display total cost
+  - Allow checkout via Stripe
+- Quiz system:
+  - Answer question correctly to unlock ticket selection
+  - Store answer state in session or temporary client state
+
+---
+
+🐳 DOCKER SUPPORT:
+
+Please create:
+- `Dockerfile` for backend (Node 18, install deps, expose 3000, run server)
+- `.dockerignore` (ignore node_modules, .env, etc.)
+- `render.yaml` with:
+  - Web service
+  - PostgreSQL database connection
+  - All required environment variables
+
+---
+
+📦 ENV SETUP:
+
+Create `.env.example` with:
+
+DATABASE_URL  
+STRIPE_SECRET_KEY  
+VITE_STRIPE_PUBLIC_KEY  
+CLOUDINARY_CLOUD_NAME  
+CLOUDINARY_API_KEY  
+CLOUDINARY_API_SECRET  
+SESSION_SECRET  
+
+---
+
+Please generate all the required files, structure, components, API endpoints, types, and UI elements.
+
+Start by creating the folder structure and boilerplate, then build out authentication, ticket reservation system, and a sample competition page flow.
+
+Use clear comments, descriptive filenames, and avoid monolithic logic.
+
+This project will be deployed on Render and maintained in Replit, so keep all logic simple and visible. Do not use Next.js or serverless functions.
