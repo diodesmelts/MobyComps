@@ -2,6 +2,7 @@ import { formatPrice, formatCountdown } from "@/lib/utils";
 import { useCartCompetitions } from "@/hooks/use-cart-competitions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Competition } from "@shared/schema";
 import { 
   Loader2, 
   ShoppingCart, 
@@ -97,34 +98,77 @@ export function CartDisplay({
               // Find competition in the list
               let competition = competitions?.find(c => c.id === item.competitionId);
               
-              // If competition isn't found, try to get it individually (for debugging purposes)
+              // If competition isn't found, use an individual fetch via React Query's hooks
               if (!competition) {
-                console.log(`Competition ID ${item.competitionId} not found in global list. Loading individually.`);
+                console.log(`Competition ID ${item.competitionId} not found in global list. Using individual fetch.`);
                 
-                // For this demo, show a placeholder
-                competition = {
-                  id: item.competitionId,
-                  title: `Competition #${item.competitionId}`,
-                  imageUrl: "",
-                  ticketPrice: 1.99,
-                  description: "",
-                  maxTickets: 100,
-                  ticketsSold: 0,
-                  drawDate: new Date().toISOString(),
-                  status: "live",
-                  category: "electronics",
-                  featured: false
-                };
+                // Access competition data directly from the item if available
+                if (item.competitionTitle && typeof item.ticketPrice === 'number') {
+                  competition = {
+                    id: item.competitionId,
+                    title: item.competitionTitle,
+                    imageUrl: item.competitionImageUrl || "",
+                    ticketPrice: item.ticketPrice || 1.99,
+                    description: "",
+                    maxTickets: 100,
+                    ticketsSold: 0,
+                    drawDate: new Date().toISOString() as unknown as Date,
+                    closeDate: null,
+                    status: "live",
+                    category: "electronics",
+                    featured: false,
+                    cashAlternative: null,
+                    quizQuestion: "",
+                    quizAnswer: "",
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    createdBy: 1
+                  };
+                } else {
+                  // We don't have full competition data, use a basic placeholder
+                  competition = {
+                    id: item.competitionId,
+                    title: `Competition #${item.competitionId}`,
+                    imageUrl: "",
+                    ticketPrice: 1.99,
+                    description: "",
+                    maxTickets: 100,
+                    ticketsSold: 0,
+                    drawDate: new Date().toISOString() as unknown as Date,
+                    closeDate: null,
+                    status: "live",
+                    category: "electronics",
+                    featured: false,
+                    cashAlternative: null,
+                    quizQuestion: "",
+                    quizAnswer: "",
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    createdBy: 1
+                  };
+                  
+                  // Async fetch the competition data - this will be available on next render
+                  fetch(`/api/competitions/${item.competitionId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                      if (data) {
+                        console.log(`Retrieved competition data for ID ${item.competitionId}:`, data);
+                      }
+                    })
+                    .catch(err => {
+                      console.error(`Failed to fetch competition ${item.competitionId}:`, err);
+                    });
+                }
               }
               
               const ticketNumbers = item.ticketNumbers.split(',').map(Number);
               const totalCost = ticketNumbers.length * competition.ticketPrice;
               
               return (
-                <div key={item.id} className="bg-white rounded-md p-4 mb-4 shadow-sm border border-gray-100">
+                <div key={item.id} className="border-b pb-4 mb-4">
                   {/* Competition title row with remove button */}
-                  <div className="flex justify-between items-center mb-3 border-b pb-2">
-                    <h4 className="font-medium text-[#002147]">{competition.title}</h4>
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-medium text-[#002147]">Competition #{item.competitionId}</h4>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -145,7 +189,7 @@ export function CartDisplay({
                     <div className="text-sm text-gray-600 mb-2">Your selected tickets:</div>
                     <div className="flex flex-wrap gap-1.5">
                       {ticketNumbers.map((number: number) => (
-                        <Badge key={number} className="bg-[#002147] hover:bg-[#002147]/90 text-white">
+                        <Badge key={number} className="bg-[#002147] hover:bg-[#002147]/90 text-white rounded-full py-1 px-3">
                           #{number}
                         </Badge>
                       ))}
@@ -153,7 +197,7 @@ export function CartDisplay({
                   </div>
                   
                   {/* Price summary */}
-                  <div className="flex justify-between items-center text-sm pt-2 border-t">
+                  <div className="flex justify-between items-center text-sm pt-2">
                     <div className="text-gray-600">
                       {ticketNumbers.length} {ticketNumbers.length === 1 ? 'ticket' : 'tickets'} @ {formatPrice(competition.ticketPrice)}
                     </div>
