@@ -4,7 +4,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { cn, formatPrice, formatCountdown } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { CartItemComponent } from "@/components/ui/cart-item";
+import { CartDisplay } from "@/components/ui/cart-display";
 // Direct cart implementation in the header for better performance and reliability
 import { 
   DropdownMenu,
@@ -429,104 +429,15 @@ export function Header() {
           />
           
           {/* Cart Modal */}
-          <div className="fixed right-0 top-0 h-screen w-full max-w-md bg-white z-50 shadow-xl flex flex-col animate-in slide-in-from-right duration-300">
-            {/* Header */}
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-xl font-bold text-[#002147]">Your Cart</h2>
-              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-gray-100" onClick={closeCart}>
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-            
-            {/* Content */}
-            <div className="flex-1 overflow-auto p-4">
-              {/* Timer */}
-              {cartItems && cartItems.length > 0 && (
-                <div className="bg-[#F6FFDD] p-4 flex flex-col items-center justify-center rounded-md mb-6">
-                  <div className="flex items-center mb-2">
-                    <Clock className="h-5 w-5 text-[#002147] mr-2" />
-                    <span className="text-sm font-medium text-[#002147]">
-                      Reservation time remaining:
-                    </span>
-                  </div>
-                  <div className="bg-[#002147] text-white font-bold text-2xl py-2 px-6 rounded-md mb-1">
-                    {timeRemaining}
-                  </div>
-                  <p className="text-xs text-[#002147]/70 mt-1">Tickets will be released if checkout is not completed in time</p>
-                </div>
-              )}
-              
-              {/* Cart Items */}
-              {!competitions ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
-                </div>
-              ) : !cartItems || cartItems.length === 0 ? (
-                <div className="text-center py-8 space-y-3">
-                  <ShoppingCart className="h-12 w-12 mx-auto text-gray-300" />
-                  <p className="text-gray-500">Your cart is empty</p>
-                  <Button 
-                    variant="outline" 
-                    className="border-[#002147] text-[#002147]"
-                    onClick={closeCart}
-                  >
-                    Browse Competitions
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {console.log("Cart items:", cartItems)}
-                  {console.log("Competitions:", competitions)}
-                  {cartItems.map((item: any) => {
-                    console.log("Processing cart item:", item);
-                    const competition = competitions?.find(c => c.id === item.competitionId);
-                    console.log("Found competition:", competition);
-                    if (!competition) return null;
-                    
-                    return (
-                      <CartItemComponent
-                        key={item.id}
-                        item={item}
-                        competition={competition}
-                        onRemove={() => removeFromCartMutation.mutate(item.id)}
-                        isRemoving={removeFromCartMutation.isPending}
-                      />
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-            
-            {/* Footer with checkout */}
-            {cartItems && cartItems.length > 0 && (
-              <div className="p-4 border-t border-gray-200">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-[#002147] font-medium">
-                    Subtotal ({cartItems.reduce((sum: number, item: any) => sum + (item.ticketNumbers ? item.ticketNumbers.split(',').length : 0), 0)} tickets):
-                  </span>
-                  <span className="font-bold text-[#002147] text-lg">{formatPrice(calculateTotal())}</span>
-                </div>
-                
-                <Button 
-                  className="w-full py-3 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] font-medium rounded-md text-center flex items-center justify-center"
-                  onClick={handleCheckout}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="h-5 w-5 mr-2" />
-                      Proceed to Checkout
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </div>
+          <CartDisplay 
+            cartItems={cartItems}
+            timeRemaining={timeRemaining}
+            onRemoveItem={(id) => removeFromCartMutation.mutate(id)}
+            isRemoving={removeFromCartMutation.isPending}
+            onCheckout={handleCheckout}
+            isProcessing={isProcessing}
+            onClose={closeCart}
+          />
         </>
       )}
     </header>
