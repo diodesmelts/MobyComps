@@ -66,21 +66,28 @@ export function registerAdminRoutes(app: Express) {
     try {
       console.log("Creating competition with data:", req.body);
       
-      // Verify dates are strings in ISO format
-      if (req.body.drawDate && typeof req.body.drawDate === 'string') {
-        // Try to ensure date is in ISO format
-        req.body.drawDate = new Date(req.body.drawDate).toISOString();
+      // Create a copy of the request body to modify
+      const processedData = {...req.body};
+      
+      // Convert date strings directly to Date objects for Zod validation
+      if (processedData.drawDate && typeof processedData.drawDate === 'string') {
+        processedData.drawDate = new Date(processedData.drawDate);
       }
       
-      if (req.body.closeDate && typeof req.body.closeDate === 'string') {
-        // Try to ensure date is in ISO format
-        req.body.closeDate = new Date(req.body.closeDate).toISOString();
+      if (processedData.closeDate && typeof processedData.closeDate === 'string') {
+        processedData.closeDate = new Date(processedData.closeDate);
       }
+      
+      console.log("Processed data with Date objects:", {
+        drawDate: processedData.drawDate,
+        closeDate: processedData.closeDate
+      });
       
       // Special handling for Zod validation
       let competitionData;
       try {
-        competitionData = insertCompetitionSchema.parse(req.body);
+        competitionData = insertCompetitionSchema.parse(processedData);
+        console.log("Validated data:", competitionData);
       } catch (zodError: any) {
         console.error("Validation error:", zodError);
         return res.status(400).json({ error: JSON.stringify(zodError.errors, null, 2) });
@@ -104,7 +111,19 @@ export function registerAdminRoutes(app: Express) {
         return res.status(400).json({ error: "Invalid competition status" });
       }
       
-      const competition = await storage.updateCompetition(id, req.body);
+      // Create a copy of the request body for processing
+      const processedData = {...req.body};
+      
+      // Convert date strings directly to Date objects
+      if (processedData.drawDate && typeof processedData.drawDate === 'string') {
+        processedData.drawDate = new Date(processedData.drawDate);
+      }
+      
+      if (processedData.closeDate && typeof processedData.closeDate === 'string') {
+        processedData.closeDate = new Date(processedData.closeDate);
+      }
+      
+      const competition = await storage.updateCompetition(id, processedData);
       res.json(competition);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -123,18 +142,24 @@ export function registerAdminRoutes(app: Express) {
         return res.status(400).json({ error: "Invalid competition status" });
       }
       
-      // Handle date conversions
-      if (req.body.drawDate && typeof req.body.drawDate === 'string') {
-        // Try to ensure date is in ISO format
-        req.body.drawDate = new Date(req.body.drawDate).toISOString();
+      // Create a copy of the request body for processing
+      const processedData = {...req.body};
+      
+      // Convert date strings directly to Date objects
+      if (processedData.drawDate && typeof processedData.drawDate === 'string') {
+        processedData.drawDate = new Date(processedData.drawDate);
       }
       
-      if (req.body.closeDate && typeof req.body.closeDate === 'string') {
-        // Try to ensure date is in ISO format
-        req.body.closeDate = new Date(req.body.closeDate).toISOString();
+      if (processedData.closeDate && typeof processedData.closeDate === 'string') {
+        processedData.closeDate = new Date(processedData.closeDate);
       }
       
-      const competition = await storage.updateCompetition(id, req.body);
+      console.log("Processed update data with Date objects:", {
+        drawDate: processedData.drawDate,
+        closeDate: processedData.closeDate
+      });
+      
+      const competition = await storage.updateCompetition(id, processedData);
       console.log("Competition updated:", competition);
       res.json(competition);
     } catch (error: any) {
