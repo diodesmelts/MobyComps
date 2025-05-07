@@ -2,6 +2,7 @@ import { Express } from "express";
 import { storage } from "../storage";
 import { z } from "zod";
 import { insertCompetitionSchema, updateCompetitionSchema, competitionStatusEnum, insertSiteConfigSchema } from "@shared/schema";
+import { ticketService } from "../services/ticket-service";
 
 // Middleware to ensure the user is an admin
 function isAdmin(req: any, res: any, next: any) {
@@ -80,6 +81,18 @@ export function registerAdminRoutes(app: Express) {
       
       const competition = await storage.createCompetition(competitionData);
       console.log("Competition created:", competition);
+      
+      // Create tickets for the competition
+      try {
+        console.log("Initializing tickets for competition:", competition.id, "maxTickets:", competition.maxTickets);
+        await ticketService.initializeTickets(competition.id, competition.maxTickets);
+        console.log("Tickets created successfully");
+      } catch (ticketError) {
+        console.error("Error creating tickets:", ticketError);
+        // We don't want to fail the competition creation if tickets fail,
+        // but we'll log the error
+      }
+      
       res.status(201).json(competition);
     } catch (error: any) {
       console.error("Error creating competition:", error);

@@ -93,7 +93,76 @@ export function registerTicketRoutes(app: Express) {
     }
   });
 
-  // Release reserved tickets
+  // Reserve tickets - client API endpoint
+  app.post("/api/tickets/:competitionId/reserve", async (req, res) => {
+    try {
+      const competitionId = parseInt(req.params.competitionId);
+      const requestSchema = z.object({
+        ticketNumbers: z.array(z.number()),
+        quizAnswer: z.string()
+      });
+      
+      const parsedBody = requestSchema.safeParse(req.body);
+      if (!parsedBody.success) {
+        return res.status(400).json({ error: parsedBody.error });
+      }
+      
+      const { ticketNumbers, quizAnswer } = parsedBody.data;
+      const sessionId = req.sessionID;
+      
+      // Use 10 minutes as the default reservation time
+      const reservedTickets = await storage.reserveTickets(
+        competitionId,
+        ticketNumbers,
+        sessionId,
+        10
+      );
+      
+      // Calculate expiration time based on reservedUntil from the first ticket
+      const expiresAt = reservedTickets.length > 0 && reservedTickets[0].reservedUntil 
+        ? reservedTickets[0].reservedUntil 
+        : new Date(Date.now() + 10 * 60 * 1000); // Default to 10 minutes from now
+      
+      const timeLeftSeconds = Math.floor(
+        (new Date(expiresAt).getTime() - Date.now()) / 1000
+      );
+      
+      res.json({
+        success: reservedTickets.length > 0,
+        tickets: reservedTickets.map(t => t.number),
+        expiresAt: expiresAt.toISOString(),
+        timeLeftSeconds: Math.max(0, timeLeftSeconds)
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Release tickets - client API endpoint
+  app.post("/api/tickets/:competitionId/release", async (req, res) => {
+    try {
+      const competitionId = parseInt(req.params.competitionId);
+      const requestSchema = z.object({
+        ticketNumbers: z.array(z.number())
+      });
+      
+      const parsedBody = requestSchema.safeParse(req.body);
+      if (!parsedBody.success) {
+        return res.status(400).json({ error: parsedBody.error });
+      }
+      
+      const { ticketNumbers } = parsedBody.data;
+      const sessionId = req.sessionID;
+      
+      // For now, just release all reserved tickets for this session
+      const count = await storage.releaseReservedTickets(sessionId);
+      res.json({ success: true, released: count });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Release reserved tickets - original endpoint
   app.post("/api/tickets/release", async (req, res) => {
     try {
       const sessionId = req.sessionID;
