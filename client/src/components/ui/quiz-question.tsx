@@ -81,7 +81,7 @@ export function QuizQuestion({
       <p className="text-sm text-gray-700">Please answer the following question correctly to continue</p>
       
       <Form {...form}>
-        <form onChange={form.handleSubmit(onSubmit)} className="space-y-2">
+        <form className="space-y-2">
           <FormField
             control={form.control}
             name="answer"
@@ -89,8 +89,12 @@ export function QuizQuestion({
               <FormItem>
                 <FormLabel className="text-sm font-medium text-[#002147]">{question}</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    // Manually call onSubmit when a value is selected
+                    onSubmit({ answer: value });
+                  }}
+                  value={field.value}
                   disabled={hasSubmitted}
                 >
                   <FormControl>
