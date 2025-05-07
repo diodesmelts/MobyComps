@@ -105,8 +105,8 @@ export default function AdminDashboard() {
                 <Users className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
-                <p className="text-xs text-gray-500 mt-1">+{Math.floor(stats.totalUsers * 0.05)} in the last month</p>
+                <div className="text-2xl font-bold">{(stats.totalUsers || 0).toLocaleString()}</div>
+                <p className="text-xs text-gray-500 mt-1">+{Math.floor((stats.totalUsers || 0) * 0.05)} in the last month</p>
               </CardContent>
             </Card>
             
@@ -116,15 +116,15 @@ export default function AdminDashboard() {
                 <Package className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalCompetitions.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{((stats.activeCompetitions || 0) + (stats.completedCompetitions || 0)).toLocaleString()}</div>
                 <div className="flex items-center text-xs mt-1">
                   <div className="text-green-500 flex items-center">
-                    <span className="mr-1">{stats.activeCompetitions}</span>
+                    <span className="mr-1">{stats.activeCompetitions || 0}</span>
                     <span>active</span>
                   </div>
                   <span className="mx-1">•</span>
                   <div className="text-gray-500 flex items-center">
-                    <span className="mr-1">{stats.completedCompetitions}</span>
+                    <span className="mr-1">{stats.completedCompetitions || 0}</span>
                     <span>completed</span>
                   </div>
                 </div>
@@ -137,9 +137,9 @@ export default function AdminDashboard() {
                 <ShoppingBag className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalTicketsSold.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{(stats.totalTicketsSold || 0).toLocaleString()}</div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {formatPrice(stats.totalTicketsSold * 1.1)} total value
+                  {formatPrice((stats.totalTicketsSold || 0) * 1.1)} total value
                 </p>
               </CardContent>
             </Card>
@@ -151,12 +151,12 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {stats.recentCompetitions[0] 
-                    ? formatDate(stats.recentCompetitions[0].drawDate)
+                  {stats.recentCompetitions && stats.recentCompetitions[0] 
+                    ? formatDate(stats.recentCompetitions[0].drawDate || new Date())
                     : "No draws scheduled"}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {stats.recentCompetitions[0]
+                  {stats.recentCompetitions && stats.recentCompetitions[0]
                     ? stats.recentCompetitions[0].title
                     : "Create a new competition"}
                 </p>
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                 <div className="h-[300px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
-                      data={stats.salesData}
+                      data={stats.salesData || []}
                       margin={{
                         top: 10,
                         right: 30,
@@ -227,15 +227,15 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {stats.recentUsers.slice(0, 5).map((user, index) => (
+                  {(stats.recentUsers || []).slice(0, 5).map((user, index) => (
                     <div key={index} className="flex items-start">
                       <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium mr-3">
-                        {user.username.charAt(0).toUpperCase()}
+                        {user.username?.charAt(0).toUpperCase() || 'U'}
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{user.username} joined</p>
+                        <p className="text-sm font-medium">{user.username || 'User'} joined</p>
                         <p className="text-xs text-gray-500">
-                          {new Date(user.createdAt).toLocaleDateString('en-GB', {
+                          {new Date(user.createdAt || new Date()).toLocaleDateString('en-GB', {
                             hour: '2-digit',
                             minute: '2-digit',
                             day: 'numeric',
@@ -246,7 +246,7 @@ export default function AdminDashboard() {
                     </div>
                   ))}
                   
-                  {stats.recentCompetitions.slice(0, 2).map((comp, index) => (
+                  {(stats.recentCompetitions || []).slice(0, 2).map((comp, index) => (
                     <div key={`comp-${index}`} className="flex items-start">
                       <div className="w-9 h-9 rounded-full bg-[#8EE000]/20 flex items-center justify-center text-[#002147] mr-3">
                         <Package className="h-5 w-5" />
@@ -301,7 +301,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {stats.recentCompetitions.map((competition) => (
+                      {(stats.recentCompetitions || []).map((competition) => (
                         <tr key={competition.id} className="hover:bg-gray-50">
                           <td className="py-3 px-4">
                             <div className="flex items-center">
