@@ -17,8 +17,9 @@ function isAdmin(req: any, res: any, next: any) {
 }
 
 export function registerAdminRoutes(app: Express) {
-  // Admin dashboard stats
-  app.get("/api/admin/dashboard", isAdmin, async (req, res) => {
+  // Admin dashboard stats - Register both endpoints for backward compatibility
+  // This handler will serve both /api/admin/dashboard and /api/admin/stats
+  const dashboardStatsHandler = async (req, res) => {
     try {
       // Get competitions
       const { competitions: allCompetitions } = await storage.listCompetitions();
@@ -54,7 +55,11 @@ export function registerAdminRoutes(app: Express) {
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
-  });
+  };
+  
+  // Register the same handler for both endpoints
+  app.get("/api/admin/dashboard", isAdmin, dashboardStatsHandler);
+  app.get("/api/admin/stats", isAdmin, dashboardStatsHandler);
 
   // CRUD for competitions (admin only)
   app.post("/api/admin/competitions", isAdmin, async (req, res) => {
