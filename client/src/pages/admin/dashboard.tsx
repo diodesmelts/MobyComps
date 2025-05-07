@@ -85,13 +85,22 @@ export default function AdminDashboard() {
       
       <main className="flex-grow py-8 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <h1 className="text-2xl font-bold text-[#002147]">Admin Dashboard</h1>
-            <div>
-              <Button asChild variant="outline" className="mr-2 border-[#002147] text-[#002147]">
-                <Link href="/admin/competitions">Manage Competitions</Link>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+                <Link href="/admin/competitions">Competitions</Link>
               </Button>
-              <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+                <Link href="/admin/users">Users</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+                <Link href="/admin/site-config">Config</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+                <Link href="/admin/site-content">Site Content</Link>
+              </Button>
+              <Button asChild size="sm" className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] ml-auto md:ml-0">
                 <Link href="/admin/competitions?new=true">Create Competition</Link>
               </Button>
             </div>
