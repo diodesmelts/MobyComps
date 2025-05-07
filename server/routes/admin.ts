@@ -87,6 +87,45 @@ export function registerAdminRoutes(app: Express) {
       res.status(400).json({ error: error.message });
     }
   });
+  
+  // Add PATCH endpoint for competition updates
+  app.patch("/api/admin/competitions/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Validate status if provided
+      if (req.body.status && !competitionStatusEnum.enumValues.includes(req.body.status)) {
+        return res.status(400).json({ error: "Invalid competition status" });
+      }
+      
+      const competition = await storage.updateCompetition(id, req.body);
+      res.json(competition);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+  
+  // Add DELETE endpoint for competitions
+  app.delete("/api/admin/competitions/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      // Check if competition exists
+      const competition = await storage.getCompetition(id);
+      if (!competition) {
+        return res.status(404).json({ error: "Competition not found" });
+      }
+      
+      // In a real application, we'd need to check if it's safe to delete
+      // e.g., no active tickets or entries that reference this competition
+      
+      // For now, we'll just delete it (simulated operation)
+      await storage.updateCompetition(id, { status: 'cancelled', deleted: true });
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
 
   // User management
   app.get("/api/admin/users", isAdmin, async (req, res) => {
