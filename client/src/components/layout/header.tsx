@@ -5,6 +5,7 @@ import { cn, formatPrice, formatCountdown } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useCompetitions } from "@/hooks/use-competitions";
 import { CartItemComponent } from "@/components/ui/cart-item";
+// Direct cart implementation in the header for better performance and reliability
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -439,11 +440,18 @@ export function Header() {
             <div className="flex-1 overflow-auto p-4">
               {/* Timer */}
               {cartItems && cartItems.length > 0 && (
-                <div className="bg-[#8EE000]/20 p-2 flex items-center justify-center space-x-2 rounded mb-4">
-                  <Clock className="h-5 w-5 text-[#002147]" />
-                  <span className="text-sm font-medium text-[#002147] countdown-pulse">
-                    Your tickets are reserved for {timeRemaining}
-                  </span>
+                <div className="bg-[#8EE000]/20 p-3 flex items-center justify-center space-x-2 rounded-md mb-4 border border-[#8EE000]/30">
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center mb-1">
+                      <Clock className="h-5 w-5 text-[#002147] mr-2" />
+                      <span className="text-sm font-medium text-[#002147]">
+                        Reservation time remaining:
+                      </span>
+                    </div>
+                    <div className="text-xl font-bold text-[#002147] countdown-timer">
+                      {timeRemaining}
+                    </div>
+                  </div>
                 </div>
               )}
               
