@@ -22,8 +22,8 @@ export function CartItemComponent({
   const totalCost = ticketNumbers.length * competition.ticketPrice;
   
   // Format draw date to readable string
-  const formatDrawDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDrawDate = (dateValue: string | Date) => {
+    const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
     return date.toLocaleDateString('en-GB', { 
       day: 'numeric', 
       month: 'short', 
