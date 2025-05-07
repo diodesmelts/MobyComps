@@ -66,20 +66,15 @@ export default function AdminSiteContentPage() {
       }
       
       const data = await response.json();
-      setLogoUrl(data.fileUrl);
+      // The file URL path
+      const logoPath = data.fileUrl;
+      setLogoUrl(logoPath);
       
       // Update site config
       if (user) {
-        // Stringify the object to prevent JSON parsing errors
-        const logoData = JSON.stringify({
-          url: data.fileUrl,
-          filename: data.filename,
-          updatedAt: new Date().toISOString()
-        });
-        
         updateConfig.mutate({
           key: "site-logo",
-          value: logoData
+          value: logoPath
         });
       }
       
@@ -118,13 +113,15 @@ export default function AdminSiteContentPage() {
       }
       
       const data = await response.json();
-      setHeroBannerUrl(data.url);
+      // The file URL path
+      const heroPath = data.fileUrl;
+      setHeroBannerUrl(heroPath);
       
       // Update site config
       if (user) {
         updateConfig.mutate({
           key: "hero-banner",
-          value: data.url
+          value: heroPath
         });
       }
       

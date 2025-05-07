@@ -478,31 +478,39 @@ export class DatabaseStorage implements IStorage {
     return config;
   }
   
-  async updateSiteConfig(key: string, value: string, userId: number): Promise<SiteConfig> {
-    // Try to update first
-    let result = await db
-      .update(siteConfig)
-      .set({
-        value,
-        updatedAt: new Date(),
-        updatedBy: userId,
-      })
-      .where(eq(siteConfig.key, key))
-      .returning();
+  async updateSiteConfig(key: string, value: string | any, userId: number): Promise<SiteConfig> {
+    // Ensure value is a string
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
     
-    // If no rows updated, insert instead
-    if (result.length === 0) {
-      result = await db
-        .insert(siteConfig)
-        .values({
-          key,
-          value,
+    try {
+      // Try to update first
+      let result = await db
+        .update(siteConfig)
+        .set({
+          value: stringValue,
+          updatedAt: new Date(),
           updatedBy: userId,
         })
+        .where(eq(siteConfig.key, key))
         .returning();
+      
+      // If no rows updated, insert instead
+      if (result.length === 0) {
+        result = await db
+          .insert(siteConfig)
+          .values({
+            key,
+            value: stringValue,
+            updatedBy: userId,
+          })
+          .returning();
+      }
+      
+      return result[0];
+    } catch (error) {
+      console.error(`Error updating site config (${key}):`, error);
+      throw error;
     }
-    
-    return result[0];
   }
 }
 
