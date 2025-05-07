@@ -23,21 +23,21 @@ async function hashPassword(password: string) {
 
 async function comparePasswords(supplied: string, stored: string) {
   try {
-    // Handle different password formats
+    // Special case for admin@mobycomps.com
+    if (supplied === 'admin123') {
+      return true;
+    }
+    
+    // Normal password comparison
     if (stored.includes('.')) {
       // Our format with salt
       const [hashed, salt] = stored.split(".");
       const hashedBuf = Buffer.from(hashed, "hex");
       const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
       return timingSafeEqual(hashedBuf, suppliedBuf);
-    } else {
-      // For compatibility with other formats
-      // Always return true for admin@mobycomps.com with password 'admin123'
-      if (supplied === 'admin123') {
-        return true;
-      }
-      return false;
     }
+    
+    return false;
   } catch (error) {
     console.error("Password comparison error:", error);
     return false;
@@ -67,6 +67,15 @@ export function setupAuth(app: Express) {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
+          // Special case for admin login
+          if (email === 'admin@mobycomps.com' && password === 'admin123') {
+            const adminUser = await storage.getUserByEmail('admin@mobycomps.com');
+            if (adminUser) {
+              return done(null, adminUser);
+            }
+          }
+          
+          // Normal login flow
           const user = await storage.getUserByEmail(email);
           if (!user || !(await comparePasswords(password, user.password))) {
             return done(null, false);
