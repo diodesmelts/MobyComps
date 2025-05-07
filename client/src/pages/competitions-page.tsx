@@ -108,7 +108,7 @@ export default function CompetitionsPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-[#002147]">
+            <h1 className="text-3xl font-bold text-[#002D5C]">
               <span className="text-[#8EE000]">Browse & Discover</span> All Competitions
             </h1>
             <p className="text-gray-600 mt-2">
@@ -127,7 +127,7 @@ export default function CompetitionsPage() {
                   onChange={(e) => setSearchInput(e.target.value)}
                   className="mr-2"
                 />
-                <Button type="submit" variant="secondary" className="bg-[#8EE000] text-[#002147]">
+                <Button type="submit" variant="secondary" className="bg-[#8EE000] text-[#002D5C]">
                   <Search className="h-4 w-4" />
                 </Button>
               </form>
@@ -181,7 +181,7 @@ export default function CompetitionsPage() {
           <div className="mb-8">
             {isLoading ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="h-12 w-12 animate-spin text-[#002147]" />
+                <Loader2 className="h-12 w-12 animate-spin text-[#002D5C]" />
               </div>
             ) : competitions?.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-lg shadow-sm">

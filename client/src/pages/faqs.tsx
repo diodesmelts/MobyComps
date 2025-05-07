@@ -158,7 +158,7 @@ export default function FAQsPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-[#002147] mb-2">Frequently Asked Questions</h1>
+            <h1 className="text-3xl font-bold text-[#002D5C] mb-2">Frequently Asked Questions</h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Find answers to common questions about Moby Comps, our competitions, and how everything works.
             </p>
@@ -185,7 +185,7 @@ export default function FAQsPage() {
                   </button>
                 )}
               </div>
-              <Button type="submit" className="ml-2 bg-[#002147]">
+              <Button type="submit" className="ml-2 bg-[#002D5C]">
                 <Search className="h-4 w-4" />
               </Button>
             </form>
@@ -196,7 +196,7 @@ export default function FAQsPage() {
             <div className="max-w-3xl mx-auto mb-8">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold text-[#002147]">
+                  <h2 className="text-xl font-semibold text-[#002D5C]">
                     Search Results ({searchResults.length})
                   </h2>
                   <Button variant="outline" size="sm" onClick={clearSearch}>
@@ -209,7 +209,7 @@ export default function FAQsPage() {
                     <AccordionItem key={idx} value={`result-${idx}`}>
                       <AccordionTrigger className="text-left font-medium">
                         {result.question}
-                        <span className="ml-2 text-xs bg-[#8EE000]/20 text-[#002147] px-2 py-0.5 rounded-full">
+                        <span className="ml-2 text-xs bg-[#8EE000]/20 text-[#002D5C] px-2 py-0.5 rounded-full">
                           {result.category}
                         </span>
                       </AccordionTrigger>
@@ -259,18 +259,18 @@ export default function FAQsPage() {
           )}
           
           {/* Contact Support */}
-          <div className="max-w-3xl mx-auto mt-12 bg-[#002147] text-white rounded-lg shadow-md p-8 text-center">
+          <div className="max-w-3xl mx-auto mt-12 bg-[#002D5C] text-white rounded-lg shadow-md p-8 text-center">
             <HelpCircle className="h-12 w-12 text-[#8EE000] mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Still Have Questions?</h2>
             <p className="text-gray-300 mb-6 max-w-xl mx-auto">
               If you couldn't find the answer you were looking for, our friendly support team is ready to help.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button className="bg-white text-[#002147] hover:bg-gray-100">
+              <Button className="bg-white text-[#002D5C] hover:bg-gray-100">
                 <Mail className="h-4 w-4 mr-2" />
                 <a href="mailto:support@mobycomps.com">Email Support</a>
               </Button>
-              <Button className="bg-[#8EE000] text-[#002147] hover:bg-[#8EE000]/90">
+              <Button className="bg-[#8EE000] text-[#002D5C] hover:bg-[#8EE000]/90">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 <a href="https://wa.me/4401234567890">Live Chat</a>
               </Button>

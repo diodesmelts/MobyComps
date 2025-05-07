@@ -151,7 +151,7 @@ export default function AdminSiteConfigPage() {
       <main className="flex-grow py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-[#002147]">Site Configuration</h1>
+            <h1 className="text-2xl font-bold text-[#002D5C]">Site Configuration</h1>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -174,7 +174,7 @@ export default function AdminSiteConfigPage() {
                   <CardContent>
                     {isMarketingBannerLoading ? (
                       <div className="flex justify-center py-6">
-                        <Loader2 className="h-6 w-6 animate-spin text-[#002147]" />
+                        <Loader2 className="h-6 w-6 animate-spin text-[#002D5C]" />
                       </div>
                     ) : (
                       <div className="space-y-4">
@@ -193,7 +193,7 @@ export default function AdminSiteConfigPage() {
                         
                         <div className="flex justify-end">
                           <Button 
-                            className="bg-[#002147]"
+                            className="bg-[#002D5C]"
                             onClick={handleMarketingTextUpdate}
                             disabled={updateConfig.isPending}
                           >
@@ -216,7 +216,7 @@ export default function AdminSiteConfigPage() {
                   <CardContent>
                     {isFooterTextLoading ? (
                       <div className="flex justify-center py-6">
-                        <Loader2 className="h-6 w-6 animate-spin text-[#002147]" />
+                        <Loader2 className="h-6 w-6 animate-spin text-[#002D5C]" />
                       </div>
                     ) : (
                       <div className="space-y-4">
@@ -235,7 +235,7 @@ export default function AdminSiteConfigPage() {
                         
                         <div className="flex justify-end">
                           <Button 
-                            className="bg-[#002147]"
+                            className="bg-[#002D5C]"
                             onClick={handleFooterTextUpdate}
                             disabled={updateConfig.isPending}
                           >
@@ -262,7 +262,7 @@ export default function AdminSiteConfigPage() {
                 <CardContent>
                   {isHeroBannerLoading ? (
                     <div className="flex justify-center py-6">
-                      <Loader2 className="h-6 w-6 animate-spin text-[#002147]" />
+                      <Loader2 className="h-6 w-6 animate-spin text-[#002D5C]" />
                     </div>
                   ) : (
                     <div className="space-y-4">

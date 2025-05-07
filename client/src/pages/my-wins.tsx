@@ -101,7 +101,7 @@ export default function MyWinsPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#002147] mb-2">My Wins</h1>
+            <h1 className="text-3xl font-bold text-[#002D5C] mb-2">My Wins</h1>
             <p className="text-gray-600">
               Congratulations! Track your prize wins and delivery status here.
             </p>
@@ -127,7 +127,7 @@ export default function MyWinsPage() {
               </Select>
             </div>
             
-            <Button asChild variant="outline" className="border-[#002147] text-[#002147]">
+            <Button asChild variant="outline" className="border-[#002D5C] text-[#002D5C]">
               <Link href="/competitions">Enter More Competitions</Link>
             </Button>
           </div>
@@ -145,7 +145,7 @@ export default function MyWinsPage() {
           {/* Loading State */}
           {isLoading && (
             <div className="flex justify-center items-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+              <Loader2 className="h-8 w-8 animate-spin text-[#002D5C]" />
             </div>
           )}
           
@@ -160,7 +160,7 @@ export default function MyWinsPage() {
                 <p className="text-gray-600 mb-6">
                   You haven't won any competitions yet. Keep entering to increase your chances!
                 </p>
-                <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+                <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                   <Link href="/competitions">Browse Competitions</Link>
                 </Button>
               </CardContent>
@@ -192,7 +192,7 @@ export default function MyWinsPage() {
                       <div className="flex-grow p-6">
                         <div className="flex justify-between items-start mb-4">
                           <div>
-                            <h3 className="text-xl font-semibold text-[#002147]">
+                            <h3 className="text-xl font-semibold text-[#002D5C]">
                               {competition?.title || "Prize"}
                             </h3>
                             <p className="text-gray-600 text-sm mt-1">
@@ -290,7 +290,7 @@ export default function MyWinsPage() {
                         {/* Action Button */}
                         {deliveryStatus === 'delivered' && (
                           <div className="flex justify-end mt-4">
-                            <Button className="bg-[#002147] hover:bg-[#002147]/90">
+                            <Button className="bg-[#002D5C] hover:bg-[#002D5C]/90">
                               Leave Feedback
                             </Button>
                           </div>

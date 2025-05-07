@@ -74,8 +74,8 @@ export function QuizQuestion({
   
   return (
     <div className="space-y-2">
-      <div className="flex items-center text-sm text-[#002147] font-medium">
-        <HelpCircle className="h-5 w-5 mr-1.5 text-[#002147]" />
+      <div className="flex items-center text-sm text-[#002D5C] font-medium">
+        <HelpCircle className="h-5 w-5 mr-1.5 text-[#002D5C]" />
         <span>Question</span>
       </div>
       <p className="text-sm text-gray-700">Please answer the following question correctly to continue</p>
@@ -87,7 +87,7 @@ export function QuizQuestion({
             name="answer"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium text-[#002147]">{question}</FormLabel>
+                <FormLabel className="text-sm font-medium text-[#002D5C]">{question}</FormLabel>
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);

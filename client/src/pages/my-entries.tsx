@@ -81,7 +81,7 @@ export default function MyEntriesPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#002147] mb-2">My Entries</h1>
+            <h1 className="text-3xl font-bold text-[#002D5C] mb-2">My Entries</h1>
             <p className="text-gray-600">
               Track all your competition entries and check their status.
             </p>
@@ -100,7 +100,7 @@ export default function MyEntriesPage() {
                 <TabsTrigger value="completed">Completed Entries</TabsTrigger>
               </TabsList>
               
-              <Button asChild variant="outline" className="border-[#002147] text-[#002147]">
+              <Button asChild variant="outline" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/competitions">Browse Competitions</Link>
               </Button>
             </div>
@@ -118,7 +118,7 @@ export default function MyEntriesPage() {
             {/* Loading State */}
             {isLoading && (
               <div className="flex justify-center items-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+                <Loader2 className="h-8 w-8 animate-spin text-[#002D5C]" />
               </div>
             )}
             
@@ -134,7 +134,7 @@ export default function MyEntriesPage() {
                     <p className="text-gray-600 mb-6">
                       You don't have any active competition entries yet.
                     </p>
-                    <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+                    <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                       <Link href="/competitions">Browse Competitions</Link>
                     </Button>
                   </CardContent>
@@ -160,10 +160,10 @@ export default function MyEntriesPage() {
                           {/* Entry Details */}
                           <div className="flex-grow p-6">
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-xl font-semibold text-[#002147]">
+                              <h3 className="text-xl font-semibold text-[#002D5C]">
                                 {competition?.title || "Competition"}
                               </h3>
-                              <div className="bg-[#8EE000]/20 text-[#002147] text-xs font-medium rounded-full px-3 py-1">
+                              <div className="bg-[#8EE000]/20 text-[#002D5C] text-xs font-medium rounded-full px-3 py-1">
                                 Active
                               </div>
                             </div>
@@ -190,7 +190,7 @@ export default function MyEntriesPage() {
                             <div className="flex justify-end mt-4">
                               <Button 
                                 asChild
-                                className="bg-[#002147] hover:bg-[#002147]/90"
+                                className="bg-[#002D5C] hover:bg-[#002D5C]/90"
                               >
                                 <Link href={`/competition/${competition?.id}`}>
                                   View Competition
@@ -218,7 +218,7 @@ export default function MyEntriesPage() {
                     <p className="text-gray-600 mb-6">
                       You don't have any completed competition entries yet.
                     </p>
-                    <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+                    <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                       <Link href="/competitions">Browse Competitions</Link>
                     </Button>
                   </CardContent>
@@ -244,7 +244,7 @@ export default function MyEntriesPage() {
                           {/* Entry Details */}
                           <div className="flex-grow p-6">
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-xl font-semibold text-[#002147]">
+                              <h3 className="text-xl font-semibold text-[#002D5C]">
                                 {competition?.title || "Competition"}
                               </h3>
                               <div className={`
@@ -276,14 +276,14 @@ export default function MyEntriesPage() {
                             
                             <div className="flex justify-end mt-4">
                               {entry.status === 'won' ? (
-                                <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+                                <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                                   <Link href="/my-wins">View Win Details</Link>
                                 </Button>
                               ) : (
                                 <Button 
                                   asChild
                                   variant="outline" 
-                                  className="border-[#002147] text-[#002147]"
+                                  className="border-[#002D5C] text-[#002D5C]"
                                 >
                                   <Link href={`/competition/${competition?.id}`}>
                                     View Competition

@@ -107,7 +107,7 @@ export default function AuthPage() {
             {/* Auth Forms */}
             <Card className="shadow-md">
               <CardHeader>
-                <CardTitle className="text-2xl text-[#002147]">
+                <CardTitle className="text-2xl text-[#002D5C]">
                   Welcome to Moby Comps
                 </CardTitle>
                 <CardDescription>
@@ -164,7 +164,7 @@ export default function AuthPage() {
 
                         <Button
                           type="submit"
-                          className="w-full bg-[#002147] hover:bg-[#002147]/90"
+                          className="w-full bg-[#002D5C] hover:bg-[#002D5C]/90"
                           disabled={loginMutation.isPending}
                         >
                           {loginMutation.isPending ? (
@@ -184,7 +184,7 @@ export default function AuthPage() {
                         Don't have an account?{" "}
                         <Button
                           variant="link"
-                          className="p-0 text-[#002147]"
+                          className="p-0 text-[#002D5C]"
                           onClick={() => setActiveTab("register")}
                         >
                           Register now
@@ -263,7 +263,7 @@ export default function AuthPage() {
 
                         <Button
                           type="submit"
-                          className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]"
+                          className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]"
                           disabled={registerMutation.isPending}
                         >
                           {registerMutation.isPending ? (
@@ -283,7 +283,7 @@ export default function AuthPage() {
                         Already have an account?{" "}
                         <Button
                           variant="link"
-                          className="p-0 text-[#002147]"
+                          className="p-0 text-[#002D5C]"
                           onClick={() => setActiveTab("login")}
                         >
                           Sign in
@@ -296,7 +296,7 @@ export default function AuthPage() {
             </Card>
 
             {/* Hero Section */}
-            <div className="bg-[#002147] rounded-lg overflow-hidden shadow-md flex flex-col justify-center p-8 text-white">
+            <div className="bg-[#002D5C] rounded-lg overflow-hidden shadow-md flex flex-col justify-center p-8 text-white">
               <div className="mb-6">
                 <h2 className="text-3xl font-bold mb-3">Win Amazing Prizes</h2>
                 <p className="text-gray-300 mb-6">
@@ -375,7 +375,7 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              <div className="bg-[#002147]/50 p-4 rounded-lg">
+              <div className="bg-[#002D5C]/50 p-4 rounded-lg">
                 <h3 className="text-[#8EE000] font-semibold mb-2">Latest Winner</h3>
                 <p className="text-sm">
                   "I never thought I'd win! The iPad Pro arrived within 3 days of the draw. Can't

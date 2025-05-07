@@ -41,12 +41,12 @@ export function TicketNumberSelector({
   };
   
   return (
-    <div className="bg-[#002147]/5 rounded-lg p-4 space-y-3">
-      <h3 className="font-semibold text-center text-[#002147]">SELECT YOUR TICKETS</h3>
+    <div className="bg-[#002D5C]/5 rounded-lg p-4 space-y-3">
+      <h3 className="font-semibold text-center text-[#002D5C]">SELECT YOUR TICKETS</h3>
       
       {/* Current Selection Display */}
       <div className="flex justify-center">
-        <div className="h-10 w-10 rounded-full bg-[#002147] text-white flex items-center justify-center font-bold text-lg">
+        <div className="h-10 w-10 rounded-full bg-[#002D5C] text-white flex items-center justify-center font-bold text-lg">
           {count}
         </div>
       </div>

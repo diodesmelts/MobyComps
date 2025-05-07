@@ -50,7 +50,7 @@ export function CartItemComponent({
     <div className="bg-white rounded-md p-4 mb-4 shadow-sm border border-gray-100">
       {/* Competition title row with remove button */}
       <div className="flex justify-between items-center mb-3 border-b pb-2">
-        <h4 className="font-medium text-[#002147]">{competition.title}</h4>
+        <h4 className="font-medium text-[#002D5C]">{competition.title}</h4>
         <Button
           variant="ghost"
           size="sm"
@@ -71,7 +71,7 @@ export function CartItemComponent({
         <div className="text-sm text-gray-600 mb-2">Your selected tickets:</div>
         <div className="flex flex-wrap gap-1.5">
           {ticketNumbers.map((number) => (
-            <Badge key={number} className="bg-[#002147] hover:bg-[#002147]/90 text-white">
+            <Badge key={number} className="bg-[#002D5C] hover:bg-[#002D5C]/90 text-white">
               #{number}
             </Badge>
           ))}
@@ -83,7 +83,7 @@ export function CartItemComponent({
         <div className="text-gray-600">
           {ticketNumbers.length} {ticketNumbers.length === 1 ? 'ticket' : 'tickets'} @ {formatPrice(competition.ticketPrice)}
         </div>
-        <div className="font-semibold text-[#002147]">
+        <div className="font-semibold text-[#002D5C]">
           {formatPrice(totalCost)}
         </div>
       </div>

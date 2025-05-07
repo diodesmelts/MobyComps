@@ -84,7 +84,7 @@ export default function AdminUsersPage() {
       <main className="flex-grow py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-[#002147]">User Management</h1>
+            <h1 className="text-2xl font-bold text-[#002D5C]">User Management</h1>
             <div className="flex items-center">
               <form onSubmit={handleSearch} className="relative mr-2">
                 <Input
@@ -95,7 +95,7 @@ export default function AdminUsersPage() {
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               </form>
-              <Button type="submit" className="bg-[#002147]">
+              <Button type="submit" className="bg-[#002D5C]">
                 Search
               </Button>
             </div>
@@ -109,7 +109,7 @@ export default function AdminUsersPage() {
             <CardContent>
               {isLoading ? (
                 <div className="flex justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+                  <Loader2 className="h-8 w-8 animate-spin text-[#002D5C]" />
                 </div>
               ) : users.length === 0 ? (
                 <div className="text-center py-12">
@@ -134,7 +134,7 @@ export default function AdminUsersPage() {
                         <tr key={user.id} className="hover:bg-gray-50">
                           <td className="px-4 py-4">
                             <div className="flex items-center">
-                              <div className="w-8 h-8 rounded-full bg-[#002147] text-white flex items-center justify-center mr-3">
+                              <div className="w-8 h-8 rounded-full bg-[#002D5C] text-white flex items-center justify-center mr-3">
                                 {user.username.charAt(0).toUpperCase()}
                               </div>
                               <div>
@@ -244,7 +244,7 @@ export default function AdminUsersPage() {
           {showingDetails && (
             <div className="space-y-4">
               <div className="flex justify-center mb-2">
-                <div className="w-16 h-16 rounded-full bg-[#002147] text-white flex items-center justify-center text-2xl">
+                <div className="w-16 h-16 rounded-full bg-[#002D5C] text-white flex items-center justify-center text-2xl">
                   {showingDetails.username.charAt(0).toUpperCase()}
                 </div>
               </div>
@@ -308,7 +308,7 @@ export default function AdminUsersPage() {
                     Send Email
                   </Button>
                   <Button 
-                    className="w-full bg-[#002147]"
+                    className="w-full bg-[#002D5C]"
                     onClick={() => {
                       setShowingDetails(null);
                       setEditingUser(showingDetails);
@@ -337,7 +337,7 @@ export default function AdminUsersPage() {
           {editingUser && (
             <div className="space-y-4">
               <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-[#002147] text-white flex items-center justify-center mr-3">
+                <div className="w-10 h-10 rounded-full bg-[#002D5C] text-white flex items-center justify-center mr-3">
                   {editingUser.username.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -384,7 +384,7 @@ export default function AdminUsersPage() {
               Cancel
             </Button>
             <Button
-              className="bg-[#002147]"
+              className="bg-[#002D5C]"
               onClick={() => setEditingUser(null)}
             >
               Save Changes

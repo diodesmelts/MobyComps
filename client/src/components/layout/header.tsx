@@ -206,7 +206,7 @@ export function Header() {
   return (
     <header>
       {/* Marketing Banner */}
-      <div className="bg-[#8EE000] py-2 px-4 text-[#002147] text-center text-sm font-medium flex justify-center items-center">
+      <div className="bg-[#8EE000] py-2 px-4 text-[#002D5C] text-center text-sm font-medium flex justify-center items-center">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
         </svg>
@@ -214,7 +214,7 @@ export function Header() {
       </div>
       
       {/* Navigation */}
-      <nav className="bg-[#002147] text-white shadow-md">
+      <nav className="bg-[#002D5C] text-white shadow-md">
         <div className="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
@@ -241,8 +241,8 @@ export function Header() {
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "px-3 py-2 rounded hover:bg-[#002147]/80", 
-                  location === item.href && "bg-[#002147]/30 border-b-2 border-[#8EE000]"
+                  "px-3 py-2 rounded hover:bg-[#002D5C]/80", 
+                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#8EE000]"
                 )}
               >
                 {item.label}
@@ -254,8 +254,8 @@ export function Header() {
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "px-3 py-2 rounded hover:bg-[#002147]/80", 
-                  location === item.href && "bg-[#002147]/30 border-b-2 border-[#8EE000]"
+                  "px-3 py-2 rounded hover:bg-[#002D5C]/80", 
+                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#8EE000]"
                 )}
               >
                 {item.label}
@@ -269,12 +269,12 @@ export function Header() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="relative p-2 rounded-full bg-[#002147]/50 hover:bg-[#002147]/70"
+              className="relative p-2 rounded-full bg-[#002D5C]/50 hover:bg-[#002D5C]/70"
               onClick={openCart}
             >
               <ShoppingCart className="h-5 w-5" />
               {cartItems && cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#8EE000] text-[#002147] rounded-full w-4 h-4 text-xs flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-[#8EE000] text-[#002D5C] rounded-full w-4 h-4 text-xs flex items-center justify-center">
                   {cartItems.length}
                 </span>
               )}
@@ -283,8 +283,8 @@ export function Header() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="hidden md:flex items-center bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] font-medium px-3 py-1.5 rounded-md text-sm">
-                    <span className="bg-[#002147] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2">
+                  <Button className="hidden md:flex items-center bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] font-medium px-3 py-1.5 rounded-md text-sm">
+                    <span className="bg-[#002D5C] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2">
                       {user.username.charAt(0).toUpperCase()}
                     </span>
                     {user.role === 'admin' ? 'Admin User' : user.username}
@@ -333,7 +333,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="hidden md:flex bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+              <Button asChild className="hidden md:flex bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                 <Link href="/auth">Sign In</Link>
               </Button>
             )}
@@ -341,11 +341,11 @@ export function Header() {
             {/* Mobile menu button */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden p-2 rounded-md bg-[#002147]/50 hover:bg-[#002147]/70">
+                <Button variant="ghost" size="icon" className="md:hidden p-2 rounded-md bg-[#002D5C]/50 hover:bg-[#002D5C]/70">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-[#002147] text-white">
+              <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-[#002D5C] text-white">
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center py-4">
                     <div className="font-bold text-xl flex items-center">
@@ -436,7 +436,7 @@ export function Header() {
                     ) : (
                       <SheetClose asChild>
                         <Link href="/auth">
-                          <Button className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+                          <Button className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                             Sign In
                           </Button>
                         </Link>

@@ -11,7 +11,7 @@ export default function AboutUsPage() {
       
       <main className="flex-grow bg-gray-50">
         {/* Hero Section */}
-        <section className="bg-[#002147] text-white py-16">
+        <section className="bg-[#002D5C] text-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">About Us</h1>
             <p className="text-xl max-w-3xl mx-auto text-gray-300">
@@ -25,7 +25,7 @@ export default function AboutUsPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-[#002147] mb-4">Our Story</h2>
+                <h2 className="text-3xl font-bold text-[#002D5C] mb-4">Our Story</h2>
                 <div className="h-1 w-20 bg-[#8EE000] mx-auto"></div>
               </div>
               
@@ -54,7 +54,7 @@ export default function AboutUsPage() {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[#002147] mb-4">Our Values</h2>
+              <h2 className="text-3xl font-bold text-[#002D5C] mb-4">Our Values</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
                 These core principles guide everything we do at Moby Comps.
               </p>
@@ -64,9 +64,9 @@ export default function AboutUsPage() {
               {/* Value */}
               <div className="bg-gray-50 rounded-lg p-8 text-center">
                 <div className="w-16 h-16 bg-[#8EE000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Trophy className="h-8 w-8 text-[#002147]" />
+                  <Trophy className="h-8 w-8 text-[#002D5C]" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#002147] mb-3">Fairness</h3>
+                <h3 className="text-xl font-semibold text-[#002D5C] mb-3">Fairness</h3>
                 <p className="text-gray-600">
                   We conduct all competitions with complete fairness and transparency. Our automated draw system ensures every entry has an equal chance of winning.
                 </p>
@@ -75,9 +75,9 @@ export default function AboutUsPage() {
               {/* Value */}
               <div className="bg-gray-50 rounded-lg p-8 text-center">
                 <div className="w-16 h-16 bg-[#8EE000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-[#002147]" />
+                  <Shield className="h-8 w-8 text-[#002D5C]" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#002147] mb-3">Integrity</h3>
+                <h3 className="text-xl font-semibold text-[#002D5C] mb-3">Integrity</h3>
                 <p className="text-gray-600">
                   We operate with the highest level of integrity, adhering to all gambling regulations and maintaining ethical standards across our business.
                 </p>
@@ -86,9 +86,9 @@ export default function AboutUsPage() {
               {/* Value */}
               <div className="bg-gray-50 rounded-lg p-8 text-center">
                 <div className="w-16 h-16 bg-[#8EE000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-[#002147]" />
+                  <Users className="h-8 w-8 text-[#002D5C]" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#002147] mb-3">Community</h3>
+                <h3 className="text-xl font-semibold text-[#002D5C] mb-3">Community</h3>
                 <p className="text-gray-600">
                   We foster a vibrant community of players who share excitement, support each other, and celebrate wins together.
                 </p>
@@ -98,10 +98,10 @@ export default function AboutUsPage() {
         </section>
         
         {/* How We're Different Section */}
-        <section className="py-16 bg-[#002147]/5">
+        <section className="py-16 bg-[#002D5C]/5">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[#002147] mb-4">How We're Different</h2>
+              <h2 className="text-3xl font-bold text-[#002D5C] mb-4">How We're Different</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
                 What sets Moby Comps apart from other competition platforms.
               </p>
@@ -114,7 +114,7 @@ export default function AboutUsPage() {
                   <Check className="h-6 w-6 text-[#8EE000]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-[#002147] mb-2">Transparent Draw Process</h3>
+                  <h3 className="text-lg font-medium text-[#002D5C] mb-2">Transparent Draw Process</h3>
                   <p className="text-gray-600">
                     Our draw process is fully automated and auditable. We publish draw results immediately and notify all participants.
                   </p>
@@ -127,7 +127,7 @@ export default function AboutUsPage() {
                   <Check className="h-6 w-6 text-[#8EE000]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-[#002147] mb-2">Affordable Entry Points</h3>
+                  <h3 className="text-lg font-medium text-[#002D5C] mb-2">Affordable Entry Points</h3>
                   <p className="text-gray-600">
                     With tickets starting from just £1, we make it possible for everyone to participate and win incredible prizes.
                   </p>
@@ -140,7 +140,7 @@ export default function AboutUsPage() {
                   <Check className="h-6 w-6 text-[#8EE000]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-[#002147] mb-2">Guaranteed Prize Delivery</h3>
+                  <h3 className="text-lg font-medium text-[#002D5C] mb-2">Guaranteed Prize Delivery</h3>
                   <p className="text-gray-600">
                     Unlike some platforms, we guarantee prize delivery within 14 days of the draw or provide a cash alternative.
                   </p>
@@ -153,7 +153,7 @@ export default function AboutUsPage() {
                   <Check className="h-6 w-6 text-[#8EE000]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-[#002147] mb-2">Responsive Customer Support</h3>
+                  <h3 className="text-lg font-medium text-[#002D5C] mb-2">Responsive Customer Support</h3>
                   <p className="text-gray-600">
                     Our dedicated support team responds to all queries within 24 hours, ensuring you always have assistance when needed.
                   </p>
@@ -166,7 +166,7 @@ export default function AboutUsPage() {
                   <Check className="h-6 w-6 text-[#8EE000]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-[#002147] mb-2">Limited Ticket Numbers</h3>
+                  <h3 className="text-lg font-medium text-[#002D5C] mb-2">Limited Ticket Numbers</h3>
                   <p className="text-gray-600">
                     We limit the number of tickets for each competition, ensuring better odds compared to many other platforms.
                   </p>
@@ -179,7 +179,7 @@ export default function AboutUsPage() {
                   <Check className="h-6 w-6 text-[#8EE000]" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-medium text-[#002147] mb-2">Cash Alternatives</h3>
+                  <h3 className="text-lg font-medium text-[#002D5C] mb-2">Cash Alternatives</h3>
                   <p className="text-gray-600">
                     We offer cash alternatives for all major prizes, giving winners flexibility in how they enjoy their winnings.
                   </p>
@@ -193,7 +193,7 @@ export default function AboutUsPage() {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[#002147] mb-4">Our Team</h2>
+              <h2 className="text-3xl font-bold text-[#002D5C] mb-4">Our Team</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
                 Meet the dedicated professionals who make Moby Comps possible.
               </p>
@@ -202,37 +202,37 @@ export default function AboutUsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
               {/* Team Member */}
               <div className="text-center">
-                <div className="w-32 h-32 bg-[#002147]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-3xl font-bold text-[#002147]">JD</span>
+                <div className="w-32 h-32 bg-[#002D5C]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-[#002D5C]">JD</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#002147] mb-1">John Davis</h3>
+                <h3 className="text-lg font-semibold text-[#002D5C] mb-1">John Davis</h3>
                 <p className="text-gray-600 text-sm">Founder & CEO</p>
               </div>
               
               {/* Team Member */}
               <div className="text-center">
-                <div className="w-32 h-32 bg-[#002147]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-3xl font-bold text-[#002147]">ST</span>
+                <div className="w-32 h-32 bg-[#002D5C]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-[#002D5C]">ST</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#002147] mb-1">Sarah Thompson</h3>
+                <h3 className="text-lg font-semibold text-[#002D5C] mb-1">Sarah Thompson</h3>
                 <p className="text-gray-600 text-sm">Operations Director</p>
               </div>
               
               {/* Team Member */}
               <div className="text-center">
-                <div className="w-32 h-32 bg-[#002147]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-3xl font-bold text-[#002147]">MK</span>
+                <div className="w-32 h-32 bg-[#002D5C]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-[#002D5C]">MK</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#002147] mb-1">Michael King</h3>
+                <h3 className="text-lg font-semibold text-[#002D5C] mb-1">Michael King</h3>
                 <p className="text-gray-600 text-sm">Marketing Manager</p>
               </div>
               
               {/* Team Member */}
               <div className="text-center">
-                <div className="w-32 h-32 bg-[#002147]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-3xl font-bold text-[#002147]">LP</span>
+                <div className="w-32 h-32 bg-[#002D5C]/10 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-[#002D5C]">LP</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#002147] mb-1">Lisa Peterson</h3>
+                <h3 className="text-lg font-semibold text-[#002D5C] mb-1">Lisa Peterson</h3>
                 <p className="text-gray-600 text-sm">Customer Support Lead</p>
               </div>
             </div>
@@ -240,7 +240,7 @@ export default function AboutUsPage() {
         </section>
         
         {/* Contact Section */}
-        <section className="py-16 bg-[#002147]">
+        <section className="py-16 bg-[#002D5C]">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-white mb-4">Get In Touch</h2>
@@ -253,7 +253,7 @@ export default function AboutUsPage() {
               {/* Contact Method */}
               <div className="bg-white/10 rounded-lg p-6 text-center">
                 <div className="w-12 h-12 bg-[#8EE000] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="h-6 w-6 text-[#002147]" />
+                  <Mail className="h-6 w-6 text-[#002D5C]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Email Us</h3>
                 <p className="text-gray-300">support@mobycomps.com</p>
@@ -263,7 +263,7 @@ export default function AboutUsPage() {
               {/* Contact Method */}
               <div className="bg-white/10 rounded-lg p-6 text-center">
                 <div className="w-12 h-12 bg-[#8EE000] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="h-6 w-6 text-[#002147]" />
+                  <Phone className="h-6 w-6 text-[#002D5C]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Call Us</h3>
                 <p className="text-gray-300">0800 123 4567</p>
@@ -273,7 +273,7 @@ export default function AboutUsPage() {
               {/* Contact Method */}
               <div className="bg-white/10 rounded-lg p-6 text-center">
                 <div className="w-12 h-12 bg-[#8EE000] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="h-6 w-6 text-[#002147]" />
+                  <MapPin className="h-6 w-6 text-[#002D5C]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Visit Us</h3>
                 <p className="text-gray-300">123 Competition Street</p>
@@ -282,7 +282,7 @@ export default function AboutUsPage() {
             </div>
             
             <div className="text-center mt-12">
-              <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]">
+              <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
                 <Link href="/competitions">Explore Our Competitions</Link>
               </Button>
             </div>

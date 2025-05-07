@@ -302,7 +302,7 @@ export default function AdminCompetitionsPage() {
             // Competition Editor
             <div className="max-w-4xl mx-auto">
               <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-[#002147]">
+                <h1 className="text-2xl font-bold text-[#002D5C]">
                   {competitionToEdit ? "Edit Competition" : "Create Competition"}
                 </h1>
                 <Button
@@ -641,7 +641,7 @@ export default function AdminCompetitionsPage() {
                         </Button>
                         <Button 
                           type="submit"
-                          className="bg-[#002147] hover:bg-[#002147]/90"
+                          className="bg-[#002D5C] hover:bg-[#002D5C]/90"
                           disabled={isUploading || createCompetition.isPending || updateCompetition.isPending}
                           onClick={() => console.log("Submit button clicked")}
                         >
@@ -660,9 +660,9 @@ export default function AdminCompetitionsPage() {
             // Competitions List
             <>
               <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-[#002147]">Manage Competitions</h1>
+                <h1 className="text-2xl font-bold text-[#002D5C]">Manage Competitions</h1>
                 <Button 
-                  className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]"
+                  className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]"
                   onClick={() => navigate("/admin/competitions?new=true")}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -684,7 +684,7 @@ export default function AdminCompetitionsPage() {
                 <CardContent>
                   {isLoading ? (
                     <div className="flex justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+                      <Loader2 className="h-8 w-8 animate-spin text-[#002D5C]" />
                     </div>
                   ) : competitions.length === 0 ? (
                     <div className="text-center py-12">
@@ -696,7 +696,7 @@ export default function AdminCompetitionsPage() {
                           : `You don't have any ${activeTab} competitions.`}
                       </p>
                       <Button 
-                        className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147]"
+                        className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]"
                         onClick={() => navigate("/admin/competitions?new=true")}
                       >
                         Create First Competition
@@ -835,7 +835,7 @@ export default function AdminCompetitionsPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-[#002147]">Confirm Deletion</DialogTitle>
+            <DialogTitle className="text-[#002D5C]">Confirm Deletion</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete the competition "{competitionToDelete?.title}"? This action cannot be undone.
             </DialogDescription>

@@ -158,7 +158,7 @@ export default function AdminSiteContentPage() {
       <main className="flex-grow py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-[#002147]">Site Content</h1>
+            <h1 className="text-2xl font-bold text-[#002D5C]">Site Content</h1>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -179,7 +179,7 @@ export default function AdminSiteContentPage() {
                 <CardContent>
                   {isSiteLogoLoading ? (
                     <div className="flex justify-center py-6">
-                      <Loader2 className="h-6 w-6 animate-spin text-[#002147]" />
+                      <Loader2 className="h-6 w-6 animate-spin text-[#002D5C]" />
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -232,7 +232,7 @@ export default function AdminSiteContentPage() {
                 <CardContent>
                   {isHeroBannerLoading ? (
                     <div className="flex justify-center py-6">
-                      <Loader2 className="h-6 w-6 animate-spin text-[#002147]" />
+                      <Loader2 className="h-6 w-6 animate-spin text-[#002D5C]" />
                     </div>
                   ) : (
                     <div className="space-y-4">

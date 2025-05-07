@@ -35,11 +35,11 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
           className="w-full h-full object-cover transition-transform hover:scale-105 duration-200"
         />
         {/* Win badge */}
-        <div className="absolute top-3 left-3 bg-[#8EE000] text-[#002147] font-bold px-4 py-1 rounded-sm text-lg">
+        <div className="absolute top-3 left-3 bg-[#8EE000] text-[#002D5C] font-bold px-4 py-1 rounded-sm text-lg">
           Win
         </div>
         {/* Draw date label */}
-        <div className="absolute bottom-3 left-3 bg-[#002147] text-white text-xs px-2 py-1 rounded-sm flex items-center">
+        <div className="absolute bottom-3 left-3 bg-[#002D5C] text-white text-xs px-2 py-1 rounded-sm flex items-center">
           <Calendar className="w-3 h-3 mr-1" />
           DRAW DATE: {formattedDate}
         </div>
@@ -47,7 +47,7 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-[#002147] font-medium text-center mb-2">{title}</h3>
+        <h3 className="text-[#002D5C] font-medium text-center mb-2">{title}</h3>
         
         {/* Win chance badge */}
         <div className="flex justify-center mb-3">
@@ -61,7 +61,7 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
         
         {/* Price */}
         <div className="text-center my-2">
-          <span className="text-2xl font-bold text-[#002147]">{formatPrice(ticketPrice)}</span>
+          <span className="text-2xl font-bold text-[#002D5C]">{formatPrice(ticketPrice)}</span>
         </div>
 
         {/* Progress bar */}
@@ -74,7 +74,7 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
         </div>
 
         {/* CTA Button */}
-        <Button asChild className="w-full bg-[#002147] hover:bg-[#002147]/90 mt-auto">
+        <Button asChild className="w-full bg-[#002D5C] hover:bg-[#002D5C]/90 mt-auto">
           <Link href={`/competition/${id}`}>
             Enter now
           </Link>

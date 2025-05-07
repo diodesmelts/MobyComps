@@ -43,7 +43,7 @@ export default function AdminDashboard() {
         <Header />
         <main className="flex-grow flex items-center justify-center p-8">
           <div className="flex flex-col items-center justify-center">
-            <Loader2 className="h-12 w-12 animate-spin text-[#002147] mb-4" />
+            <Loader2 className="h-12 w-12 animate-spin text-[#002D5C] mb-4" />
             <p className="text-gray-500">Loading dashboard data...</p>
           </div>
         </main>
@@ -86,21 +86,21 @@ export default function AdminDashboard() {
       <main className="flex-grow py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <h1 className="text-2xl font-bold text-[#002147]">Admin Dashboard</h1>
+            <h1 className="text-2xl font-bold text-[#002D5C]">Admin Dashboard</h1>
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
-              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+              <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/admin/competitions">Competitions</Link>
               </Button>
-              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+              <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/admin/users">Users</Link>
               </Button>
-              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+              <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/admin/site-config">Config</Link>
               </Button>
-              <Button asChild variant="outline" size="sm" className="border-[#002147] text-[#002147]">
+              <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/admin/site-content">Site Content</Link>
               </Button>
-              <Button asChild size="sm" className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] ml-auto md:ml-0">
+              <Button asChild size="sm" className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] ml-auto md:ml-0">
                 <Link href="/admin/competitions?new=true">Create Competition</Link>
               </Button>
             </div>
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                   
                   {(stats.recentCompetitions || []).slice(0, 2).map((comp, index) => (
                     <div key={`comp-${index}`} className="flex items-start">
-                      <div className="w-9 h-9 rounded-full bg-[#8EE000]/20 flex items-center justify-center text-[#002147] mr-3">
+                      <div className="w-9 h-9 rounded-full bg-[#8EE000]/20 flex items-center justify-center text-[#002D5C] mr-3">
                         <Package className="h-5 w-5" />
                       </div>
                       <div className="flex-1">
