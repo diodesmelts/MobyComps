@@ -39,7 +39,7 @@ export function useAdminCompetitions(page = 1, limit = 10, status?: string) {
   };
 }
 
-export function useAdminCompeitionMutations() {
+export function useAdminCompetitionMutations() {
   const { toast } = useToast();
   
   const createCompetition = useMutation({

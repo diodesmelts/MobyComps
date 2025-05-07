@@ -49,7 +49,27 @@ export function registerUploadRoutes(app: Express) {
       res.json({
         success: true,
         fileUrl,
+        url: fileUrl, // Add url property for backward compatibility
         filename
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Simple upload endpoint without authentication for testing
+  app.post("/api/upload-test", upload.single("image"), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      // For simplicity, just return a fake URL
+      res.json({
+        success: true,
+        fileUrl: "/uploads/test-image.jpg",
+        url: "/uploads/test-image.jpg",
+        filename: "test-image.jpg"
       });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

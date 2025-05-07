@@ -48,7 +48,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { insertCompetitionSchema, Competition } from "@shared/schema";
-import { useAdminCompetitions, useAdminCompeitionMutations } from "@/hooks/use-admin";
+import { useAdminCompetitions, useAdminCompetitionMutations } from "@/hooks/use-admin";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { formatPrice, formatDate } from "@/lib/utils";
@@ -90,7 +90,7 @@ export default function AdminCompetitionsPage() {
     createCompetition,
     updateCompetition,
     deleteCompetition
-  } = useAdminCompeitionMutations();
+  } = useAdminCompetitionMutations();
   
   // Get competition being edited
   const competitionToEdit = competitions.find(c => c.id === Number(editId));
@@ -156,7 +156,7 @@ export default function AdminCompetitionsPage() {
         const formData = new FormData();
         formData.append("image", values.imageFile[0]);
         
-        const response = await fetch("/api/uploads/image", {
+        const response = await fetch("/api/upload/image", {
           method: "POST",
           body: formData,
         });
@@ -166,7 +166,7 @@ export default function AdminCompetitionsPage() {
         }
         
         const data = await response.json();
-        imageUrl = data.url;
+        imageUrl = data.fileUrl;
       } catch (error) {
         toast({
           title: "Error uploading image",
