@@ -16,16 +16,20 @@ export function CartModal() {
   const { toast } = useToast();
   const [location, setLocation] = useLocation();
   const { user } = useAuth();
+  
+  // Get cart data from our custom hook
   const { 
-    isCartOpen, 
-    closeCart, 
     cartItems, 
+    isCartOpen, 
+    openCart,
+    closeCart, 
     removeFromCart, 
     clearCart, 
     calculateTotal,
     cartTimeRemaining,
     isRemoving
   } = useCart();
+  
   const { competitions, isLoading: isLoadingCompetitions } = useCompetitions();
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -90,6 +94,7 @@ export function CartModal() {
     ? formatCountdown(cartTimeRemaining)
     : "00:00";
     
+  // If cart is not open, don't render anything
   if (!isCartOpen) return null;
   
   return (
@@ -101,7 +106,7 @@ export function CartModal() {
       />
       
       {/* Modal */}
-      <div className="fixed right-0 top-0 h-screen w-full max-w-md bg-white z-50 shadow-xl flex flex-col">
+      <div className="fixed right-0 top-0 h-screen w-full max-w-md bg-white z-50 shadow-xl flex flex-col animate-in slide-in-from-right duration-300">
         {/* Header */}
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-lg font-bold">Your Cart</h2>
@@ -141,7 +146,7 @@ export function CartModal() {
             </div>
           ) : (
             <div className="space-y-4">
-              {cartItems.map((item) => {
+              {cartItems.map((item: any) => {
                 const competition = competitions?.find(c => c.id === item.competitionId);
                 if (!competition) return null;
                 
