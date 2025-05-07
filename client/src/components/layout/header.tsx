@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { cn } from "@/lib/utils";
+import { apiRequest } from "@/lib/queryClient";
+import { cn, formatPrice, formatCountdown } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
-import { useCart } from "@/hooks/use-cart";
-import { CartModal } from "@/components/modals/cart-modal";
+import { useCompetitions } from "@/hooks/use-competitions";
+import { CartItemComponent } from "@/components/ui/cart-item";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -18,8 +19,9 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { X, Menu, LogOut, User, Settings, ShoppingCart } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { X, Menu, LogOut, User, Settings, ShoppingCart, Clock, Loader2 } from "lucide-react";
 
 const marketingMessages = [
   "Sign up before 20th May and get £10.00 site credit!",
@@ -29,10 +31,21 @@ const marketingMessages = [
 ];
 
 export function Header() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const { toast } = useToast();
   const { user, logoutMutation } = useAuth();
-  const { cartItems, openCart } = useCart();
+  const { competitions } = useCompetitions();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [marketingIndex, setMarketingIndex] = useState(0);
+  
+  // Get cart items directly
+  const { data: cartData, refetch: refreshCart } = useQuery({
+    queryKey: ["/api/cart"],
+    select: (data) => data?.items || [],
+  });
+  
+  const cartItems = cartData || [];
   
   // Rotate marketing messages
   useEffect(() => {
@@ -64,6 +77,117 @@ export function Header() {
   const handleLogout = () => {
     logoutMutation.mutate();
   };
+  
+  // Cart open/close handlers
+  const openCart = () => {
+    refreshCart();
+    setIsCartOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+  
+  const closeCart = () => {
+    setIsCartOpen(false);
+    document.body.style.overflow = 'auto';
+  };
+  
+  // Calculate total price for cart items
+  const calculateTotal = () => {
+    if (!competitions || !cartItems || cartItems.length === 0) return 0;
+    
+    return cartItems.reduce((total, item) => {
+      const competition = competitions.find(c => c.id === item.competitionId);
+      if (!competition) return total;
+      
+      const ticketCount = item.ticketNumbers.split(',').length;
+      return total + (competition.ticketPrice * ticketCount);
+    }, 0);
+  };
+  
+  // Handle removing items from cart
+  const removeFromCartMutation = useMutation({
+    mutationFn: async (cartItemId: number) => {
+      const response = await apiRequest("DELETE", `/api/cart/remove/${cartItemId}`);
+      if (!response.ok) {
+        throw new Error("Failed to remove item from cart");
+      }
+      return cartItemId;
+    },
+    onSuccess: () => {
+      refreshCart();
+      toast({
+        title: "Item removed",
+        description: "The item has been removed from your cart",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to remove item from cart",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Handle checkout
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      setIsProcessing(true);
+      const res = await apiRequest("POST", "/api/checkout", {});
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        // Redirect to Stripe checkout
+        window.location.href = data.checkoutUrl;
+      } else {
+        closeCart();
+        refreshCart();
+        toast({
+          title: "Checkout successful",
+          description: "Your tickets have been purchased successfully."
+        });
+        setLocation("/my-entries");
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Checkout failed",
+        description: error.message,
+        variant: "destructive"
+      });
+      setIsProcessing(false);
+    }
+  });
+  
+  const handleCheckout = () => {
+    if (!user) {
+      closeCart();
+      setLocation("/auth?redirect=cart");
+      return;
+    }
+    
+    checkoutMutation.mutate();
+  };
+
+  // Get the earliest expiry time for any cart item
+  const getCartTimeRemaining = () => {
+    if (!cartItems || cartItems.length === 0) return 0;
+    
+    // Find the earliest expiry time
+    const earliestExpiry = cartItems.reduce((earliest, item) => {
+      const expiryTime = new Date(item.expiresAt).getTime();
+      return expiryTime < earliest ? expiryTime : earliest;
+    }, Infinity);
+    
+    // Calculate remaining time in seconds
+    const now = new Date().getTime();
+    return Math.max(0, Math.floor((earliestExpiry - now) / 1000));
+  };
+  
+  const cartTimeRemaining = getCartTimeRemaining();
+  const timeRemaining = cartTimeRemaining > 0 
+    ? formatCountdown(cartTimeRemaining) 
+    : "00:00";
 
   return (
     <header>
@@ -292,8 +416,106 @@ export function Header() {
         </div>
       </nav>
       
-      {/* Cart Modal */}
-      <CartModal />
+      {/* Cart Sidebar - Directly in header to avoid issues */}
+      {isCartOpen && (
+        <>
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-50"
+            onClick={closeCart}
+          />
+          
+          {/* Cart Modal */}
+          <div className="fixed right-0 top-0 h-screen w-full max-w-md bg-white z-50 shadow-xl flex flex-col animate-in slide-in-from-right duration-300">
+            {/* Header */}
+            <div className="p-4 border-b flex items-center justify-between">
+              <h2 className="text-lg font-bold">Your Cart</h2>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={closeCart}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4">
+              {/* Timer */}
+              {cartItems && cartItems.length > 0 && (
+                <div className="bg-[#8EE000]/20 p-2 flex items-center justify-center space-x-2 rounded mb-4">
+                  <Clock className="h-5 w-5 text-[#002147]" />
+                  <span className="text-sm font-medium text-[#002147] countdown-pulse">
+                    Your tickets are reserved for {timeRemaining}
+                  </span>
+                </div>
+              )}
+              
+              {/* Cart Items */}
+              {!competitions ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+                </div>
+              ) : !cartItems || cartItems.length === 0 ? (
+                <div className="text-center py-8 space-y-3">
+                  <ShoppingCart className="h-12 w-12 mx-auto text-gray-300" />
+                  <p className="text-gray-500">Your cart is empty</p>
+                  <Button 
+                    variant="outline" 
+                    className="border-[#002147] text-[#002147]"
+                    onClick={closeCart}
+                  >
+                    Browse Competitions
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {cartItems.map((item: any) => {
+                    const competition = competitions?.find(c => c.id === item.competitionId);
+                    if (!competition) return null;
+                    
+                    return (
+                      <CartItemComponent
+                        key={item.id}
+                        item={item}
+                        competition={competition}
+                        onRemove={() => removeFromCartMutation.mutate(item.id)}
+                        isRemoving={removeFromCartMutation.isPending}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            
+            {/* Footer with checkout */}
+            {cartItems && cartItems.length > 0 && (
+              <div className="p-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-gray-600">
+                    Subtotal ({cartItems.reduce((sum: number, item: any) => sum + (item.ticketNumbers ? item.ticketNumbers.split(',').length : 0), 0)} tickets):
+                  </span>
+                  <span className="font-medium text-[#002147]">{formatPrice(calculateTotal())}</span>
+                </div>
+                
+                <Button 
+                  className="w-full py-6 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] font-medium rounded-md text-center flex items-center justify-center"
+                  onClick={handleCheckout}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                      Proceed to Checkout
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </header>
   );
 }
