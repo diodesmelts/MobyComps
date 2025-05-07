@@ -23,7 +23,8 @@ export function CartItemComponent({
   
   // Format draw date to readable string
   const formatDrawDate = (dateValue: string | Date) => {
-    const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+    if (!dateValue) return 'TBD';
+    const date = new Date(dateValue);
     return date.toLocaleDateString('en-GB', { 
       day: 'numeric', 
       month: 'short', 

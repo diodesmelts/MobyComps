@@ -35,7 +35,9 @@ export function Header() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const { user, logoutMutation } = useAuth();
-  const { competitions } = useCompetitions();
+  const { competitions } = useCompetitions({
+    limit: 100 // Get all competitions to ensure we can find matches for cart items
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [marketingIndex, setMarketingIndex] = useState(0);
@@ -440,18 +442,17 @@ export function Header() {
             <div className="flex-1 overflow-auto p-4">
               {/* Timer */}
               {cartItems && cartItems.length > 0 && (
-                <div className="bg-[#8EE000]/20 p-3 flex items-center justify-center space-x-2 rounded-md mb-4 border border-[#8EE000]/30">
-                  <div className="flex flex-col items-center">
-                    <div className="flex items-center mb-1">
-                      <Clock className="h-5 w-5 text-[#002147] mr-2" />
-                      <span className="text-sm font-medium text-[#002147]">
-                        Reservation time remaining:
-                      </span>
-                    </div>
-                    <div className="text-xl font-bold text-[#002147] countdown-timer">
-                      {timeRemaining}
-                    </div>
+                <div className="bg-[#8EE000]/20 p-4 flex flex-col items-center justify-center rounded-md mb-6 border-2 border-[#8EE000]/50 shadow-sm">
+                  <div className="flex items-center mb-2">
+                    <Clock className="h-6 w-6 text-[#002147] mr-2" />
+                    <span className="text-base font-semibold text-[#002147]">
+                      Reservation time remaining:
+                    </span>
                   </div>
+                  <div className="countdown-timer">
+                    {timeRemaining}
+                  </div>
+                  <p className="text-xs text-[#002147]/70 mt-2">Tickets will be released if checkout is not completed in time</p>
                 </div>
               )}
               
