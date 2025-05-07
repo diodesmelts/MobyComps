@@ -66,13 +66,20 @@ export default function AdminSiteContentPage() {
       }
       
       const data = await response.json();
-      setLogoUrl(data.url);
+      setLogoUrl(data.fileUrl);
       
       // Update site config
       if (user) {
+        // Stringify the object to prevent JSON parsing errors
+        const logoData = JSON.stringify({
+          url: data.fileUrl,
+          filename: data.filename,
+          updatedAt: new Date().toISOString()
+        });
+        
         updateConfig.mutate({
           key: "site-logo",
-          value: data.url
+          value: logoData
         });
       }
       

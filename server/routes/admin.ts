@@ -199,15 +199,24 @@ export function registerAdminRoutes(app: Express) {
 
   app.put("/api/admin/site-config/:key", isAdmin, async (req, res) => {
     try {
-      const { value } = insertSiteConfigSchema.parse({
-        key: req.params.key,
-        value: req.body.value,
-        updatedBy: req.user.id
-      });
-      
       const config = await storage.updateSiteConfig(
         req.params.key,
-        value,
+        req.body.value,
+        req.user.id
+      );
+      
+      res.json(config);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+  
+  // Add POST endpoint for backward compatibility
+  app.post("/api/admin/site-config/:key", isAdmin, async (req, res) => {
+    try {
+      const config = await storage.updateSiteConfig(
+        req.params.key,
+        req.body.value,
         req.user.id
       );
       
