@@ -439,10 +439,10 @@ export function Header() {
             </div>
             
             {/* Content */}
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto p-4">
               {/* Timer */}
               {cartItems && cartItems.length > 0 && (
-                <div className="bg-[#F6FFDD] p-4 flex flex-col items-center justify-center">
+                <div className="bg-[#F6FFDD] p-4 flex flex-col items-center justify-center rounded-md mb-6">
                   <div className="flex items-center mb-2">
                     <Clock className="h-5 w-5 text-[#002147] mr-2" />
                     <span className="text-sm font-medium text-[#002147]">
@@ -456,22 +456,45 @@ export function Header() {
                 </div>
               )}
               
-              {/* Cart Items - Empty Section (as per design, this is just blank space) */}
-              <div className="flex-1">
-                {!cartItems || cartItems.length === 0 ? (
-                  <div className="text-center py-8 space-y-3">
-                    <ShoppingCart className="h-12 w-12 mx-auto text-gray-300" />
-                    <p className="text-gray-500">Your cart is empty</p>
-                    <Button 
-                      variant="outline" 
-                      className="border-[#002147] text-[#002147]"
-                      onClick={closeCart}
-                    >
-                      Browse Competitions
-                    </Button>
-                  </div>
-                ) : null}
-              </div>
+              {/* Cart Items */}
+              {!competitions ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+                </div>
+              ) : !cartItems || cartItems.length === 0 ? (
+                <div className="text-center py-8 space-y-3">
+                  <ShoppingCart className="h-12 w-12 mx-auto text-gray-300" />
+                  <p className="text-gray-500">Your cart is empty</p>
+                  <Button 
+                    variant="outline" 
+                    className="border-[#002147] text-[#002147]"
+                    onClick={closeCart}
+                  >
+                    Browse Competitions
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {console.log("Cart items:", cartItems)}
+                  {console.log("Competitions:", competitions)}
+                  {cartItems.map((item: any) => {
+                    console.log("Processing cart item:", item);
+                    const competition = competitions?.find(c => c.id === item.competitionId);
+                    console.log("Found competition:", competition);
+                    if (!competition) return null;
+                    
+                    return (
+                      <CartItemComponent
+                        key={item.id}
+                        item={item}
+                        competition={competition}
+                        onRemove={() => removeFromCartMutation.mutate(item.id)}
+                        isRemoving={removeFromCartMutation.isPending}
+                      />
+                    );
+                  })}
+                </div>
+              )}
             </div>
             
             {/* Footer with checkout */}
