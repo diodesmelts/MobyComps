@@ -43,7 +43,7 @@ export function Header() {
   // Get cart items directly
   const { data: cartData, refetch: refreshCart } = useQuery({
     queryKey: ["/api/cart"],
-    select: (data) => data?.items || [],
+    select: (data: any) => data?.items || [],
   });
   
   const cartItems = cartData || [];
@@ -57,7 +57,7 @@ export function Header() {
   }, []);
   
   // Get site config
-  const { data: announcement } = useQuery({
+  const { data: announcement } = useQuery<{value: string}>({
     queryKey: ["/api/site-config/marketing-banner"],
     enabled: false, // Disable until we implement site config
   });
@@ -95,7 +95,7 @@ export function Header() {
   const calculateTotal = () => {
     if (!competitions || !cartItems || cartItems.length === 0) return 0;
     
-    return cartItems.reduce((total, item) => {
+    return cartItems.reduce((total: number, item: any) => {
       const competition = competitions.find(c => c.id === item.competitionId);
       if (!competition) return total;
       
@@ -175,7 +175,7 @@ export function Header() {
     if (!cartItems || cartItems.length === 0) return 0;
     
     // Find the earliest expiry time
-    const earliestExpiry = cartItems.reduce((earliest, item) => {
+    const earliestExpiry = cartItems.reduce((earliest: number, item: any) => {
       const expiryTime = new Date(item.expiresAt).getTime();
       return expiryTime < earliest ? expiryTime : earliest;
     }, Infinity);
