@@ -118,8 +118,8 @@ export function registerAdminRoutes(app: Express) {
       // In a real application, we'd need to check if it's safe to delete
       // e.g., no active tickets or entries that reference this competition
       
-      // For now, we'll just delete it (simulated operation)
-      await storage.updateCompetition(id, { status: 'cancelled', deleted: true });
+      // For now, we'll just mark it as cancelled
+      await storage.updateCompetition(id, { status: 'cancelled' });
       
       res.json({ success: true });
     } catch (error: any) {
