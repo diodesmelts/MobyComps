@@ -31,7 +31,11 @@ const marketingMessages = [
 export function Header() {
   const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
-  const { cartItems, openCart } = useCart();
+  const cart = useCart();
+  const { cartItems, openCart } = cart;
+  
+  // Debug cart functions
+  console.log("Cart context:", cart);
   const [marketingIndex, setMarketingIndex] = useState(0);
   
   // Rotate marketing messages
