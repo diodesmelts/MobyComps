@@ -43,7 +43,8 @@ export function useAdminCompetitionMutations() {
   const { toast } = useToast();
   
   const createCompetition = useMutation({
-    mutationFn: async (competition: InsertCompetition) => {
+    mutationFn: async (competition: any) => { // Use 'any' to bypass strict typing for dates
+      // Let the server handle date conversion
       const res = await apiRequest("POST", "/api/admin/competitions", competition);
       return res.json();
     },
@@ -65,7 +66,8 @@ export function useAdminCompetitionMutations() {
   });
   
   const updateCompetition = useMutation({
-    mutationFn: async ({ id, data }: { id: number, data: Partial<Competition> }) => {
+    mutationFn: async ({ id, data }: { id: number, data: any }) => { // Use 'any' to bypass strict typing for dates
+      // Let the server handle date conversion
       const res = await apiRequest("PATCH", `/api/admin/competitions/${id}`, data);
       return res.json();
     },

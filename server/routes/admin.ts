@@ -64,10 +64,33 @@ export function registerAdminRoutes(app: Express) {
   // CRUD for competitions (admin only)
   app.post("/api/admin/competitions", isAdmin, async (req, res) => {
     try {
-      const competitionData = insertCompetitionSchema.parse(req.body);
+      console.log("Creating competition with data:", req.body);
+      
+      // Verify dates are strings in ISO format
+      if (req.body.drawDate && typeof req.body.drawDate === 'string') {
+        // Try to ensure date is in ISO format
+        req.body.drawDate = new Date(req.body.drawDate).toISOString();
+      }
+      
+      if (req.body.closeDate && typeof req.body.closeDate === 'string') {
+        // Try to ensure date is in ISO format
+        req.body.closeDate = new Date(req.body.closeDate).toISOString();
+      }
+      
+      // Special handling for Zod validation
+      let competitionData;
+      try {
+        competitionData = insertCompetitionSchema.parse(req.body);
+      } catch (zodError: any) {
+        console.error("Validation error:", zodError);
+        return res.status(400).json({ error: JSON.stringify(zodError.errors, null, 2) });
+      }
+      
       const competition = await storage.createCompetition(competitionData);
+      console.log("Competition created:", competition);
       res.status(201).json(competition);
     } catch (error: any) {
+      console.error("Error creating competition:", error);
       res.status(400).json({ error: error.message });
     }
   });
@@ -93,14 +116,29 @@ export function registerAdminRoutes(app: Express) {
     try {
       const id = parseInt(req.params.id);
       
+      console.log("Updating competition data:", req.body);
+      
       // Validate status if provided
       if (req.body.status && !competitionStatusEnum.enumValues.includes(req.body.status)) {
         return res.status(400).json({ error: "Invalid competition status" });
       }
       
+      // Handle date conversions
+      if (req.body.drawDate && typeof req.body.drawDate === 'string') {
+        // Try to ensure date is in ISO format
+        req.body.drawDate = new Date(req.body.drawDate).toISOString();
+      }
+      
+      if (req.body.closeDate && typeof req.body.closeDate === 'string') {
+        // Try to ensure date is in ISO format
+        req.body.closeDate = new Date(req.body.closeDate).toISOString();
+      }
+      
       const competition = await storage.updateCompetition(id, req.body);
+      console.log("Competition updated:", competition);
       res.json(competition);
     } catch (error: any) {
+      console.error("Error updating competition:", error);
       res.status(400).json({ error: error.message });
     }
   });

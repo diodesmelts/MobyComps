@@ -215,11 +215,8 @@ export default function AdminCompetitionsPage() {
         return;
       }
       
-      // Convert dates to ISO strings
-      const drawDate = new Date(values.drawDate);
-      const closeDate = values.closeDate ? new Date(values.closeDate) : undefined;
-      
-      // Prepare competition data
+      // Prepare competition data without explicit type conversion on dates
+      // The backend will handle conversion of string dates to proper format
       const competitionData = {
         title: values.title,
         description: values.description,
@@ -229,8 +226,8 @@ export default function AdminCompetitionsPage() {
         featured: values.featured,
         quizQuestion: values.quizQuestion,
         quizAnswer: values.quizAnswer,
-        drawDate: drawDate,
-        closeDate: closeDate,
+        drawDate: values.drawDate,
+        closeDate: values.closeDate || null,
         status: values.status,
         cashAlternative: values.cashAlternative,
         imageUrl: imageUrl!,
