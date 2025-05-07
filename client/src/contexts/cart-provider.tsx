@@ -6,6 +6,8 @@ import { Competition } from "@shared/schema";
 export interface CartItem {
   id: number;
   competitionId: number;
+  competitionTitle?: string;
+  competitionImageUrl?: string;
   ticketNumbers: string;
   expiresAt: string;
 }

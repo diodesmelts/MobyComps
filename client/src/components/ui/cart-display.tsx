@@ -100,35 +100,18 @@ export function CartDisplay({
         ) : (
           <div className="space-y-4">
             {cartItems.map((item: any) => {
-              // Find competition in the list
+              // Find competition in the list for pricing info
+              // or use the title and image directly from cart item
               let competition = competitions?.find(c => c.id === item.competitionId);
               
-              // If competition isn't found, create a placeholder with proper ID/title
-              if (!competition) {
-                console.log(`Competition ID ${item.competitionId} not found in global list. Creating placeholder.`);
-                
-                // Create a safely typed placeholder
-                const now = new Date();
-                competition = {
-                  id: item.competitionId,
-                  title: `Competition #${item.competitionId}`,
-                  imageUrl: "",
-                  ticketPrice: 1.99,
-                  description: "",
-                  maxTickets: 100,
-                  ticketsSold: 0,
-                  drawDate: safeDate(now.toISOString()),
-                  closeDate: null,
-                  status: "live" as any,
-                  category: "electronics" as any,
-                  featured: false,
-                  cashAlternative: null,
-                  quizQuestion: "",
-                  quizAnswer: "",
-                  createdAt: safeDate(now.toISOString()),
-                  updatedAt: safeDate(now.toISOString()),
-                  createdBy: 1
-                };
+              // Get ticket price from competition or fallback to a default if needed
+              const ticketPrice = competition?.ticketPrice || 1.99;
+              const ticketNumbers = item.ticketNumbers.split(',').map(Number);
+              const totalCost = ticketNumbers.length * ticketPrice;
+              
+              // If competition title and image URL are not in the cart item, fetch it
+              if (!item.competitionTitle || !item.competitionImageUrl) {
+                console.log(`Competition details missing for ID ${item.competitionId}. Fetching data.`);
                 
                 // Fetch the competition data for next render
                 fetch(`/api/competitions/${item.competitionId}`)
@@ -142,9 +125,6 @@ export function CartDisplay({
                   });
               }
               
-              const ticketNumbers = item.ticketNumbers.split(',').map(Number);
-              const totalCost = ticketNumbers.length * competition.ticketPrice;
-              
               return (
                 <div key={item.id} className="border-b pb-4 mb-4">
                   {/* Competition title row with remove button */}
@@ -152,10 +132,10 @@ export function CartDisplay({
                     <div className="flex items-center gap-3">
                       {/* Competition image */}
                       <div className="h-12 w-12 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                        {competition.imageUrl ? (
+                        {item.competitionImageUrl || (competition && competition.imageUrl) ? (
                           <img 
-                            src={competition.imageUrl} 
-                            alt={competition.title} 
+                            src={item.competitionImageUrl || (competition && competition.imageUrl)} 
+                            alt={item.competitionTitle || (competition && competition.title) || `Competition #${item.competitionId}`} 
                             className="h-full w-full object-cover"
                           />
                         ) : (
@@ -167,7 +147,7 @@ export function CartDisplay({
                       
                       {/* Competition title */}
                       <h4 className="font-medium text-[#002147] line-clamp-2">
-                        {competition.title}
+                        {item.competitionTitle || (competition && competition.title) || `Competition #${item.competitionId}`}
                       </h4>
                     </div>
                     

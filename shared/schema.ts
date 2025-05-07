@@ -84,6 +84,8 @@ export const cartItems = pgTable('cart_items', {
   sessionId: text('session_id').notNull(),
   userId: integer('user_id').references(() => users.id),
   competitionId: integer('competition_id').notNull().references(() => competitions.id),
+  competitionTitle: text('competition_title'),
+  competitionImageUrl: text('competition_image_url'),
   ticketNumbers: text('ticket_numbers').notNull(), // Comma-separated list of ticket numbers
   createdAt: timestamp('created_at').notNull().defaultNow(),
   expiresAt: timestamp('expires_at').notNull(),

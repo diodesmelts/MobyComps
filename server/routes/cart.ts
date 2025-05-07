@@ -35,12 +35,20 @@ export function registerCartRoutes(app: Express) {
         return res.status(400).json({ error: "Invalid request data" });
       }
       
+      // Get competition details for title and image
+      const competition = await storage.getCompetition(competitionId);
+      if (!competition) {
+        return res.status(404).json({ error: "Competition not found" });
+      }
+      
       // Create expiration timestamp for 10 minutes from now
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + 10);
       
       const cartItemData = {
         competitionId,
+        competitionTitle: competition.title,
+        competitionImageUrl: competition.imageUrl,
         ticketNumbers: ticketNumbers.join(','),
         sessionId,
         expiresAt // Pass the Date object directly
