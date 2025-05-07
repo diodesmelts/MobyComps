@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { cn, pickRandomNumbers } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { Ticket } from "@shared/schema";
 import { Loader2, Shuffle, Trash2 } from "lucide-react";
 import { useTicketStatus } from "@/hooks/use-ticket-status";
 
@@ -14,9 +13,15 @@ interface TicketGridProps {
   onDeselectTicket: (ticketNumber: number) => void;
   onClearSelection: () => void;
   onConfirmSelection: () => void;
-  onLuckyDip: (count: number) => void;
+  onLuckyDip: (count: number[]) => void;
   maxSelectable: number;
   loading?: boolean;
+}
+
+// Define ticket type
+interface AvailableTicket {
+  number: number;
+  status?: string;
 }
 
 export function TicketGrid({
@@ -34,7 +39,7 @@ export function TicketGrid({
   const { toast } = useToast();
   const [ticketsPerPage, setTicketsPerPage] = useState(100);
   const [currentPage, setCurrentPage] = useState(1);
-  const { getPurchasedTickets, getReservedTickets, isLoading } = useTicketStatus(competitionId);
+  const { availableTickets, isLoadingTickets } = useTicketStatus(competitionId.toString());
   const [luckyDipCount, setLuckyDipCount] = useState(1);
   
   // Calculate total pages
@@ -44,10 +49,6 @@ export function TicketGrid({
   const startTicket = (currentPage - 1) * ticketsPerPage + 1;
   const endTicket = Math.min(currentPage * ticketsPerPage, maxTickets);
   const ticketsRange = Array.from({ length: endTicket - startTicket + 1 }, (_, i) => startTicket + i);
-  
-  // Get purchased and reserved tickets
-  const purchasedTickets = getPurchasedTickets();
-  const reservedTickets = getReservedTickets();
   
   // Handle window resize to adjust tickets per page
   useEffect(() => {
@@ -77,17 +78,27 @@ export function TicketGrid({
       return;
     }
     
-    // Get all unavailable tickets
-    const unavailableTickets = [
-      ...purchasedTickets,
-      ...reservedTickets.filter(t => !t.includes("self")),
-      ...selectedTickets
-    ];
+    // Generate all numbers from 1 to maxTickets
+    const allTickets = Array.from({ length: maxTickets }, (_, i) => i + 1);
+    
+    // Filter out unavailable tickets (ones that aren't in the availableTickets array)
+    const availableTicketNumbers = availableTickets.map((ticket: AvailableTicket) => ticket.number);
+    const availableForSelection = allTickets.filter(
+      num => availableTicketNumbers.includes(num) && !selectedTickets.includes(num)
+    );
     
     // Pick random available tickets
-    const luckyDipTickets = pickRandomNumbers(1, maxTickets, luckyDipCount, unavailableTickets);
+    const randomTickets: number[] = [];
+    const tempAvailable = [...availableForSelection];
     
-    if (luckyDipTickets.length === 0) {
+    // Select random tickets
+    for (let i = 0; i < Math.min(luckyDipCount, tempAvailable.length); i++) {
+      const randomIndex = Math.floor(Math.random() * tempAvailable.length);
+      const selectedTicket = tempAvailable.splice(randomIndex, 1)[0];
+      randomTickets.push(selectedTicket);
+    }
+    
+    if (randomTickets.length === 0) {
       toast({
         title: "No available tickets",
         description: "There are no available tickets for Lucky Dip.",
@@ -96,15 +107,15 @@ export function TicketGrid({
       return;
     }
     
-    if (luckyDipTickets.length < luckyDipCount) {
+    if (randomTickets.length < luckyDipCount) {
       toast({
         title: "Limited availability",
-        description: `Only ${luckyDipTickets.length} tickets available for Lucky Dip.`,
-        variant: "warning"
+        description: `Only ${randomTickets.length} tickets available for Lucky Dip.`,
+        variant: "destructive"
       });
     }
     
-    onLuckyDip(luckyDipTickets);
+    onLuckyDip(randomTickets);
   };
   
   return (
@@ -117,7 +128,7 @@ export function TicketGrid({
             size="sm"
             className="bg-[#002147] hover:bg-[#002147]/90 text-white"
             onClick={handleLuckyDip}
-            disabled={loading || isLoading}
+            disabled={loading || isLoadingTickets}
           >
             <Shuffle className="h-4 w-4 mr-1" />
             Lucky Dip
@@ -126,7 +137,7 @@ export function TicketGrid({
             variant="outline"
             size="sm"
             onClick={onClearSelection}
-            disabled={selectedTickets.length === 0 || loading || isLoading}
+            disabled={selectedTickets.length === 0 || loading || isLoadingTickets}
           >
             <Trash2 className="h-4 w-4 mr-1" />
             Clear Selection
@@ -199,7 +210,7 @@ export function TicketGrid({
       )}
       
       {/* Ticket Grid */}
-      {isLoading || loading ? (
+      {isLoadingTickets || loading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
         </div>
@@ -207,15 +218,13 @@ export function TicketGrid({
         <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 ticket-grid max-h-[50vh] overflow-y-auto p-1">
           {ticketsRange.map(number => {
             const isSelected = selectedTickets.includes(number);
-            const isPurchased = purchasedTickets.includes(number);
-            const isReserved = reservedTickets.some(t => t.split(':')[0] === number.toString() && !t.includes('self'));
+            // Check if ticket is available based on availableTickets array from the hook
+            const isAvailableTicket = availableTickets.some((ticket: AvailableTicket) => ticket.number === number);
             
             // Determine button state
-            let buttonState: 'available' | 'selected' | 'reserved' | 'purchased' = 'available';
-            if (isPurchased) {
-              buttonState = 'purchased';
-            } else if (isReserved) {
-              buttonState = 'reserved';
+            let buttonState: 'available' | 'selected' | 'purchased' = 'available';
+            if (!isAvailableTicket) {
+              buttonState = 'purchased'; // simplification - any unavailable ticket is treated as purchased
             } else if (isSelected) {
               buttonState = 'selected';
             }
@@ -229,7 +238,6 @@ export function TicketGrid({
                     'border-2 border-[#8EE000] bg-[#8EE000]/10 text-[#002147]': buttonState === 'selected',
                     'border border-gray-300 hover:bg-[#8EE000]/10 hover:border-[#8EE000] text-gray-700': buttonState === 'available',
                     'border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed': buttonState === 'purchased',
-                    'border border-orange-200 bg-orange-50 text-orange-500 cursor-not-allowed': buttonState === 'reserved',
                   }
                 )}
                 onClick={() => {
@@ -247,7 +255,7 @@ export function TicketGrid({
                     onDeselectTicket(number);
                   }
                 }}
-                disabled={buttonState === 'purchased' || buttonState === 'reserved'}
+                disabled={buttonState === 'purchased'}
               >
                 {number}
               </button>
@@ -260,7 +268,7 @@ export function TicketGrid({
       <div className="pt-4 border-t border-gray-200 flex justify-end">
         <Button 
           className="px-6 py-2.5 bg-[#8EE000] text-[#002147] font-medium rounded-md hover:bg-[#8EE000]/90"
-          disabled={selectedTickets.length === 0 || loading || isLoading}
+          disabled={selectedTickets.length === 0 || loading || isLoadingTickets}
           onClick={onConfirmSelection}
         >
           Confirm Selection
