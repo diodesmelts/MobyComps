@@ -55,10 +55,21 @@ import { formatPrice, formatDate } from "@/lib/utils";
 import { Loader2, Package, Eye, Edit, Trash2, Plus, Calendar, FileImage, CreditCard, AlertCircle } from "lucide-react";
 
 // Extended schema for form validation
-const formSchema = insertCompetitionSchema.extend({
-  imageFile: z.instanceof(FileList).optional(),
-  drawDate: z.string(),
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  category: z.enum(['electronics', 'travel', 'beauty', 'household', 'cash_prizes', 'family']),
+  maxTickets: z.number().min(1, "Must have at least 1 ticket"),
+  ticketPrice: z.number().min(0.01, "Price must be at least 0.01"),
+  featured: z.boolean().default(false),
+  quizQuestion: z.string().min(1, "Quiz question is required"),
+  quizAnswer: z.string().min(1, "Quiz answer is required"),
+  drawDate: z.string().min(1, "Draw date is required"),
   closeDate: z.string().optional(),
+  status: z.enum(['draft', 'live', 'completed', 'cancelled']).default('draft'),
+  cashAlternative: z.number().optional(),
+  imageFile: z.instanceof(FileList).optional(),
+  imageUrl: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -127,13 +138,14 @@ export default function AdminCompetitionsPage() {
         category: competitionToEdit.category,
         ticketPrice: competitionToEdit.ticketPrice,
         maxTickets: competitionToEdit.maxTickets,
-        cashAlternative: competitionToEdit.cashAlternative,
+        cashAlternative: competitionToEdit.cashAlternative || undefined,
         featured: competitionToEdit.featured,
         quizQuestion: competitionToEdit.quizQuestion,
         quizAnswer: competitionToEdit.quizAnswer,
         drawDate: new Date(competitionToEdit.drawDate).toISOString().split('T')[0],
         closeDate: competitionToEdit.closeDate ? new Date(competitionToEdit.closeDate).toISOString().split('T')[0] : undefined,
         status: competitionToEdit.status,
+        imageUrl: competitionToEdit.imageUrl,
       });
     } else if (isNew) {
       form.reset({
@@ -154,73 +166,108 @@ export default function AdminCompetitionsPage() {
   // Handle form submission
   const onSubmit = async (values: FormValues) => {
     console.log("Form submitted with values:", values);
-    // Handle image upload if provided
-    let imageUrl = competitionToEdit?.imageUrl;
     
-    if (values.imageFile && values.imageFile.length > 0) {
-      setIsUploading(true);
-      try {
-        const formData = new FormData();
-        formData.append("image", values.imageFile[0]);
-        
-        const response = await fetch("/api/upload/image", {
-          method: "POST",
-          body: formData,
-        });
-        
-        if (!response.ok) {
-          throw new Error("Failed to upload image");
+    try {
+      // Handle image upload if provided
+      let imageUrl = competitionToEdit?.imageUrl;
+      
+      if (values.imageFile && values.imageFile.length > 0) {
+        setIsUploading(true);
+        try {
+          const formData = new FormData();
+          formData.append("image", values.imageFile[0]);
+          
+          const response = await fetch("/api/upload/image", {
+            method: "POST",
+            body: formData,
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            throw new Error("Failed to upload image: " + await response.text());
+          }
+          
+          const data = await response.json();
+          console.log("Image upload response:", data);
+          imageUrl = data.fileUrl;
+        } catch (error) {
+          console.error("Image upload error:", error);
+          toast({
+            title: "Error uploading image",
+            description: error instanceof Error ? error.message : "Failed to upload image",
+            variant: "destructive",
+          });
+          setIsUploading(false);
+          return;
         }
-        
-        const data = await response.json();
-        imageUrl = data.fileUrl;
-      } catch (error) {
+        setIsUploading(false);
+      }
+      
+      console.log("Using image URL:", imageUrl);
+      
+      // Check if we have an image
+      if (!imageUrl && !competitionToEdit) {
         toast({
-          title: "Error uploading image",
-          description: error instanceof Error ? error.message : "Failed to upload image",
+          title: "Image required",
+          description: "Please upload an image for the competition",
           variant: "destructive",
         });
-        setIsUploading(false);
         return;
       }
-      setIsUploading(false);
-    }
-    
-    // Convert dates to ISO strings
-    const drawDate = new Date(values.drawDate);
-    const closeDate = values.closeDate ? new Date(values.closeDate) : undefined;
-    
-    if (!imageUrl && !competitionToEdit) {
-      toast({
-        title: "Image required",
-        description: "Please upload an image for the competition",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Create or update competition
-    if (competitionToEdit) {
-      updateCompetition.mutate({
-        id: competitionToEdit.id,
-        data: {
-          ...values,
-          drawDate,
-          closeDate,
-          imageUrl: imageUrl!,
-        },
-      });
-    } else {
-      createCompetition.mutate({
-        ...values,
-        drawDate,
-        closeDate,
+      
+      // Convert dates to ISO strings
+      const drawDate = new Date(values.drawDate);
+      const closeDate = values.closeDate ? new Date(values.closeDate) : undefined;
+      
+      // Prepare competition data
+      const competitionData = {
+        title: values.title,
+        description: values.description,
+        category: values.category,
+        ticketPrice: values.ticketPrice,
+        maxTickets: values.maxTickets,
+        featured: values.featured,
+        quizQuestion: values.quizQuestion,
+        quizAnswer: values.quizAnswer,
+        drawDate: drawDate,
+        closeDate: closeDate,
+        status: values.status,
+        cashAlternative: values.cashAlternative,
         imageUrl: imageUrl!,
+      };
+      
+      console.log("Saving competition data:", competitionData);
+      
+      // Create or update competition
+      if (competitionToEdit) {
+        updateCompetition.mutate({
+          id: competitionToEdit.id,
+          data: competitionData,
+        });
+        
+        toast({
+          title: "Competition updated",
+          description: "The competition has been updated successfully."
+        });
+      } else {
+        createCompetition.mutate(competitionData);
+        
+        toast({
+          title: "Competition created",
+          description: "The competition has been created successfully."
+        });
+      }
+      
+      // Navigate back to competitions list
+      navigate("/admin/competitions");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast({
+        title: "Error saving competition",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
       });
     }
-    
-    // Navigate back to competitions list
-    navigate("/admin/competitions");
   };
   
   // Handle competition deletion
