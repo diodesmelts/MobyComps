@@ -43,7 +43,7 @@ export function registerCartRoutes(app: Express) {
         competitionId,
         ticketNumbers: ticketNumbers.join(','),
         sessionId,
-        expiresAt: expiresAt.toISOString()
+        expiresAt // Pass the Date object directly
       };
       
       const cartItem = await storage.addToCart(cartItemData);
@@ -142,18 +142,23 @@ export function registerCartRoutes(app: Express) {
         return res.status(401).json({ error: "User must be logged in to complete purchase" });
       }
       
-      const userId = req.user.id;
-      let purchasedTickets = [];
+      // Get user ID safely
+      const userId = req.user ? (req.user as any).id : null;
+      if (!userId) {
+        return res.status(401).json({ error: "User authentication required" });
+      }
+      
+      const purchasedTickets: any[] = [];
       
       // Process each cart item
       for (const item of cartItemsData) {
-        const { competitionId, quantity } = item;
+        const { competitionId, ticketCount } = item;
         
         // Get available tickets
         const tickets = await storage.listTickets(competitionId, 'available');
-        const ticketNumbers = tickets.slice(0, quantity).map(t => t.id);
+        const ticketNumbers = tickets.slice(0, ticketCount).map(t => t.id);
         
-        if (ticketNumbers.length < quantity) {
+        if (ticketNumbers.length < ticketCount) {
           return res.status(400).json({ 
             error: `Not enough tickets available for competition ${competitionId}` 
           });
@@ -161,7 +166,7 @@ export function registerCartRoutes(app: Express) {
         
         // Purchase tickets
         const purchased = await storage.purchaseTickets(ticketNumbers, userId);
-        purchasedTickets = [...purchasedTickets, ...purchased];
+        purchasedTickets.push(...purchased);
         
         // Update competition tickets sold count
         await storage.incrementTicketsSold(competitionId, purchased.length);
@@ -170,7 +175,7 @@ export function registerCartRoutes(app: Express) {
         await storage.createEntry({
           userId,
           competitionId,
-          entryDate: new Date().toISOString(),
+          ticketIds: ticketNumbers.join(','),
           status: 'active'
         });
       }

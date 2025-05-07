@@ -70,7 +70,8 @@ export function CartModal() {
     checkoutMutation.mutate();
   };
   
-  const total = calculateTotal(competitions);
+  // Safely calculate total, handling potential undefined/null
+  const total = typeof calculateTotal === 'function' ? calculateTotal(competitions) : 0;
   
   // Get remaining time in minutes and seconds
   const timeRemaining = cartTimeRemaining > 0
@@ -90,7 +91,7 @@ export function CartModal() {
         </DialogHeader>
         
         {/* Timer */}
-        {cartItems.length > 0 && (
+        {cartItems && cartItems.length > 0 && (
           <div className="bg-[#8EE000]/20 p-2 flex items-center justify-center space-x-2 rounded">
             <Clock className="h-5 w-5 text-[#002147]" />
             <span className="text-sm font-medium text-[#002147] countdown-pulse">
@@ -105,7 +106,7 @@ export function CartModal() {
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
             </div>
-          ) : cartItems.length === 0 ? (
+          ) : !cartItems || cartItems.length === 0 ? (
             <div className="text-center py-8 space-y-3">
               <ShoppingCart className="h-12 w-12 mx-auto text-gray-300" />
               <p className="text-gray-500">Your cart is empty</p>
@@ -138,11 +139,11 @@ export function CartModal() {
         </div>
         
         {/* Summary */}
-        {cartItems.length > 0 && (
+        {cartItems && cartItems.length > 0 && (
           <div className="pt-4 border-t border-gray-200 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">
-                Subtotal ({cartItems.reduce((sum, item) => sum + item.ticketNumbers.split(',').length, 0)} tickets):
+                Subtotal ({cartItems.reduce((sum: number, item: any) => sum + (item.ticketNumbers ? item.ticketNumbers.split(',').length : 0), 0)} tickets):
               </span>
               <span className="font-medium text-[#002147]">{formatPrice(total)}</span>
             </div>

@@ -89,24 +89,28 @@ export function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-1 text-sm">
             {navItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <a className={cn(
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className={cn(
                   "px-3 py-2 rounded hover:bg-[#002147]/80", 
                   location === item.href && "bg-[#002147]/30 border-b-2 border-[#8EE000]"
-                )}>
-                  {item.label}
-                </a>
+                )}
+              >
+                {item.label}
               </Link>
             ))}
             
             {user && userNavItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <a className={cn(
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className={cn(
                   "px-3 py-2 rounded hover:bg-[#002147]/80", 
                   location === item.href && "bg-[#002147]/30 border-b-2 border-[#8EE000]"
-                )}>
-                  {item.label}
-                </a>
+                )}
+              >
+                {item.label}
               </Link>
             ))}
           </div>
@@ -121,7 +125,7 @@ export function Header() {
               onClick={openCart}
             >
               <ShoppingCart className="h-5 w-5" />
-              {cartItems.length > 0 && (
+              {cartItems && cartItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#8EE000] text-[#002147] rounded-full w-4 h-4 text-xs flex items-center justify-center">
                   {cartItems.length}
                 </span>

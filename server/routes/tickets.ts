@@ -8,15 +8,22 @@ export function registerTicketRoutes(app: Express) {
   app.get("/api/competitions/:competitionId/tickets", async (req, res) => {
     try {
       const competitionId = parseInt(req.params.competitionId);
+      const sessionId = req.sessionID;
       const status = req.query.status as string | undefined;
       
-      // Validate status if provided
-      if (status && !ticketStatusEnum.enumValues.includes(status)) {
+      // Validate status if provided and cast to the correct type
+      let validStatus: "available" | "reserved" | "purchased" | undefined = undefined;
+      if (status && ["available", "reserved", "purchased"].includes(status)) {
+        validStatus = status as "available" | "reserved" | "purchased";
+      } else if (status) {
         return res.status(400).json({ error: "Invalid ticket status" });
       }
       
-      const tickets = await storage.listTickets(competitionId, status);
-      res.json(tickets);
+      const tickets = await storage.listTickets(competitionId, validStatus);
+      res.json({
+        tickets,
+        sessionId
+      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
