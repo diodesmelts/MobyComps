@@ -47,76 +47,45 @@ export function CartItemComponent({
   };
   
   return (
-    <div className="flex flex-col pb-4 border-b border-gray-200">
-      {/* Competition title and image row */}
-      <div className="flex items-start space-x-3 mb-2">
-        <div className="flex-shrink-0 w-20 h-20 bg-gray-100 rounded overflow-hidden">
-          <img 
-            src={competition.imageUrl} 
-            alt={competition.title} 
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="flex-grow">
-          <div className="flex justify-between items-start">
-            <h4 className="font-medium text-[#002147] text-sm md:text-base">{competition.title}</h4>
-            <Badge 
-              variant="outline" 
-              className={`uppercase text-xs ${getStatusColor(competition.status)}`}
-            >
-              {competition.status}
-            </Badge>
-          </div>
-          
-          {/* Competition details */}
-          <div className="flex flex-col space-y-1 mt-1">
-            <div className="flex items-center text-xs text-gray-500">
-              <CalendarDays className="h-3 w-3 mr-1" />
-              <span>Draw: {formatDrawDate(competition.drawDate)}</span>
-            </div>
-            
-            <div className="flex items-center text-xs text-gray-500">
-              <Tag className="h-3 w-3 mr-1" />
-              <span>{competition.ticketsSold} / {competition.maxTickets} tickets sold</span>
-            </div>
-          </div>
-        </div>
+    <div className="bg-white rounded-md p-4 mb-4 shadow-sm border border-gray-100">
+      {/* Competition title row with remove button */}
+      <div className="flex justify-between items-center mb-3 border-b pb-2">
+        <h4 className="font-medium text-[#002147]">{competition.title}</h4>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-red-500 hover:text-red-700 h-8 px-2"
+          onClick={onRemove}
+          disabled={isRemoving}
+        >
+          {isRemoving ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
+        </Button>
       </div>
       
-      {/* Ticket numbers section */}
-      <div className="bg-gray-50 p-2 rounded-md my-2">
-        <div className="text-xs text-gray-600 mb-1">Your Tickets:</div>
-        <div className="flex flex-wrap gap-1">
+      {/* Ticket numbers */}
+      <div className="mb-3">
+        <div className="text-sm text-gray-600 mb-2">Your selected tickets:</div>
+        <div className="flex flex-wrap gap-1.5">
           {ticketNumbers.map((number) => (
-            <Badge key={number} variant="outline" className="bg-[#002147] text-white">
+            <Badge key={number} className="bg-[#002147] hover:bg-[#002147]/90 text-white">
               #{number}
             </Badge>
           ))}
         </div>
       </div>
       
-      {/* Price and remove row */}
-      <div className="flex justify-between items-center mt-2">
-        <div className="flex items-center">
-          <div className="text-sm">
-            <span className="font-medium">{formatPrice(competition.ticketPrice)}</span> × {ticketNumbers.length}
-            <span className="font-bold ml-2">{formatPrice(totalCost)}</span>
-          </div>
+      {/* Price summary */}
+      <div className="flex justify-between items-center text-sm pt-2 border-t">
+        <div className="text-gray-600">
+          {ticketNumbers.length} {ticketNumbers.length === 1 ? 'ticket' : 'tickets'} @ {formatPrice(competition.ticketPrice)}
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-red-500 hover:text-red-700 text-sm h-8 px-2"
-          onClick={onRemove}
-          disabled={isRemoving}
-        >
-          {isRemoving ? (
-            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-          ) : (
-            <Trash2 className="h-4 w-4 mr-1" />
-          )}
-          Remove
-        </Button>
+        <div className="font-semibold text-[#002147]">
+          {formatPrice(totalCost)}
+        </div>
       </div>
     </div>
   );

@@ -432,9 +432,9 @@ export function Header() {
           <div className="fixed right-0 top-0 h-screen w-full max-w-md bg-white z-50 shadow-xl flex flex-col animate-in slide-in-from-right duration-300">
             {/* Header */}
             <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-bold">Your Cart</h2>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={closeCart}>
-                <X className="h-4 w-4" />
+              <h2 className="text-xl font-bold text-[#002147]">Your Cart</h2>
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-gray-100" onClick={closeCart}>
+                <X className="h-5 w-5" />
               </Button>
             </div>
             
@@ -442,17 +442,17 @@ export function Header() {
             <div className="flex-1 overflow-auto p-4">
               {/* Timer */}
               {cartItems && cartItems.length > 0 && (
-                <div className="bg-[#8EE000]/20 p-4 flex flex-col items-center justify-center rounded-md mb-6 border-2 border-[#8EE000]/50 shadow-sm">
+                <div className="bg-[#F6FFDD] p-4 flex flex-col items-center justify-center rounded-md mb-6">
                   <div className="flex items-center mb-2">
-                    <Clock className="h-6 w-6 text-[#002147] mr-2" />
-                    <span className="text-base font-semibold text-[#002147]">
+                    <Clock className="h-5 w-5 text-[#002147] mr-2" />
+                    <span className="text-sm font-medium text-[#002147]">
                       Reservation time remaining:
                     </span>
                   </div>
-                  <div className="countdown-timer">
+                  <div className="bg-[#002147] text-white font-bold text-2xl py-2 px-6 rounded-md mb-1">
                     {timeRemaining}
                   </div>
-                  <p className="text-xs text-[#002147]/70 mt-2">Tickets will be released if checkout is not completed in time</p>
+                  <p className="text-xs text-[#002147]/70 mt-1">Tickets will be released if checkout is not completed in time</p>
                 </div>
               )}
               
@@ -495,16 +495,16 @@ export function Header() {
             
             {/* Footer with checkout */}
             {cartItems && cartItems.length > 0 && (
-              <div className="p-4 border-t border-gray-200 bg-gray-50">
+              <div className="p-4 border-t border-gray-200">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-gray-600">
+                  <span className="text-[#002147] font-medium">
                     Subtotal ({cartItems.reduce((sum: number, item: any) => sum + (item.ticketNumbers ? item.ticketNumbers.split(',').length : 0), 0)} tickets):
                   </span>
-                  <span className="font-medium text-[#002147]">{formatPrice(calculateTotal())}</span>
+                  <span className="font-bold text-[#002147] text-lg">{formatPrice(calculateTotal())}</span>
                 </div>
                 
                 <Button 
-                  className="w-full py-6 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] font-medium rounded-md text-center flex items-center justify-center"
+                  className="w-full py-5 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] font-semibold rounded-md text-center flex items-center justify-center"
                   onClick={handleCheckout}
                   disabled={isProcessing}
                 >
