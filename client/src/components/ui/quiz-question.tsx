@@ -51,9 +51,25 @@ export function QuizQuestion({
   
   // Form submission handler
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const isCorrect = values.answer === correctAnswer;
-    setHasSubmitted(true);
+    // Perform case-insensitive string comparison and trim any whitespace
+    const isCorrect = values.answer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+    console.log("Quiz answer check:", { 
+      userAnswer: values.answer, 
+      correctAnswer,
+      isMatch: isCorrect
+    });
+    
+    // Only lock the form if the answer is correct
+    setHasSubmitted(isCorrect);
     onAnswerSubmit(isCorrect);
+    
+    // If the answer is incorrect, allow the user to try again
+    if (!isCorrect) {
+      // Reset the form after a short delay
+      setTimeout(() => {
+        form.reset();
+      }, 500);
+    }
   }
   
   return (
