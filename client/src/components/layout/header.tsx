@@ -38,6 +38,17 @@ export function Header() {
   const { competitions } = useCompetitions({
     limit: 100 // Get all competitions to ensure we can find matches for cart items
   });
+  
+  // Fetch site logo
+  const { data: siteLogo } = useQuery<{key: string, value: string}>({
+    queryKey: ['/api/admin/site-config/site-logo'],
+    enabled: true,
+  });
+  
+  // Create a site config object for template usage
+  const siteConfig = {
+    logo: siteLogo?.value || null
+  };
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [marketingIndex, setMarketingIndex] = useState(0);
@@ -208,8 +219,18 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="font-bold text-2xl text-white flex items-center">
-              <span className="text-white uppercase tracking-wider mr-1">MOBY</span>
-              <span className="text-[#8EE000] text-sm uppercase">COMPS</span>
+              {siteConfig?.logo ? (
+                <img 
+                  src={siteConfig.logo} 
+                  alt="Moby Comps Logo" 
+                  className="h-10 max-w-[160px] object-contain"
+                />
+              ) : (
+                <>
+                  <span className="text-white uppercase tracking-wider mr-1">MOBY</span>
+                  <span className="text-[#8EE000] text-sm uppercase">COMPS</span>
+                </>
+              )}
             </Link>
           </div>
           
@@ -328,8 +349,18 @@ export function Header() {
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center py-4">
                     <div className="font-bold text-xl flex items-center">
-                      <span className="text-white uppercase tracking-wider mr-1">MOBY</span>
-                      <span className="text-[#8EE000] text-sm uppercase">COMPS</span>
+                      {siteConfig?.logo ? (
+                        <img 
+                          src={siteConfig.logo} 
+                          alt="Moby Comps Logo" 
+                          className="h-8 max-w-[120px] object-contain"
+                        />
+                      ) : (
+                        <>
+                          <span className="text-white uppercase tracking-wider mr-1">MOBY</span>
+                          <span className="text-[#8EE000] text-sm uppercase">COMPS</span>
+                        </>
+                      )}
                     </div>
                     <SheetClose asChild>
                       <Button variant="ghost" size="icon" className="rounded-full">
