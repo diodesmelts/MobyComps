@@ -115,17 +115,18 @@ export const insertCompetitionSchema = createInsertSchema(competitions)
     createdAt: true,
     updatedAt: true,
   })
-  .transform((data) => {
-    // Ensure dates are properly converted to Date objects
-    // This will handle both string dates and Date objects
-    if (data.drawDate && typeof data.drawDate === 'string') {
-      data.drawDate = new Date(data.drawDate);
-    }
-    if (data.closeDate && typeof data.closeDate === 'string') {
-      data.closeDate = new Date(data.closeDate);
-    }
-    return data;
+  .extend({
+    // Override the date fields with string transformers
+    drawDate: z.string().transform(val => new Date(val)),
+    closeDate: z.string().optional().transform(val => val ? new Date(val) : null)
   });
+
+// Create a schema for PATCH/PUT operations that can handle partial updates
+export const updateCompetitionSchema = insertCompetitionSchema.partial().extend({
+  // Ensure date fields are properly processed even in partial updates
+  drawDate: z.string().transform(val => new Date(val)).optional(),
+  closeDate: z.string().transform(val => new Date(val)).nullable().optional(),
+});
 
 export const insertTicketSchema = createInsertSchema(tickets)
   .omit({

@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { storage } from "../storage";
 import { z } from "zod";
-import { insertCompetitionSchema, competitionStatusEnum, insertSiteConfigSchema } from "@shared/schema";
+import { insertCompetitionSchema, updateCompetitionSchema, competitionStatusEnum, insertSiteConfigSchema } from "@shared/schema";
 
 // Middleware to ensure the user is an admin
 function isAdmin(req: any, res: any, next: any) {
@@ -66,27 +66,12 @@ export function registerAdminRoutes(app: Express) {
     try {
       console.log("Creating competition with data:", req.body);
       
-      // Create a copy of the request body to modify
-      const processedData = {...req.body};
-      
-      // Convert date strings directly to Date objects for Zod validation
-      if (processedData.drawDate && typeof processedData.drawDate === 'string') {
-        processedData.drawDate = new Date(processedData.drawDate);
-      }
-      
-      if (processedData.closeDate && typeof processedData.closeDate === 'string') {
-        processedData.closeDate = new Date(processedData.closeDate);
-      }
-      
-      console.log("Processed data with Date objects:", {
-        drawDate: processedData.drawDate,
-        closeDate: processedData.closeDate
-      });
+      // No need to pre-process dates anymore since the schema will handle it
       
       // Special handling for Zod validation
       let competitionData;
       try {
-        competitionData = insertCompetitionSchema.parse(processedData);
+        competitionData = insertCompetitionSchema.parse(req.body);
         console.log("Validated data:", competitionData);
       } catch (zodError: any) {
         console.error("Validation error:", zodError);
@@ -111,21 +96,13 @@ export function registerAdminRoutes(app: Express) {
         return res.status(400).json({ error: "Invalid competition status" });
       }
       
-      // Create a copy of the request body for processing
-      const processedData = {...req.body};
+      // Use the updateCompetitionSchema to handle the data transformation
+      const competitionData = updateCompetitionSchema.parse(req.body);
       
-      // Convert date strings directly to Date objects
-      if (processedData.drawDate && typeof processedData.drawDate === 'string') {
-        processedData.drawDate = new Date(processedData.drawDate);
-      }
-      
-      if (processedData.closeDate && typeof processedData.closeDate === 'string') {
-        processedData.closeDate = new Date(processedData.closeDate);
-      }
-      
-      const competition = await storage.updateCompetition(id, processedData);
+      const competition = await storage.updateCompetition(id, competitionData);
       res.json(competition);
     } catch (error: any) {
+      console.error("Error updating competition:", error);
       res.status(400).json({ error: error.message });
     }
   });
@@ -142,24 +119,12 @@ export function registerAdminRoutes(app: Express) {
         return res.status(400).json({ error: "Invalid competition status" });
       }
       
-      // Create a copy of the request body for processing
-      const processedData = {...req.body};
+      // Use the updateCompetitionSchema to handle the data transformation
+      const competitionData = updateCompetitionSchema.parse(req.body);
       
-      // Convert date strings directly to Date objects
-      if (processedData.drawDate && typeof processedData.drawDate === 'string') {
-        processedData.drawDate = new Date(processedData.drawDate);
-      }
+      console.log("Validated update data:", competitionData);
       
-      if (processedData.closeDate && typeof processedData.closeDate === 'string') {
-        processedData.closeDate = new Date(processedData.closeDate);
-      }
-      
-      console.log("Processed update data with Date objects:", {
-        drawDate: processedData.drawDate,
-        closeDate: processedData.closeDate
-      });
-      
-      const competition = await storage.updateCompetition(id, processedData);
+      const competition = await storage.updateCompetition(id, competitionData);
       console.log("Competition updated:", competition);
       res.json(competition);
     } catch (error: any) {

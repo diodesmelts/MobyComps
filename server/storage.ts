@@ -202,44 +202,24 @@ export class DatabaseStorage implements IStorage {
   }
   
   async createCompetition(competition: InsertCompetition): Promise<Competition> {
-    // Ensure dates are proper Date objects
-    const competitionData = {
-      ...competition,
-      drawDate: competition.drawDate instanceof Date 
-        ? competition.drawDate 
-        : new Date(competition.drawDate),
-      closeDate: competition.closeDate instanceof Date 
-        ? competition.closeDate 
-        : competition.closeDate ? new Date(competition.closeDate) : null
-    };
-    
-    console.log("Creating competition with prepared data:", competitionData);
+    // The dates should already be Date objects thanks to Zod validation
+    console.log("Creating competition with prepared data:", competition);
     
     const [result] = await db
       .insert(competitions)
-      .values(competitionData)
+      .values(competition)
       .returning();
     return result;
   }
   
   async updateCompetition(id: number, data: Partial<Competition>): Promise<Competition> {
-    // Handle date conversions for updates
-    const updateData = {...data};
-    
-    if (updateData.drawDate && !(updateData.drawDate instanceof Date)) {
-      updateData.drawDate = new Date(updateData.drawDate);
-    }
-    
-    if (updateData.closeDate && !(updateData.closeDate instanceof Date)) {
-      updateData.closeDate = new Date(updateData.closeDate);
-    }
-    
-    console.log("Updating competition with prepared data:", updateData);
+    // Date conversion should be handled by the API route now
+    console.log("Updating competition with data:", data);
     
     const [competition] = await db
       .update(competitions)
       .set({
-        ...updateData,
+        ...data,
         updatedAt: new Date(),
       })
       .where(eq(competitions.id, id))
