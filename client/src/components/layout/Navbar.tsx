@@ -29,7 +29,8 @@ import {
   Info,
   HelpCircle,
   List,
-  Settings
+  Settings,
+  ImageIcon
 } from "lucide-react";
 
 const NavLink = ({ to, label }: { to: string; label: string }) => {
@@ -134,7 +135,7 @@ export default function Navbar() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="secondary" className="flex items-center gap-2">
                       <User className="h-4 w-4" />
-                      <span>{user.isAdmin ? "Admin User" : user.username}</span>
+                      <span>{user.role === 'admin' ? "Admin User" : user.username}</span>
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -146,7 +147,7 @@ export default function Navbar() {
                       <Link href="/my-wins">My Wins</Link>
                     </DropdownMenuItem>
                     
-                    {user.isAdmin && (
+                    {user.role === 'admin' && (
                       <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
@@ -160,6 +161,9 @@ export default function Navbar() {
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href="/admin/config">Site Configuration</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/site-content">Site Content</Link>
                         </DropdownMenuItem>
                       </>
                     )}
@@ -208,7 +212,7 @@ export default function Navbar() {
                       </>
                     )}
                     
-                    {user?.isAdmin && (
+                    {user && user.role === 'admin' && (
                       <>
                         <div className="pt-4 mt-4 border-t border-gray-200">
                           <h3 className="px-4 mb-2 text-sm font-medium text-gray-500">Admin</h3>
@@ -216,6 +220,7 @@ export default function Navbar() {
                           <MobileNavLink to="/admin/competitions" label="Competitions" icon={Gift} />
                           <MobileNavLink to="/admin/users" label="Users" icon={User} />
                           <MobileNavLink to="/admin/config" label="Configuration" icon={Settings} />
+                          <MobileNavLink to="/admin/site-content" label="Site Content" icon={Image} />
                         </div>
                       </>
                     )}
