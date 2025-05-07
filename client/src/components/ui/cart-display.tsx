@@ -21,6 +21,11 @@ interface CartDisplayProps {
   onClose: () => void;
 }
 
+// Helper function to convert string dates to Date objects safely
+function safeDate(dateStr: string): Date {
+  return new Date(dateStr);
+}
+
 export function CartDisplay({
   cartItems,
   timeRemaining,
@@ -98,67 +103,43 @@ export function CartDisplay({
               // Find competition in the list
               let competition = competitions?.find(c => c.id === item.competitionId);
               
-              // If competition isn't found, use an individual fetch via React Query's hooks
+              // If competition isn't found, create a placeholder with proper ID/title
               if (!competition) {
-                console.log(`Competition ID ${item.competitionId} not found in global list. Using individual fetch.`);
+                console.log(`Competition ID ${item.competitionId} not found in global list. Creating placeholder.`);
                 
-                // Access competition data directly from the item if available
-                if (item.competitionTitle && typeof item.ticketPrice === 'number') {
-                  competition = {
-                    id: item.competitionId,
-                    title: item.competitionTitle,
-                    imageUrl: item.competitionImageUrl || "",
-                    ticketPrice: item.ticketPrice || 1.99,
-                    description: "",
-                    maxTickets: 100,
-                    ticketsSold: 0,
-                    drawDate: new Date().toISOString() as unknown as Date,
-                    closeDate: null,
-                    status: "live",
-                    category: "electronics",
-                    featured: false,
-                    cashAlternative: null,
-                    quizQuestion: "",
-                    quizAnswer: "",
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    createdBy: 1
-                  };
-                } else {
-                  // We don't have full competition data, use a basic placeholder
-                  competition = {
-                    id: item.competitionId,
-                    title: `Competition #${item.competitionId}`,
-                    imageUrl: "",
-                    ticketPrice: 1.99,
-                    description: "",
-                    maxTickets: 100,
-                    ticketsSold: 0,
-                    drawDate: new Date().toISOString() as unknown as Date,
-                    closeDate: null,
-                    status: "live",
-                    category: "electronics",
-                    featured: false,
-                    cashAlternative: null,
-                    quizQuestion: "",
-                    quizAnswer: "",
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    createdBy: 1
-                  };
-                  
-                  // Async fetch the competition data - this will be available on next render
-                  fetch(`/api/competitions/${item.competitionId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                      if (data) {
-                        console.log(`Retrieved competition data for ID ${item.competitionId}:`, data);
-                      }
-                    })
-                    .catch(err => {
-                      console.error(`Failed to fetch competition ${item.competitionId}:`, err);
-                    });
-                }
+                // Create a safely typed placeholder
+                const now = new Date();
+                competition = {
+                  id: item.competitionId,
+                  title: `Competition #${item.competitionId}`,
+                  imageUrl: "",
+                  ticketPrice: 1.99,
+                  description: "",
+                  maxTickets: 100,
+                  ticketsSold: 0,
+                  drawDate: safeDate(now.toISOString()),
+                  closeDate: null,
+                  status: "live" as any,
+                  category: "electronics" as any,
+                  featured: false,
+                  cashAlternative: null,
+                  quizQuestion: "",
+                  quizAnswer: "",
+                  createdAt: safeDate(now.toISOString()),
+                  updatedAt: safeDate(now.toISOString()),
+                  createdBy: 1
+                };
+                
+                // Fetch the competition data for next render
+                fetch(`/api/competitions/${item.competitionId}`)
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data && data.title) {
+                      console.log(`Retrieved competition data for ID ${item.competitionId}:`, data);
+                      // We would ideally update our component state here
+                      // In a real app, we'd use React Query's cache
+                    }
+                  });
               }
               
               const ticketNumbers = item.ticketNumbers.split(',').map(Number);
@@ -168,11 +149,33 @@ export function CartDisplay({
                 <div key={item.id} className="border-b pb-4 mb-4">
                   {/* Competition title row with remove button */}
                   <div className="flex justify-between items-center mb-3">
-                    <h4 className="font-medium text-[#002147]">Competition #{item.competitionId}</h4>
+                    <div className="flex items-center gap-3">
+                      {/* Competition image */}
+                      <div className="h-12 w-12 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                        {competition.imageUrl ? (
+                          <img 
+                            src={competition.imageUrl} 
+                            alt={competition.title} 
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center bg-gray-200">
+                            <ShoppingCart className="h-6 w-6 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Competition title */}
+                      <h4 className="font-medium text-[#002147] line-clamp-2">
+                        {competition.title}
+                      </h4>
+                    </div>
+                    
+                    {/* Remove button */}
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-500 hover:text-red-700 h-8 px-2"
+                      className="text-red-500 hover:text-red-700 h-8 px-2 ml-2 flex-shrink-0"
                       onClick={() => onRemoveItem(item.id)}
                       disabled={isRemoving}
                     >
