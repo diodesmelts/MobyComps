@@ -11,11 +11,11 @@
   --popover-foreground: 222.2 84% 4.9%;
   --primary: 210 100% 18%; /* Updated Oxford Blue #002D5C */
   --primary-foreground: 210 40% 98%;
-  --secondary: 91 100% 44%; /* Kiwi Green */
+  --secondary: 74 46% 65%; /* Updated Kiwi Green #C3DC6F */
   --secondary-foreground: 210 100% 18%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 91 100% 44%; /* Kiwi Green */
+  --accent: 74 46% 65%; /* Updated Kiwi Green #C3DC6F */
   --accent-foreground: 222.2 47.4% 11.2%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
@@ -24,13 +24,13 @@
   --ring: 222.2 84% 4.9%;
   --radius: 0.5rem;
   --chart-1: 210 100% 18%;
-  --chart-2: 91 100% 44%;
+  --chart-2: 74 46% 65%;
   --chart-3: 200 100% 50%;
   --chart-4: 40 100% 50%;
   --chart-5: 300 100% 50%;
   --sidebar-background: 210 100% 18%;
   --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 91 100% 44%;
+  --sidebar-primary: 74 46% 65%;
   --sidebar-primary-foreground: 210 100% 18%;
   --sidebar-accent: 210 40% 90%;
   --sidebar-accent-foreground: 210 100% 18%;
@@ -47,7 +47,7 @@
   --popover-foreground: 210 40% 98%;
   --primary: 210 100% 18%; /* Updated Oxford Blue #002D5C */
   --primary-foreground: 210 40% 98%;
-  --secondary: 91 100% 44%; /* Kiwi Green */
+  --secondary: 74 46% 65%; /* Updated Kiwi Green #C3DC6F */
   --secondary-foreground: 210 100% 18%;
   --muted: 217.2 32.6% 17.5%;
   --muted-foreground: 215 20.2% 65.1%;
@@ -76,7 +76,7 @@
   }
   
   .kiwi-green {
-    @apply bg-[#8EE000] text-[#002D5C];
+    @apply bg-[#C3DC6F] text-[#002D5C];
   }
 
   /* Custom scrollbar styles */
@@ -123,18 +123,18 @@
     text-align: center;
     min-width: 120px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 2px solid #8EE000;
+    border: 2px solid #C3DC6F;
   }
   
   @keyframes pulse-border {
     0% {
-      box-shadow: 0 0 0 0 rgba(142, 224, 0, 0.7);
+      box-shadow: 0 0 0 0 rgba(195, 220, 111, 0.7);
     }
     70% {
-      box-shadow: 0 0 0 8px rgba(142, 224, 0, 0);
+      box-shadow: 0 0 0 8px rgba(195, 220, 111, 0);
     }
     100% {
-      box-shadow: 0 0 0 0 rgba(142, 224, 0, 0);
+      box-shadow: 0 0 0 0 rgba(195, 220, 111, 0);
     }
   }
 }
