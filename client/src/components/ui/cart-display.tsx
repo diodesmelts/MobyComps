@@ -182,7 +182,7 @@ export function CartDisplay({
                   {/* Price summary */}
                   <div className="flex justify-between items-center text-sm pt-2">
                     <div className="text-gray-600">
-                      {ticketNumbers.length} {ticketNumbers.length === 1 ? 'ticket' : 'tickets'} @ {formatPrice(competition.ticketPrice)}
+                      {ticketNumbers.length} {ticketNumbers.length === 1 ? 'ticket' : 'tickets'} @ {formatPrice(ticketPrice)}
                     </div>
                     <div className="font-semibold text-[#002147]">
                       {formatPrice(totalCost)}

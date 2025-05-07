@@ -18,8 +18,34 @@ export function registerCartRoutes(app: Express) {
     try {
       const sessionId = req.sessionID;
       const cartItems = await storage.getCartItems(sessionId);
+      
+      // Fetch competition details and add them to cart items
+      const enrichedCartItems = await Promise.all(
+        cartItems.map(async (item) => {
+          // Convert item to regular object to avoid any issues with prototype methods
+          const itemObj = {
+            id: item.id,
+            sessionId: item.sessionId,
+            competitionId: item.competitionId,
+            ticketNumbers: item.ticketNumbers,
+            expiresAt: item.expiresAt,
+            createdAt: item.createdAt,
+            userId: item.userId
+          };
+          
+          const competition = await storage.getCompetition(item.competitionId);
+          
+          // Return cart item with additional competition details
+          return {
+            ...itemObj,
+            competitionTitle: competition?.title || `Competition #${item.competitionId}`,
+            competitionImageUrl: competition?.imageUrl || ""
+          };
+        })
+      );
+      
       // Return items in a structured format to match what the frontend expects
-      res.json({ items: cartItems });
+      res.json({ items: enrichedCartItems });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -35,7 +61,7 @@ export function registerCartRoutes(app: Express) {
         return res.status(400).json({ error: "Invalid request data" });
       }
       
-      // Get competition details for title and image
+      // Check if competition exists
       const competition = await storage.getCompetition(competitionId);
       if (!competition) {
         return res.status(404).json({ error: "Competition not found" });
@@ -47,15 +73,21 @@ export function registerCartRoutes(app: Express) {
       
       const cartItemData = {
         competitionId,
-        competitionTitle: competition.title,
-        competitionImageUrl: competition.imageUrl,
         ticketNumbers: ticketNumbers.join(','),
         sessionId,
         expiresAt // Pass the Date object directly
       };
       
       const cartItem = await storage.addToCart(cartItemData);
-      res.status(201).json(cartItem);
+      
+      // Add competition details to response
+      const responseItem = {
+        ...cartItem,
+        competitionTitle: competition.title,
+        competitionImageUrl: competition.imageUrl
+      };
+      
+      res.status(201).json(responseItem);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
