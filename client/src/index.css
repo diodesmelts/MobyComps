@@ -9,27 +9,33 @@
   --card-foreground: 222.2 84% 4.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 222.2 84% 4.9%;
-  --primary: 213 100% 14%; /* Oxford Blue #002147 */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 83 100% 44%; /* Kiwi Green #8EE000 */
-  --secondary-foreground: 0 0% 9%;
+  --primary: 212 100% 14%; /* Oxford Blue */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 91 100% 44%; /* Kiwi Green */
+  --secondary-foreground: 212 100% 14%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
+  --accent: 91 100% 44%; /* Kiwi Green */
   --accent-foreground: 222.2 47.4% 11.2%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 213 100% 14%;
+  --ring: 222.2 84% 4.9%;
   --radius: 0.5rem;
-
-  /* Chart colors */
-  --chart-1: 213 100% 14%;
-  --chart-2: 83 100% 44%;
-  --chart-3: 39 100% 50%;
-  --chart-4: 262 100% 67%;
-  --chart-5: 0 84% 60%;
+  --chart-1: 212 100% 14%;
+  --chart-2: 91 100% 44%;
+  --chart-3: 200 100% 50%;
+  --chart-4: 40 100% 50%;
+  --chart-5: 300 100% 50%;
+  --sidebar-background: 212 100% 14%;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-primary: 91 100% 44%;
+  --sidebar-primary-foreground: 212 100% 14%;
+  --sidebar-accent: 210 40% 90%;
+  --sidebar-accent-foreground: 212 100% 14%;
+  --sidebar-border: 212 100% 17%;
+  --sidebar-ring: 210 40% 98%;
 }
 
 .dark {
@@ -39,10 +45,10 @@
   --card-foreground: 210 40% 98%;
   --popover: 222.2 84% 4.9%;
   --popover-foreground: 210 40% 98%;
-  --primary: 213 100% 14%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 83 100% 44%;
-  --secondary-foreground: 0 0% 9%;
+  --primary: 212 100% 14%; /* Oxford Blue */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 91 100% 44%; /* Kiwi Green */
+  --secondary-foreground: 212 100% 14%;
   --muted: 217.2 32.6% 17.5%;
   --muted-foreground: 215 20.2% 65.1%;
   --accent: 217.2 32.6% 17.5%;
@@ -51,32 +57,54 @@
   --destructive-foreground: 210 40% 98%;
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
-  --ring: 83 100% 44%;
+  --ring: 212.7 26.8% 83.9%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-
+  
   body {
-    @apply bg-background text-foreground;
+    @apply font-sans antialiased bg-background text-foreground;
   }
 }
 
-/* Custom CSS Classes */
-.oxford-blue {
-  @apply bg-primary text-primary-foreground;
-}
+@layer components {
+  .oxford-blue {
+    @apply bg-[#002147] text-white;
+  }
+  
+  .kiwi-green {
+    @apply bg-[#8EE000] text-[#002147];
+  }
 
-.kiwi-green {
-  @apply bg-secondary text-secondary-foreground;
-}
+  /* Custom scrollbar styles */
+  .ticket-grid::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .ticket-grid::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-xl;
+  }
+  
+  .ticket-grid::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 rounded-xl;
+  }
+  
+  .ticket-grid::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
 
-.competition-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
-}
-
-.ticket-grid {
-  @apply grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2;
+  /* Countdown timer animation */
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+  
+  .countdown-pulse {
+    animation: pulse 2s infinite;
+  }
 }

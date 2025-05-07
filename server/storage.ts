@@ -1,287 +1,238 @@
-import { eq, and, ilike, desc, sql, asc } from "drizzle-orm";
+import { 
+  User, InsertUser, Competition, InsertCompetition, 
+  Ticket, InsertTicket, Entry, InsertEntry,
+  CartItem, InsertCartItem, SiteConfig, InsertSiteConfig
+} from "@shared/schema";
 import { db } from "./db";
+import { eq, and, inArray, gt, lt, desc, not, sql, gte, like } from "drizzle-orm";
+import { 
+  users, competitions, tickets, entries, cartItems, siteConfig,
+  competitionStatusEnum, ticketStatusEnum, entryStatusEnum
+} from "@shared/schema";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
-import {
-  users,
-  categories,
-  competitions,
-  tickets,
-  cartItems,
-  entries,
-  wins,
-  siteConfig,
-  User,
-  Category,
-  Competition,
-  Ticket,
-  CartItem,
-  Entry,
-  Win,
-  SiteConfig,
-  InsertUser,
-  InsertCompetition,
-  InsertTicket,
-  InsertCartItem,
-  InsertEntry,
-  InsertWin,
-} from "@shared/schema";
-import { DashboardStats, SiteConfigResponse } from "@shared/types";
 
-const PostgresStore = connectPg(session);
+const PostgresSessionStore = connectPg(session);
 
+// Export interface for storage operations
 export interface IStorage {
-  // User methods
+  // User operations
   getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, data: Partial<User>): Promise<User>;
-  getUsers(page: number, limit: number, search: string): Promise<{ users: User[], total: number, totalPages: number }>;
+  updateUser(id: number, userData: Partial<User>): Promise<User>;
+  listUsers(page?: number, limit?: number): Promise<{ users: User[], total: number }>;
+  updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User>;
   
-  // Category methods
-  getAllCategories(): Promise<Category[]>;
-  getCategoryById(id: number): Promise<Category | undefined>;
-  getCategoryBySlug(slug: string): Promise<Category | undefined>;
-  
-  // Competition methods
-  getAllCompetitions(): Promise<Competition[]>;
-  getAllLiveCompetitions(): Promise<Competition[]>;
-  getCompetitionById(id: number): Promise<Competition | undefined>;
-  getCompetitionsByCategory(category: string): Promise<Competition[]>;
+  // Competition operations
+  getCompetition(id: number): Promise<Competition | undefined>;
+  listCompetitions(options?: {
+    status?: string,
+    category?: string,
+    featured?: boolean,
+    page?: number,
+    limit?: number,
+    search?: string
+  }): Promise<{ competitions: Competition[], total: number }>;
   createCompetition(competition: InsertCompetition): Promise<Competition>;
   updateCompetition(id: number, data: Partial<Competition>): Promise<Competition>;
-  deleteCompetition(id: number): Promise<void>;
-  incrementCompetitionSoldTickets(id: number, count: number): Promise<void>;
+  incrementTicketsSold(id: number, count: number): Promise<void>;
   
-  // Ticket methods
-  getTicket(id: number): Promise<Ticket | undefined>;
-  getTicketByCompetitionAndNumber(competitionId: number, number: number): Promise<Ticket | undefined>;
-  getTicketsByCompetitionId(competitionId: number): Promise<Ticket[]>;
-  getTicketsByCompetitionIdAndStatus(competitionId: number, status: 'available' | 'reserved' | 'purchased'): Promise<Ticket[]>;
+  // Ticket operations
+  getTicket(competitionId: number, number: number): Promise<Ticket | undefined>;
+  getTicketById(id: number): Promise<Ticket | undefined>;
+  listTickets(competitionId: number, status?: string): Promise<Ticket[]>;
   createTicket(ticket: InsertTicket): Promise<Ticket>;
-  updateTicket(id: number, data: Partial<Ticket>): Promise<Ticket>;
+  reserveTickets(competitionId: number, numbers: number[], sessionId: string, expiryMinutes: number): Promise<Ticket[]>;
+  releaseReservedTickets(sessionId: string): Promise<number>;
+  releaseExpiredTickets(): Promise<number>;
+  purchaseTickets(ticketIds: number[], userId: number): Promise<Ticket[]>;
   
-  // Cart methods
-  getUserCart(userId: number): Promise<{ items: any[], total: number }>;
-  getCartItemById(id: number): Promise<CartItem | undefined>;
-  addToCart(item: InsertCartItem): Promise<CartItem>;
-  removeFromCart(cartItemId: number, userId: number): Promise<void>;
-  clearCart(userId: number): Promise<void>;
-  
-  // Entry methods
-  getUserEntries(userId: number): Promise<any[]>;
+  // Entry operations
   createEntry(entry: InsertEntry): Promise<Entry>;
+  getUserEntries(userId: number): Promise<Entry[]>;
+  getUserWinningEntries(userId: number): Promise<Entry[]>;
   
-  // Win methods
-  getUserWins(userId: number): Promise<any[]>;
-  createWin(win: InsertWin): Promise<Win>;
-  updateWinStatus(id: number, status: 'pending' | 'claimed' | 'delivered'): Promise<Win>;
+  // Cart operations
+  getCartItems(sessionId: string): Promise<CartItem[]>;
+  addToCart(cartItem: InsertCartItem): Promise<CartItem>;
+  removeFromCart(id: number): Promise<void>;
+  clearCart(sessionId: string): Promise<void>;
   
-  // Site config methods
-  getSiteConfig(): Promise<SiteConfigResponse>;
-  updateSiteConfig(config: Partial<SiteConfig>): Promise<SiteConfigResponse>;
+  // Site configuration
+  getSiteConfig(key: string): Promise<SiteConfig | undefined>;
+  updateSiteConfig(key: string, value: string, userId: number): Promise<SiteConfig>;
   
-  // Admin methods
-  getAdminStats(): Promise<DashboardStats>;
-  
-  // Session store
-  sessionStore: session.Store;
+  // Session store for auth
+  sessionStore: session.SessionStore;
 }
 
+// Database storage implementation
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.Store;
-
+  sessionStore: session.SessionStore;
+  
   constructor() {
-    this.sessionStore = new PostgresStore({
+    this.sessionStore = new PostgresSessionStore({
       conObject: {
         connectionString: process.env.DATABASE_URL,
       },
       createTableIfMissing: true,
     });
   }
-
-  // User methods
+  
+  // User operations
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user;
-  }
-
+  
   async getUserByEmail(email: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
   }
-
+  
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+  
   async createUser(userData: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
-
-  async updateUser(id: number, data: Partial<User>): Promise<User> {
+  
+  async updateUser(id: number, userData: Partial<User>): Promise<User> {
     const [user] = await db
       .update(users)
-      .set(data)
+      .set({
+        ...userData,
+        updatedAt: new Date(),
+      })
       .where(eq(users.id, id))
       .returning();
     return user;
   }
-
-  async getUsers(page: number, limit: number, search: string): Promise<{ users: User[], total: number, totalPages: number }> {
-    // Calculate offset
+  
+  async listUsers(page = 1, limit = 20): Promise<{ users: User[], total: number }> {
     const offset = (page - 1) * limit;
     
-    // Build the query
-    let query = db.select().from(users);
+    const result = await db.select().from(users).limit(limit).offset(offset);
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(users);
     
-    // Add search condition if search term provided
-    if (search) {
-      query = query.where(
-        ilike(users.username, `%${search}%`)
-      );
-    }
-    
-    // Get total count
-    const countResult = await db.select({ count: sql<number>`count(*)` }).from(users);
-    const total = countResult[0]?.count || 0;
-    
-    // Get paginated results
-    const results = await query
-      .limit(limit)
-      .offset(offset)
-      .orderBy(desc(users.createdAt));
-    
-    return {
-      users: results,
-      total,
-      totalPages: Math.ceil(total / limit),
-    };
+    return { users: result, total: count };
   }
-
-  // Category methods
-  async getAllCategories(): Promise<Category[]> {
-    return db.select().from(categories).orderBy(asc(categories.name));
+  
+  async updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ stripeCustomerId })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
   }
-
-  async getCategoryById(id: number): Promise<Category | undefined> {
-    const [category] = await db
-      .select()
-      .from(categories)
-      .where(eq(categories.id, id));
-    return category;
-  }
-
-  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
-    const [category] = await db
-      .select()
-      .from(categories)
-      .where(eq(categories.slug, slug));
-    return category;
-  }
-
-  // Competition methods
-  async getAllCompetitions(): Promise<Competition[]> {
-    return db.select().from(competitions).orderBy(desc(competitions.createdAt));
-  }
-
-  async getAllLiveCompetitions(): Promise<Competition[]> {
-    return db
-      .select()
-      .from(competitions)
-      .where(eq(competitions.isLive, true))
-      .orderBy(desc(competitions.createdAt));
-  }
-
-  async getCompetitionById(id: number): Promise<Competition | undefined> {
+  
+  // Competition operations
+  async getCompetition(id: number): Promise<Competition | undefined> {
     const [competition] = await db
       .select()
       .from(competitions)
       .where(eq(competitions.id, id));
-    
-    if (competition) {
-      const [category] = await db
-        .select()
-        .from(categories)
-        .where(eq(categories.id, competition.categoryId));
-      
-      return { ...competition, category };
-    }
-    
     return competition;
   }
-
-  async getCompetitionsByCategory(category: string): Promise<Competition[]> {
-    // Get category by name or slug
-    const [categoryRecord] = await db
-      .select()
-      .from(categories)
-      .where(
-        or(
-          eq(categories.name, category),
-          eq(categories.slug, category.toLowerCase())
-        )
+  
+  async listCompetitions(options?: {
+    status?: string,
+    category?: string,
+    featured?: boolean,
+    page?: number,
+    limit?: number,
+    search?: string
+  }): Promise<{ competitions: Competition[], total: number }> {
+    const { 
+      status = 'live', 
+      category, 
+      featured,
+      page = 1, 
+      limit = 20,
+      search
+    } = options || {};
+    
+    let query = db.select().from(competitions);
+    
+    // Apply filters
+    if (status) {
+      query = query.where(eq(competitions.status, status as any));
+    }
+    
+    if (category) {
+      query = query.where(eq(competitions.category, category as any));
+    }
+    
+    if (featured !== undefined) {
+      query = query.where(eq(competitions.featured, featured));
+    }
+    
+    if (search) {
+      query = query.where(
+        sql`to_tsvector('english', ${competitions.title} || ' ' || ${competitions.description}) @@ to_tsquery('english', ${search.replace(/ /g, ' & ')})`
       );
-    
-    if (!categoryRecord) {
-      return [];
     }
     
-    return db
-      .select()
-      .from(competitions)
-      .where(
-        and(
-          eq(competitions.categoryId, categoryRecord.id),
-          eq(competitions.isLive, true)
-        )
-      )
-      .orderBy(desc(competitions.createdAt));
+    // Calculate total before pagination
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(query.as('filtered_competitions'));
+    
+    // Apply pagination
+    const offset = (page - 1) * limit;
+    query = query.limit(limit).offset(offset);
+    
+    // Order by created date (newest first)
+    query = query.orderBy(desc(competitions.createdAt));
+    
+    const results = await query;
+    
+    return {
+      competitions: results,
+      total: count,
+    };
   }
-
-  async createCompetition(competitionData: InsertCompetition): Promise<Competition> {
-    const [competition] = await db
+  
+  async createCompetition(competition: InsertCompetition): Promise<Competition> {
+    const [result] = await db
       .insert(competitions)
-      .values(competitionData)
+      .values(competition)
       .returning();
-    return competition;
+    return result;
   }
-
+  
   async updateCompetition(id: number, data: Partial<Competition>): Promise<Competition> {
     const [competition] = await db
       .update(competitions)
-      .set({ ...data, updatedAt: new Date() })
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
       .where(eq(competitions.id, id))
       .returning();
     return competition;
   }
-
-  async deleteCompetition(id: number): Promise<void> {
-    await db.delete(competitions).where(eq(competitions.id, id));
-  }
-
-  async incrementCompetitionSoldTickets(id: number, count: number): Promise<void> {
+  
+  async incrementTicketsSold(id: number, count: number): Promise<void> {
     await db
       .update(competitions)
       .set({
-        soldTickets: sql`${competitions.soldTickets} + ${count}`,
+        ticketsSold: sql`${competitions.ticketsSold} + ${count}`,
+        updatedAt: new Date(),
       })
       .where(eq(competitions.id, id));
   }
-
-  // Ticket methods
-  async getTicket(id: number): Promise<Ticket | undefined> {
-    const [ticket] = await db
-      .select()
-      .from(tickets)
-      .where(eq(tickets.id, id));
-    return ticket;
-  }
-
-  async getTicketByCompetitionAndNumber(competitionId: number, number: number): Promise<Ticket | undefined> {
+  
+  // Ticket operations
+  async getTicket(competitionId: number, number: number): Promise<Ticket | undefined> {
     const [ticket] = await db
       .select()
       .from(tickets)
@@ -293,386 +244,261 @@ export class DatabaseStorage implements IStorage {
       );
     return ticket;
   }
-
-  async getTicketsByCompetitionId(competitionId: number): Promise<Ticket[]> {
-    return db
+  
+  async getTicketById(id: number): Promise<Ticket | undefined> {
+    const [ticket] = await db
       .select()
       .from(tickets)
-      .where(eq(tickets.competitionId, competitionId))
-      .orderBy(asc(tickets.number));
+      .where(eq(tickets.id, id));
+    return ticket;
   }
-
-  async getTicketsByCompetitionIdAndStatus(
-    competitionId: number,
-    status: 'available' | 'reserved' | 'purchased'
+  
+  async listTickets(competitionId: number, status?: string): Promise<Ticket[]> {
+    let query = db
+      .select()
+      .from(tickets)
+      .where(eq(tickets.competitionId, competitionId));
+    
+    if (status) {
+      query = query.where(eq(tickets.status, status as any));
+    }
+    
+    return await query;
+  }
+  
+  async createTicket(ticket: InsertTicket): Promise<Ticket> {
+    const [result] = await db
+      .insert(tickets)
+      .values(ticket)
+      .returning();
+    return result;
+  }
+  
+  async reserveTickets(
+    competitionId: number, 
+    numbers: number[], 
+    sessionId: string,
+    expiryMinutes: number = 10
   ): Promise<Ticket[]> {
-    return db
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + expiryMinutes * 60 * 1000);
+    
+    // Filter out tickets that are not available
+    const availableTickets = await db
       .select()
       .from(tickets)
       .where(
         and(
           eq(tickets.competitionId, competitionId),
-          eq(tickets.status, status)
-        )
-      )
-      .orderBy(asc(tickets.number));
-  }
-
-  async createTicket(ticketData: InsertTicket): Promise<Ticket> {
-    const [ticket] = await db
-      .insert(tickets)
-      .values(ticketData)
-      .returning();
-    return ticket;
-  }
-
-  async updateTicket(id: number, data: Partial<Ticket>): Promise<Ticket> {
-    const [ticket] = await db
-      .update(tickets)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(tickets.id, id))
-      .returning();
-    return ticket;
-  }
-
-  // Cart methods
-  async getUserCart(userId: number): Promise<{ items: any[], total: number }> {
-    const items = await db
-      .select()
-      .from(cartItems)
-      .where(eq(cartItems.userId, userId));
-
-    const itemsWithDetails = [];
-    let total = 0;
-
-    for (const item of items) {
-      const [competition] = await db
-        .select()
-        .from(competitions)
-        .where(eq(competitions.id, item.competitionId));
-
-      if (competition) {
-        const ticketCount = item.ticketIds.length;
-        const totalPrice = ticketCount * competition.ticketPrice;
-        total += totalPrice;
-
-        itemsWithDetails.push({
-          ...item,
-          competitionTitle: competition.title,
-          imageUrl: competition.imageUrl,
-          ticketPrice: competition.ticketPrice,
-          ticketCount,
-          totalPrice,
-          drawDate: competition.drawDate,
-        });
-      }
-    }
-
-    return {
-      items: itemsWithDetails,
-      total,
-    };
-  }
-
-  async getCartItemById(id: number): Promise<CartItem | undefined> {
-    const [cartItem] = await db
-      .select()
-      .from(cartItems)
-      .where(eq(cartItems.id, id));
-    return cartItem;
-  }
-
-  async addToCart(itemData: InsertCartItem): Promise<CartItem> {
-    // Check if the competition exists
-    const [competition] = await db
-      .select()
-      .from(competitions)
-      .where(eq(competitions.id, itemData.competitionId));
-
-    if (!competition) {
-      throw new Error("Competition not found");
-    }
-
-    // Check if the tickets are valid
-    for (const ticketId of itemData.ticketIds) {
-      const ticket = await this.getTicketByCompetitionAndNumber(itemData.competitionId, ticketId);
-      if (!ticket || (ticket.status !== "available" && ticket.status !== "reserved") || (ticket.status === "reserved" && ticket.userId !== itemData.userId)) {
-        throw new Error(`Ticket #${ticketId} is not available`);
-      }
-    }
-
-    // Add to cart
-    const [cartItem] = await db
-      .insert(cartItems)
-      .values(itemData)
-      .returning();
-    return cartItem;
-  }
-
-  async removeFromCart(cartItemId: number, userId: number): Promise<void> {
-    await db
-      .delete(cartItems)
-      .where(
-        and(
-          eq(cartItems.id, cartItemId),
-          eq(cartItems.userId, userId)
+          inArray(tickets.number, numbers),
+          eq(tickets.status, 'available')
         )
       );
+    
+    const availableNumbers = availableTickets.map(t => t.number);
+    
+    if (availableNumbers.length === 0) {
+      return [];
+    }
+    
+    // Update the tickets to reserved
+    const updatedTickets = await db
+      .update(tickets)
+      .set({
+        status: 'reserved',
+        sessionId,
+        reservedAt: now,
+        reservedUntil: expiresAt,
+      })
+      .where(
+        and(
+          eq(tickets.competitionId, competitionId),
+          inArray(tickets.number, availableNumbers)
+        )
+      )
+      .returning();
+    
+    return updatedTickets;
   }
-
-  async clearCart(userId: number): Promise<void> {
-    await db
-      .delete(cartItems)
-      .where(eq(cartItems.userId, userId));
+  
+  async releaseReservedTickets(sessionId: string): Promise<number> {
+    const result = await db
+      .update(tickets)
+      .set({
+        status: 'available',
+        sessionId: null,
+        reservedAt: null,
+        reservedUntil: null,
+      })
+      .where(
+        and(
+          eq(tickets.status, 'reserved'),
+          eq(tickets.sessionId, sessionId)
+        )
+      );
+    
+    return result.rowCount || 0;
   }
-
-  // Entry methods
-  async getUserEntries(userId: number): Promise<any[]> {
+  
+  async releaseExpiredTickets(): Promise<number> {
+    const now = new Date();
+    
+    const result = await db
+      .update(tickets)
+      .set({
+        status: 'available',
+        sessionId: null,
+        reservedAt: null,
+        reservedUntil: null,
+      })
+      .where(
+        and(
+          eq(tickets.status, 'reserved'),
+          lt(tickets.reservedUntil!, now)
+        )
+      );
+    
+    return result.rowCount || 0;
+  }
+  
+  async purchaseTickets(ticketIds: number[], userId: number): Promise<Ticket[]> {
+    const now = new Date();
+    
+    const purchasedTickets = await db
+      .update(tickets)
+      .set({
+        status: 'purchased',
+        userId,
+        purchasedAt: now,
+        reservedAt: null,
+        reservedUntil: null,
+        sessionId: null,
+      })
+      .where(inArray(tickets.id, ticketIds))
+      .returning();
+    
+    return purchasedTickets;
+  }
+  
+  // Entry operations
+  async createEntry(entry: InsertEntry): Promise<Entry> {
+    const [result] = await db
+      .insert(entries)
+      .values(entry)
+      .returning();
+    return result;
+  }
+  
+  async getUserEntries(userId: number): Promise<Entry[]> {
     const userEntries = await db
-      .select()
+      .select({
+        entry: entries,
+        competition: competitions,
+      })
       .from(entries)
+      .innerJoin(competitions, eq(entries.competitionId, competitions.id))
       .where(eq(entries.userId, userId))
       .orderBy(desc(entries.createdAt));
-
-    const entriesWithDetails = [];
-
-    for (const entry of userEntries) {
-      const [competition] = await db
-        .select()
-        .from(competitions)
-        .where(eq(competitions.id, entry.competitionId));
-
-      if (competition) {
-        entriesWithDetails.push({
-          ...entry,
-          competition,
-        });
-      }
-    }
-
-    return entriesWithDetails;
+    
+    return userEntries.map(({ entry }) => entry);
   }
-
-  async createEntry(entryData: InsertEntry): Promise<Entry> {
-    const [entry] = await db
-      .insert(entries)
-      .values(entryData)
+  
+  async getUserWinningEntries(userId: number): Promise<Entry[]> {
+    const winningEntries = await db
+      .select({
+        entry: entries,
+        competition: competitions,
+      })
+      .from(entries)
+      .innerJoin(competitions, eq(entries.competitionId, competitions.id))
+      .where(
+        and(
+          eq(entries.userId, userId),
+          eq(entries.status, 'won')
+        )
+      )
+      .orderBy(desc(entries.createdAt));
+    
+    return winningEntries.map(({ entry }) => entry);
+  }
+  
+  // Cart operations
+  async getCartItems(sessionId: string): Promise<CartItem[]> {
+    const now = new Date();
+    
+    const items = await db
+      .select({
+        cartItem: cartItems,
+        competition: competitions,
+      })
+      .from(cartItems)
+      .innerJoin(competitions, eq(cartItems.competitionId, competitions.id))
+      .where(
+        and(
+          eq(cartItems.sessionId, sessionId),
+          gt(cartItems.expiresAt, now)
+        )
+      );
+    
+    return items.map(({ cartItem }) => cartItem);
+  }
+  
+  async addToCart(cartItem: InsertCartItem): Promise<CartItem> {
+    const [item] = await db
+      .insert(cartItems)
+      .values(cartItem)
       .returning();
-    return entry;
+    return item;
   }
-
-  // Win methods
-  async getUserWins(userId: number): Promise<any[]> {
-    const userWins = await db
+  
+  async removeFromCart(id: number): Promise<void> {
+    await db
+      .delete(cartItems)
+      .where(eq(cartItems.id, id));
+  }
+  
+  async clearCart(sessionId: string): Promise<void> {
+    await db
+      .delete(cartItems)
+      .where(eq(cartItems.sessionId, sessionId));
+  }
+  
+  // Site configuration
+  async getSiteConfig(key: string): Promise<SiteConfig | undefined> {
+    const [config] = await db
       .select()
-      .from(wins)
-      .where(eq(wins.userId, userId))
-      .orderBy(desc(wins.createdAt));
-
-    const winsWithDetails = [];
-
-    for (const win of userWins) {
-      const [competition] = await db
-        .select()
-        .from(competitions)
-        .where(eq(competitions.id, win.competitionId));
-
-      const [entry] = await db
-        .select()
-        .from(entries)
-        .where(eq(entries.id, win.entryId));
-
-      if (competition && entry) {
-        winsWithDetails.push({
-          ...win,
-          competition,
-          entry,
-        });
-      }
-    }
-
-    return winsWithDetails;
+      .from(siteConfig)
+      .where(eq(siteConfig.key, key));
+    return config;
   }
-
-  async createWin(winData: InsertWin): Promise<Win> {
-    const [win] = await db
-      .insert(wins)
-      .values(winData)
+  
+  async updateSiteConfig(key: string, value: string, userId: number): Promise<SiteConfig> {
+    // Try to update first
+    let result = await db
+      .update(siteConfig)
+      .set({
+        value,
+        updatedAt: new Date(),
+        updatedBy: userId,
+      })
+      .where(eq(siteConfig.key, key))
       .returning();
-    return win;
-  }
-
-  async updateWinStatus(id: number, status: 'pending' | 'claimed' | 'delivered'): Promise<Win> {
-    const [win] = await db
-      .update(wins)
-      .set({ status, updatedAt: new Date() })
-      .where(eq(wins.id, id))
-      .returning();
-    return win;
-  }
-
-  // Site config methods
-  async getSiteConfig(): Promise<SiteConfigResponse> {
-    const [config] = await db.select().from(siteConfig);
-
-    if (!config) {
-      // Create default config if it doesn't exist
-      const [newConfig] = await db
+    
+    // If no rows updated, insert instead
+    if (result.length === 0) {
+      result = await db
         .insert(siteConfig)
-        .values({})
+        .values({
+          key,
+          value,
+          updatedBy: userId,
+        })
         .returning();
-      
-      return {
-        heroBanner: null,
-        marketingBanner: {
-          text: "Sign up before 20th May and get £10.00 site credit!",
-          enabled: true,
-        },
-        footerText: null,
-      };
-    }
-
-    // Parse JSON values
-    return {
-      heroBanner: config.heroBanner ? JSON.parse(config.heroBanner) : null,
-      marketingBanner: config.marketingBanner ? JSON.parse(config.marketingBanner) : {
-        text: "Sign up before 20th May and get £10.00 site credit!",
-        enabled: true,
-      },
-      footerText: config.footerText,
-    };
-  }
-
-  async updateSiteConfig(configData: Partial<SiteConfig>): Promise<SiteConfigResponse> {
-    // Format the data correctly
-    const dataToUpdate: Partial<SiteConfig> = {};
-    
-    if (configData.heroBanner !== undefined) {
-      if (typeof configData.heroBanner === 'string') {
-        dataToUpdate.heroBanner = configData.heroBanner;
-      } else {
-        dataToUpdate.heroBanner = JSON.stringify(configData.heroBanner);
-      }
     }
     
-    if (configData.marketingBanner !== undefined) {
-      if (typeof configData.marketingBanner === 'string') {
-        dataToUpdate.marketingBanner = configData.marketingBanner;
-      } else {
-        dataToUpdate.marketingBanner = JSON.stringify(configData.marketingBanner);
-      }
-    }
-    
-    if (configData.footerText !== undefined) {
-      dataToUpdate.footerText = configData.footerText;
-    }
-    
-    // Check if config exists
-    const [existingConfig] = await db.select().from(siteConfig);
-    
-    if (existingConfig) {
-      // Update existing config
-      const [config] = await db
-        .update(siteConfig)
-        .set({ ...dataToUpdate, updatedAt: new Date() })
-        .where(eq(siteConfig.id, existingConfig.id))
-        .returning();
-      
-      return this.getSiteConfig();
-    } else {
-      // Create new config
-      await db
-        .insert(siteConfig)
-        .values(dataToUpdate);
-      
-      return this.getSiteConfig();
-    }
-  }
-
-  // Admin methods
-  async getAdminStats(): Promise<DashboardStats> {
-    // In a real implementation, this would query the database
-    // for actual statistics. For now, we'll return mock data.
-    
-    // Total revenue
-    const totalRevenue = 8721.50;
-    const revenueChangePercent = 12.5;
-    
-    // Users
-    const activeUsers = 1243;
-    const newUsersThisWeek = 34;
-    
-    // Competitions
-    const activeCompetitions = 15;
-    const completedCompetitions = 8;
-    
-    // Tickets
-    const ticketsSold = 7862;
-    const ticketSoldToday = 134;
-    
-    // Revenue by category
-    const revenueByCategory = [
-      { name: "Electronics", value: 3245.80 },
-      { name: "Household", value: 1897.30 },
-      { name: "Beauty", value: 853.25 },
-      { name: "Travel", value: 1562.15 },
-      { name: "Cash", value: 986.50 },
-      { name: "Family", value: 176.50 },
-    ];
-    
-    // Sales trend (last 30 days)
-    const salesTrend = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (30 - i - 1));
-      return {
-        date: date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }),
-        tickets: Math.floor(Math.random() * 100) + 50, // Random value between 50-150
-      };
-    });
-    
-    // Recent activity
-    const recentActivity = [
-      {
-        title: "New competition created",
-        description: "Nintendo Switch OLED competition added",
-        time: "2 hours ago",
-      },
-      {
-        title: "Draw completed",
-        description: "Ninja Air Fryer competition - Winner: john_doe",
-        time: "4 hours ago",
-      },
-      {
-        title: "Prize delivered",
-        description: "PlayStation 5 delivered to winner",
-        time: "Yesterday",
-      },
-      {
-        title: "New user registered",
-        description: "User sarah_j has joined the platform",
-        time: "2 days ago",
-      },
-      {
-        title: "Competition sold out",
-        description: "£500 Cash Prize competition is now sold out",
-        time: "3 days ago",
-      },
-    ];
-    
-    return {
-      totalRevenue,
-      revenueChangePercent,
-      activeUsers,
-      newUsersThisWeek,
-      activeCompetitions,
-      completedCompetitions,
-      ticketsSold,
-      ticketSoldToday,
-      revenueByCategory,
-      salesTrend,
-      recentActivity,
-    };
+    return result[0];
   }
 }
 
+// Create and export storage instance
 export const storage = new DatabaseStorage();

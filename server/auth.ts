@@ -6,7 +6,6 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User } from "@shared/schema";
-import connectPg from "connect-pg-simple";
 
 declare global {
   namespace Express {
@@ -30,24 +29,15 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  const PostgresStore = connectPg(session);
-
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || "moby-comps-secret-key-change-in-production",
+    secret: process.env.SESSION_SECRET || "moby-comps-secret",
     resave: false,
     saveUninitialized: false,
+    store: storage.sessionStore,
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    },
-    store: new PostgresStore({
-      conObject: {
-        connectionString: process.env.DATABASE_URL,
-      },
-      createTableIfMissing: true,
-    }),
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+    }
   };
 
   app.set("trust proxy", 1);
@@ -55,29 +45,26 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Configure LocalStrategy to use email instead of username
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
-      try {
-        const user = await storage.getUserByUsername(username);
-        if (!user || !(await comparePasswords(password, user.password))) {
-          return done(null, false, { message: "Invalid username or password" });
+    new LocalStrategy(
+      { usernameField: "email" },
+      async (email, password, done) => {
+        try {
+          const user = await storage.getUserByEmail(email);
+          if (!user || !(await comparePasswords(password, user.password))) {
+            return done(null, false);
+          } else {
+            return done(null, user);
+          }
+        } catch (error) {
+          return done(error);
         }
-        
-        if (!user.isActive) {
-          return done(null, false, { message: "Account is inactive" });
-        }
-
-        return done(null, user);
-      } catch (error) {
-        return done(error);
       }
-    }),
+    )
   );
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
-
+  passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
     try {
       const user = await storage.getUser(id);
@@ -87,54 +74,58 @@ export function setupAuth(app: Express) {
     }
   });
 
+  // Register API route
   app.post("/api/register", async (req, res, next) => {
     try {
-      // Validate the request using Zod schema
-      const { username, email, password } = req.body;
-      
+      // Check if email already exists
+      const existingUser = await storage.getUserByEmail(req.body.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
       // Check if username already exists
-      const existingUsername = await storage.getUserByUsername(username);
+      const existingUsername = await storage.getUserByUsername(req.body.username);
       if (existingUsername) {
         return res.status(400).json({ message: "Username already exists" });
       }
-      
-      // Check if email already exists
-      const existingEmail = await storage.getUserByEmail(email);
-      if (existingEmail) {
-        return res.status(400).json({ message: "Email already exists" });
-      }
-      
-      // Hash password and create user
-      const hashedPassword = await hashPassword(password);
+
+      // Create user with hashed password
       const user = await storage.createUser({
-        username,
-        email,
-        password: hashedPassword,
+        ...req.body,
+        password: await hashPassword(req.body.password),
       });
-      
-      // Auto-login the user
+
+      // Log in the newly created user
       req.login(user, (err) => {
         if (err) return next(err);
-        return res.status(201).json(user);
+        res.status(201).json(user);
       });
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+    } catch (error) {
+      next(error);
     }
   });
 
+  // Login API route
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
-      if (err) return next(err);
-      if (!user) {
-        return res.status(401).json({ message: info?.message || "Invalid credentials" });
+      if (err) {
+        return next(err);
       }
+      
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
       req.login(user, (loginErr) => {
-        if (loginErr) return next(loginErr);
-        return res.status(200).json(user);
+        if (loginErr) {
+          return next(loginErr);
+        }
+        return res.json(user);
       });
     })(req, res, next);
   });
 
+  // Logout API route
   app.post("/api/logout", (req, res, next) => {
     req.logout((err) => {
       if (err) return next(err);
@@ -142,6 +133,7 @@ export function setupAuth(app: Express) {
     });
   });
 
+  // Get current user API route
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Not authenticated" });
@@ -149,7 +141,7 @@ export function setupAuth(app: Express) {
     res.json(req.user);
   });
 
-  // Authentication middleware
+  // Middleware to check if user is authenticated
   const isAuthenticated = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
     if (req.isAuthenticated()) {
       return next();
@@ -157,12 +149,12 @@ export function setupAuth(app: Express) {
     res.status(401).json({ message: "Authentication required" });
   };
 
-  // Admin middleware
+  // Middleware to check if user is admin
   const isAdmin = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-    if (req.isAuthenticated() && req.user.isAdmin) {
+    if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
       return next();
     }
-    res.status(403).json({ message: "Admin privileges required" });
+    res.status(403).json({ message: "Admin access required" });
   };
 
   return { isAuthenticated, isAdmin };

@@ -1,0 +1,172 @@
+import { useState } from "react";
+import { useCart } from "@/hooks/use-cart";
+import { useCompetitions } from "@/hooks/use-competitions";
+import { useAuth } from "@/hooks/use-auth";
+import { CartItemComponent } from "@/components/ui/cart-item";
+import { formatPrice, formatCountdown } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Loader2, ShoppingCart, X, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useLocation } from "wouter";
+
+export function CartModal() {
+  const { toast } = useToast();
+  const [location, setLocation] = useLocation();
+  const { user } = useAuth();
+  const { 
+    isCartOpen, 
+    closeCart, 
+    cartItems, 
+    removeFromCart, 
+    clearCart, 
+    calculateTotal,
+    cartTimeRemaining,
+    isRemoving
+  } = useCart();
+  const { competitions, isLoading: isLoadingCompetitions } = useCompetitions();
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      setIsProcessing(true);
+      const res = await apiRequest("POST", "/api/checkout", {});
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        // Redirect to Stripe checkout
+        window.location.href = data.checkoutUrl;
+      } else {
+        closeCart();
+        clearCart();
+        toast({
+          title: "Checkout successful",
+          description: "Your tickets have been purchased successfully."
+        });
+        setLocation("/my-entries");
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Checkout failed",
+        description: error.message,
+        variant: "destructive"
+      });
+      setIsProcessing(false);
+    }
+  });
+  
+  const handleCheckout = () => {
+    if (!user) {
+      closeCart();
+      setLocation("/auth?redirect=cart");
+      return;
+    }
+    
+    checkoutMutation.mutate();
+  };
+  
+  const total = calculateTotal(competitions);
+  
+  // Get remaining time in minutes and seconds
+  const timeRemaining = cartTimeRemaining > 0
+    ? formatCountdown(cartTimeRemaining)
+    : "00:00";
+  
+  return (
+    <Dialog open={isCartOpen} onOpenChange={(open) => !open && closeCart()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-lg font-bold">Your Cart</DialogTitle>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={closeCart}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </DialogHeader>
+        
+        {/* Timer */}
+        {cartItems.length > 0 && (
+          <div className="bg-[#8EE000]/20 p-2 flex items-center justify-center space-x-2 rounded">
+            <Clock className="h-5 w-5 text-[#002147]" />
+            <span className="text-sm font-medium text-[#002147] countdown-pulse">
+              Your tickets are reserved for {timeRemaining} minutes
+            </span>
+          </div>
+        )}
+        
+        {/* Cart Items */}
+        <div className="max-h-[40vh] overflow-y-auto py-2">
+          {isLoadingCompetitions ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
+            </div>
+          ) : cartItems.length === 0 ? (
+            <div className="text-center py-8 space-y-3">
+              <ShoppingCart className="h-12 w-12 mx-auto text-gray-300" />
+              <p className="text-gray-500">Your cart is empty</p>
+              <Button 
+                variant="outline" 
+                className="border-[#002147] text-[#002147]"
+                onClick={closeCart}
+              >
+                Browse Competitions
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {cartItems.map((item) => {
+                const competition = competitions?.find(c => c.id === item.competitionId);
+                if (!competition) return null;
+                
+                return (
+                  <CartItemComponent
+                    key={item.id}
+                    item={item}
+                    competition={competition}
+                    onRemove={() => removeFromCart(item.id)}
+                    isRemoving={isRemoving === item.id}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </div>
+        
+        {/* Summary */}
+        {cartItems.length > 0 && (
+          <div className="pt-4 border-t border-gray-200 space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">
+                Subtotal ({cartItems.reduce((sum, item) => sum + item.ticketNumbers.split(',').length, 0)} tickets):
+              </span>
+              <span className="font-medium text-[#002147]">{formatPrice(total)}</span>
+            </div>
+            
+            <Button 
+              className="w-full py-3 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002147] font-medium rounded-md text-center flex items-center justify-center"
+              onClick={handleCheckout}
+              disabled={isProcessing}
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Proceed to Checkout
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
