@@ -114,6 +114,17 @@ export const insertCompetitionSchema = createInsertSchema(competitions)
     ticketsSold: true,
     createdAt: true,
     updatedAt: true,
+  })
+  .transform((data) => {
+    // Ensure dates are properly converted to Date objects
+    // This will handle both string dates and Date objects
+    if (data.drawDate && typeof data.drawDate === 'string') {
+      data.drawDate = new Date(data.drawDate);
+    }
+    if (data.closeDate && typeof data.closeDate === 'string') {
+      data.closeDate = new Date(data.closeDate);
+    }
+    return data;
   });
 
 export const insertTicketSchema = createInsertSchema(tickets)

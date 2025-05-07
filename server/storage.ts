@@ -202,18 +202,44 @@ export class DatabaseStorage implements IStorage {
   }
   
   async createCompetition(competition: InsertCompetition): Promise<Competition> {
+    // Ensure dates are proper Date objects
+    const competitionData = {
+      ...competition,
+      drawDate: competition.drawDate instanceof Date 
+        ? competition.drawDate 
+        : new Date(competition.drawDate),
+      closeDate: competition.closeDate instanceof Date 
+        ? competition.closeDate 
+        : competition.closeDate ? new Date(competition.closeDate) : null
+    };
+    
+    console.log("Creating competition with prepared data:", competitionData);
+    
     const [result] = await db
       .insert(competitions)
-      .values(competition)
+      .values(competitionData)
       .returning();
     return result;
   }
   
   async updateCompetition(id: number, data: Partial<Competition>): Promise<Competition> {
+    // Handle date conversions for updates
+    const updateData = {...data};
+    
+    if (updateData.drawDate && !(updateData.drawDate instanceof Date)) {
+      updateData.drawDate = new Date(updateData.drawDate);
+    }
+    
+    if (updateData.closeDate && !(updateData.closeDate instanceof Date)) {
+      updateData.closeDate = new Date(updateData.closeDate);
+    }
+    
+    console.log("Updating competition with prepared data:", updateData);
+    
     const [competition] = await db
       .update(competitions)
       .set({
-        ...data,
+        ...updateData,
         updatedAt: new Date(),
       })
       .where(eq(competitions.id, id))

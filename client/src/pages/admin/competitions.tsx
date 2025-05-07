@@ -70,6 +70,11 @@ const formSchema = z.object({
   cashAlternative: z.number().optional(),
   imageFile: z.instanceof(FileList).optional(),
   imageUrl: z.string().optional(),
+})
+.transform((data) => {
+  // For logging purposes
+  console.log("Form data before transformation:", data);
+  return data;
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -215,8 +220,13 @@ export default function AdminCompetitionsPage() {
         return;
       }
       
-      // Prepare competition data without explicit type conversion on dates
-      // The backend will handle conversion of string dates to proper format
+      // Ensure we have proper date strings in ISO format
+      const drawDate = values.drawDate ? new Date(values.drawDate).toISOString() : null;
+      const closeDate = values.closeDate ? new Date(values.closeDate).toISOString() : null;
+      
+      console.log("Formatted dates:", { drawDate, closeDate });
+      
+      // Prepare competition data - convert dates to ISO format strings
       const competitionData = {
         title: values.title,
         description: values.description,
@@ -226,10 +236,10 @@ export default function AdminCompetitionsPage() {
         featured: values.featured,
         quizQuestion: values.quizQuestion,
         quizAnswer: values.quizAnswer,
-        drawDate: values.drawDate,
-        closeDate: values.closeDate || null,
+        drawDate: drawDate,
+        closeDate: closeDate,
         status: values.status,
-        cashAlternative: values.cashAlternative,
+        cashAlternative: values.cashAlternative || null,
         imageUrl: imageUrl!,
       };
       
@@ -237,7 +247,7 @@ export default function AdminCompetitionsPage() {
       
       // Create or update competition
       if (competitionToEdit) {
-        updateCompetition.mutate({
+        await updateCompetition.mutateAsync({
           id: competitionToEdit.id,
           data: competitionData,
         });
@@ -247,7 +257,7 @@ export default function AdminCompetitionsPage() {
           description: "The competition has been updated successfully."
         });
       } else {
-        createCompetition.mutate(competitionData);
+        await createCompetition.mutateAsync(competitionData);
         
         toast({
           title: "Competition created",
