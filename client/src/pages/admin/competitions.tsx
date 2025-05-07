@@ -110,7 +110,13 @@ export default function AdminCompetitionsPage() {
       drawDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       status: "draft",
     },
+    mode: "onChange",
   });
+  
+  // Debug form errors
+  useEffect(() => {
+    console.log("Form errors:", form.formState.errors);
+  }, [form.formState.errors]);
   
   // Update form values when editing a competition
   useEffect(() => {
@@ -147,6 +153,7 @@ export default function AdminCompetitionsPage() {
   
   // Handle form submission
   const onSubmit = async (values: FormValues) => {
+    console.log("Form submitted with values:", values);
     // Handle image upload if provided
     let imageUrl = competitionToEdit?.imageUrl;
     
@@ -567,9 +574,22 @@ export default function AdminCompetitionsPage() {
                           Cancel
                         </Button>
                         <Button 
+                          type="button" 
+                          variant="outline"
+                          onClick={() => {
+                            console.log("Debug button clicked");
+                            console.log("Form values:", form.getValues());
+                            console.log("Form errors:", form.formState.errors);
+                            form.handleSubmit(onSubmit)();
+                          }}
+                        >
+                          Debug Submit
+                        </Button>
+                        <Button 
                           type="submit"
                           className="bg-[#002147] hover:bg-[#002147]/90"
                           disabled={isUploading || createCompetition.isPending || updateCompetition.isPending}
+                          onClick={() => console.log("Submit button clicked")}
                         >
                           {(isUploading || createCompetition.isPending || updateCompetition.isPending) && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
