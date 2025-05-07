@@ -23,6 +23,7 @@ import AdminDashboard from "@/pages/admin/dashboard";
 import AdminCompetitions from "@/pages/admin/competitions";
 import AdminUsers from "@/pages/admin/users";
 import AdminSiteConfig from "@/pages/admin/site-config";
+import AdminSiteContent from "@/pages/admin/site-content";
 
 function Router() {
   return (
@@ -44,6 +45,7 @@ function Router() {
       <ProtectedRoute path="/admin/competitions" component={AdminCompetitions} />
       <ProtectedRoute path="/admin/users" component={AdminUsers} />
       <ProtectedRoute path="/admin/site-config" component={AdminSiteConfig} />
+      <ProtectedRoute path="/admin/site-content" component={AdminSiteContent} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

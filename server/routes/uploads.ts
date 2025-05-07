@@ -28,8 +28,8 @@ export function registerUploadRoutes(app: Express) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
-  // Upload endpoint for competition images
-  app.post("/api/upload/image", isAuthenticated, upload.single("image"), async (req, res) => {
+  // Upload endpoint for images
+  app.post("/api/uploads/image", isAuthenticated, upload.single("image"), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
