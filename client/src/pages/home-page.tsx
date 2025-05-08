@@ -77,17 +77,16 @@ export default function HomePage() {
               onError={(e) => console.error("Hero image failed to load:", e)}
             />
           )}
-          {/* Overlay to ensure text readability on any image */}
-          <div className="absolute inset-0 bg-[#002D5C]/70"></div>
+          {/* Removed overlay to show full image */}
           
           <div className="container relative z-10 text-white">
             <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-shadow-lg drop-shadow-2xl">
                 WIN THIS<br/>
                 BEAUTIFUL<br/>
                 NINJA AIR FRYER
               </h1>
-              <p className="text-xl md:text-2xl font-semibold mb-8 text-[#C3DC6F]">DRAW 10TH MAY 9PM</p>
+              <p className="text-xl md:text-2xl font-semibold mb-8 text-[#C3DC6F] text-shadow drop-shadow-lg">DRAW 10TH MAY 9PM</p>
               <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-semibold">
                 <Link href="/competitions">
                   Enter now
