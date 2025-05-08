@@ -36,7 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const userId = (req.user as any).id;
-      console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
+      console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId} (${typeof userId})`);
       
       if (!userId) {
         console.error("❌ Invalid user ID:", userId);
@@ -44,14 +44,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       try {
-        // Get entries directly using SQL to avoid ORM issues
+        // First check if there are any entries in the database
+        const countQuery = `SELECT COUNT(*) FROM entries`;
+        const countResult = await db.execute(countQuery);
+        console.log(`🔍 STEP 5 - Total entries in database: ${countResult.rows[0].count}`);
+        
+        // Check if the entries table exists and has the right columns
+        try {
+          const tableCheck = await db.execute(`
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'entries' ORDER BY ordinal_position
+          `);
+          console.log(`🔍 STEP 5 - Entries table columns:`, tableCheck.rows.map(r => r.column_name));
+        } catch (e) {
+          console.error(`❌ STEP 5 - Error checking entries table:`, e);
+        }
+        
+        // Use direct integer in the query to avoid parameter binding issues
+        console.log(`🔍 STEP 5 - Executing query with direct userId: ${userId}`);
         const result = await db.execute(
           `SELECT e.*, c.title as competition_title, c.image_url as competition_image_url 
            FROM entries e 
            JOIN competitions c ON e.competition_id = c.id 
-           WHERE e.user_id = $1 
-           ORDER BY e.created_at DESC`,
-          [userId]
+           WHERE e.user_id = ${parseInt(userId, 10)} 
+           ORDER BY e.created_at DESC`
         );
         
         console.log(`✅ STEP 5 - Found ${result.rows.length} entries directly with SQL`);
@@ -121,14 +137,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
       
       try {
-        // Get entries directly using SQL to avoid ORM issues
+        // Use direct integer in the query to avoid parameter binding issues
+        console.log(`🔍 STEP 5 - Executing query with direct userId: ${userId}`);
         const result = await db.execute(
           `SELECT e.*, c.title as competition_title, c.image_url as competition_image_url 
            FROM entries e 
            JOIN competitions c ON e.competition_id = c.id 
-           WHERE e.user_id = $1 
-           ORDER BY e.created_at DESC`,
-          [userId]
+           WHERE e.user_id = ${parseInt(userId, 10)} 
+           ORDER BY e.created_at DESC`
         );
         
         console.log(`✅ STEP 5 - Found ${result.rows.length} entries directly with SQL`);

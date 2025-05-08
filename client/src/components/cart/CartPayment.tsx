@@ -207,7 +207,8 @@ export default function CartPayment() {
 
   const handlePaymentSuccess = () => {
     clearCart();
-    window.location.href = "/my-entries";
+    // Redirect to payment success page to ensure proper backend processing
+    window.location.href = "/payment-success";
   };
 
   const handleCancel = () => {
