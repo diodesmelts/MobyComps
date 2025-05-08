@@ -48,22 +48,26 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
 
     try {
       console.log("Confirming payment with Stripe...");
-      const { error, paymentIntent } = await stripe.confirmPayment({
+      // Always redirect to payment-success page for consistent payment flow
+      const result = await stripe.confirmPayment({
         elements,
         confirmParams: {
           return_url: window.location.origin + "/payment-success",
         },
-        redirect: "if_required",
+        redirect: "always",
       });
 
-      if (error) {
-        console.error("Stripe confirmation error:", error);
+      // This code will only run if redirect is NOT always or doesn't happen
+      // We're keeping it for safety but with redirect:'always', we should 
+      // always be redirected to /payment-success
+      if (result.error) {
+        console.error("Stripe confirmation error:", result.error);
         toast({
           title: "Payment failed",
-          description: error.message,
+          description: result.error.message,
           variant: "destructive",
         });
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
         console.log("🔴 Payment succeeded, payment intent ID:", paymentIntent.id);
         
         try {

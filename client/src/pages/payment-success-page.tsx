@@ -39,14 +39,28 @@ export default function PaymentSuccessPage() {
         console.log(`Processing payment with intent ID: ${paymentIntentId}`);
         
         // First process the payment on the server
-        const response = await apiRequest("POST", "/api/process-payment", {
-          paymentIntentId
+        console.log("CRITICAL: Sending payment intent to backend for processing:", paymentIntentId);
+        const response = await fetch("/api/process-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentIntentId }),
+          credentials: "include" // Critical: include credentials for authentication
         });
         
+        console.log("Process payment response status:", response.status);
+        
         if (!response.ok) {
-          const error = await response.json();
-          console.error("Payment processing API error:", error);
-          throw new Error(error.error || "Failed to process payment");
+          let errorMessage = "Failed to process payment";
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // If parsing fails, use the text content
+            const errorText = await response.text();
+            errorMessage = errorText || errorMessage;
+          }
+          console.error("Payment processing API error:", errorMessage);
+          throw new Error(errorMessage);
         }
         
         const data = await response.json();
