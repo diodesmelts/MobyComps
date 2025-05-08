@@ -473,18 +473,66 @@ export class DatabaseStorage implements IStorage {
   
   // Entry operations
   async createEntry(entry: InsertEntry): Promise<Entry> {
-    console.log(`📝 createEntry - Creating entry with data:`, entry);
+    console.log(`📝 STEP 4 - createEntry - Creating entry with data:`, entry);
     
     try {
-      const [result] = await db
-        .insert(entries)
-        .values(entry)
-        .returning();
+      // First check if this competition exists
+      const competition = await this.getCompetition(entry.competitionId);
+      if (!competition) {
+        console.error(`❌ STEP 4 - createEntry - Error: Competition with ID ${entry.competitionId} not found`);
+        throw new Error(`Competition with ID ${entry.competitionId} not found`);
+      }
+      console.log(`📝 STEP 4 - createEntry - Validated competition exists:`, competition.title);
       
-      console.log(`✅ createEntry - Successfully created entry:`, result);
-      return result;
+      // Validate user exists
+      const user = await this.getUser(entry.userId);
+      if (!user) {
+        console.error(`❌ STEP 4 - createEntry - Error: User with ID ${entry.userId} not found`);
+        throw new Error(`User with ID ${entry.userId} not found`);
+      }
+      console.log(`📝 STEP 4 - createEntry - Validated user exists:`, user.username);
+      
+      // Verify the ticketIds string format
+      if (!entry.ticketIds || !entry.ticketIds.match(/^(\d+)(,\d+)*$/)) {
+        console.error(`❌ STEP 4 - createEntry - Error: Invalid ticket IDs format: ${entry.ticketIds}`);
+        throw new Error(`Invalid ticket IDs format: ${entry.ticketIds}`);
+      }
+      
+      // Try to insert with direct SQL first for debugging
+      console.log(`📝 STEP 4 - createEntry - Executing direct SQL insert...`);
+      try {
+        const directQuery = `
+          INSERT INTO entries (user_id, competition_id, ticket_ids, status, stripe_payment_id, created_at)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING *
+        `;
+        const now = new Date();
+        const sqlResult = await db.execute(directQuery, [
+          entry.userId, 
+          entry.competitionId, 
+          entry.ticketIds, 
+          entry.status, 
+          entry.stripePaymentId || null,
+          now
+        ]);
+        
+        console.log(`✅ STEP 4 - createEntry - Direct SQL insert successful:`, sqlResult.rows[0]);
+        return sqlResult.rows[0];
+      } catch (sqlError) {
+        console.error(`❌ STEP 4 - createEntry - Direct SQL insert failed:`, sqlError);
+        
+        // Fall back to Drizzle ORM
+        console.log(`📝 STEP 4 - createEntry - Falling back to Drizzle ORM...`);
+        const [result] = await db
+          .insert(entries)
+          .values(entry)
+          .returning();
+        
+        console.log(`✅ STEP 4 - createEntry - Drizzle ORM insert successful:`, result);
+        return result;
+      }
     } catch (error) {
-      console.error(`❌ createEntry - Error creating entry:`, error);
+      console.error(`❌ STEP 4 - createEntry - Error creating entry:`, error);
       throw error;
     }
   }
@@ -517,17 +565,27 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getUserEntries(userId: number): Promise<Entry[]> {
-    console.log(`🔍 getUserEntries - Fetching entries for user ID: ${userId}`);
+    console.log(`🔍 STEP 5 - getUserEntries - Fetching entries for user ID: ${userId}`);
     
     try {
       // First, check if the user exists
       const user = await db.select().from(users).where(eq(users.id, userId));
       
       if (user.length === 0) {
-        console.warn(`⚠️ getUserEntries - User with ID ${userId} not found`);
+        console.warn(`⚠️ STEP 5 - getUserEntries - User with ID ${userId} not found`);
       } else {
-        console.log(`👤 getUserEntries - Found user: ${user[0].username} (${user[0].email})`);
+        console.log(`👤 STEP 5 - getUserEntries - Found user: ${user[0].username} (${user[0].email})`);
       }
+      
+      // Raw SQL query to debug entry issues
+      const rawQuery = `SELECT * FROM entries WHERE user_id = $1`;
+      const rawResult = await db.execute(rawQuery, [userId]);
+      console.log(`🔍 STEP 5 - Raw entries found via SQL: ${rawResult.rowCount} entries`, rawResult.rows);
+      
+      // Check schema structure
+      const schemaQuery = `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'entries'`;
+      const schemaResult = await db.execute(schemaQuery);
+      console.log(`🔍 STEP 5 - Entries table schema:`, schemaResult.rows);
       
       // Check if any entries exist for this user at all
       const entriesCount = await db
@@ -535,10 +593,16 @@ export class DatabaseStorage implements IStorage {
         .from(entries)
         .where(eq(entries.userId, userId));
       
-      console.log(`📊 getUserEntries - Found ${entriesCount[0].count} total entries for user ID ${userId}`);
+      console.log(`📊 STEP 5 - getUserEntries - Found ${entriesCount[0].count} total entries for user ID ${userId}`);
       
       if (entriesCount[0].count === 0) {
-        console.log(`ℹ️ getUserEntries - No entries found for user ID ${userId}`);
+        console.log(`ℹ️ STEP 5 - getUserEntries - No entries found for user ID ${userId}`);
+        
+        // Check overall entries count to see if any exist in the table
+        const totalEntriesQuery = `SELECT COUNT(*) FROM entries`;
+        const totalEntries = await db.execute(totalEntriesQuery);
+        console.log(`🔍 STEP 5 - Total entries in database:`, totalEntries.rows[0]);
+        
         return [];
       }
       
@@ -553,11 +617,11 @@ export class DatabaseStorage implements IStorage {
         .where(eq(entries.userId, userId))
         .orderBy(desc(entries.createdAt));
       
-      console.log(`✅ getUserEntries - Retrieved ${userEntries.length} entries with competition details`);
+      console.log(`✅ STEP 5 - getUserEntries - Retrieved ${userEntries.length} entries with competition details`);
       
       // Debug log the entries
       userEntries.forEach((entry, index) => {
-        console.log(`📌 Entry ${index + 1}:`, {
+        console.log(`📌 STEP 5 - Entry ${index + 1}:`, {
           id: entry.entry.id,
           competitionId: entry.entry.competitionId,
           status: entry.entry.status,
@@ -569,7 +633,7 @@ export class DatabaseStorage implements IStorage {
       
       return userEntries.map(({ entry }) => entry);
     } catch (error) {
-      console.error(`❌ getUserEntries - Error fetching entries:`, error);
+      console.error(`❌ STEP 5 - getUserEntries - Error fetching entries:`, error);
       throw error;
     }
   }
