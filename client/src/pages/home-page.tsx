@@ -16,7 +16,13 @@ export default function HomePage() {
   
   // Get hero banner from site config
   const { data: heroBanner, isLoading: isHeroBannerLoading } = useQuery({
-    queryKey: ["/api/admin/site-config/hero-banner"],
+    queryKey: ["/api/site-config/hero-banner"],
+    onSuccess: (data) => {
+      console.log("Hero banner data:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching hero banner:", error);
+    }
   });
   
   return (

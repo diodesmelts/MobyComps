@@ -6,6 +6,7 @@ import { registerTicketRoutes } from "./routes/tickets";
 import { registerAdminRoutes } from "./routes/admin";
 import { registerUploadRoutes } from "./routes/uploads";
 import { registerCartRoutes } from "./routes/cart";
+import { registerSiteConfigRoutes } from "./routes/site-config";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
@@ -17,6 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerAdminRoutes(app);
   registerUploadRoutes(app);
   registerCartRoutes(app);
+  registerSiteConfigRoutes(app);
   
   // Create HTTP server
   const httpServer = createServer(app);
