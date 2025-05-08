@@ -46,7 +46,8 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li><Link href="/competitions?category=electronics" className="hover:text-[#C3DC6F]">Electronics</Link></li>
-              <li><Link href="/competitions?category=travel" className="hover:text-[#C3DC6F]">Travel</Link></li>
+              <li><Link href="/competitions?category=kids" className="hover:text-[#C3DC6F]">Kids</Link></li>
+              <li><Link href="/competitions?category=days_out" className="hover:text-[#C3DC6F]">Days Out</Link></li>
               <li><Link href="/competitions?category=cash_prizes" className="hover:text-[#C3DC6F]">Cash Prizes</Link></li>
               <li><Link href="/competitions?category=household" className="hover:text-[#C3DC6F]">Household</Link></li>
               <li><Link href="/competitions?category=beauty" className="hover:text-[#C3DC6F]">Beauty</Link></li>

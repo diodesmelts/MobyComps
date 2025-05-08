@@ -58,7 +58,7 @@ import { Loader2, Package, Eye, Edit, Trash2, Plus, Calendar, FileImage, CreditC
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  category: z.enum(['electronics', 'travel', 'beauty', 'household', 'cash_prizes', 'family']),
+  category: z.enum(['electronics', 'kids', 'days_out', 'beauty', 'household', 'cash_prizes', 'family']),
   maxTickets: z.number().min(1, "Must have at least 1 ticket"),
   ticketPrice: z.number().min(0.01, "Price must be at least 0.01"),
   featured: z.boolean().default(false),
@@ -369,7 +369,8 @@ export default function AdminCompetitionsPage() {
                                     </FormControl>
                                     <SelectContent>
                                       <SelectItem value="electronics">Electronics</SelectItem>
-                                      <SelectItem value="travel">Travel</SelectItem>
+                                      <SelectItem value="kids">Kids</SelectItem>
+                                      <SelectItem value="days_out">Days Out</SelectItem>
                                       <SelectItem value="beauty">Beauty</SelectItem>
                                       <SelectItem value="household">Household</SelectItem>
                                       <SelectItem value="cash_prizes">Cash Prizes</SelectItem>
