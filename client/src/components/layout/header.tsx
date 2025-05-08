@@ -268,19 +268,28 @@ export function Header() {
           {/* User Controls */}
           <div className="flex items-center space-x-2">
             {/* Cart Button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="relative p-2 rounded-full bg-[#002D5C]/50 hover:bg-[#002D5C]/70"
-              onClick={openCart}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartItems && cartItems.length > 0 && (
+            {cartItems && cartItems.length > 0 ? (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative p-2 rounded-full bg-[#002D5C]/50 hover:bg-[#002D5C]/70"
+                onClick={() => setLocation('/cart')}
+              >
+                <ShoppingCart className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 bg-[#C3DC6F] text-[#002D5C] rounded-full w-4 h-4 text-xs flex items-center justify-center">
                   {cartItems.length}
                 </span>
-              )}
-            </Button>
+              </Button>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative p-2 rounded-full bg-[#002D5C]/50 hover:bg-[#002D5C]/70"
+                onClick={openCart}
+              >
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+            )}
             
             {user ? (
               <DropdownMenu>

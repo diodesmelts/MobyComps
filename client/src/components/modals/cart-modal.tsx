@@ -83,7 +83,9 @@ export function CartModal() {
       return;
     }
     
-    checkoutMutation.mutate();
+    // Navigate to cart page instead of direct checkout
+    closeCart();
+    setLocation("/cart");
   };
   
   // Safely calculate total, handling potential undefined/null

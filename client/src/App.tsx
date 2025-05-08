@@ -17,6 +17,7 @@ import MyEntriesPage from "@/pages/my-entries";
 import MyWinsPage from "@/pages/my-wins";
 import AuthPage from "@/pages/auth-page";
 import CheckoutPage from "@/pages/checkout-page";
+import CartPage from "@/pages/cart-page";
 import NotFound from "@/pages/not-found";
 
 // Admin pages
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/competitions" component={CompetitionsPage} />
       <Route path="/competition/:id" component={CompetitionDetail} />
+      <Route path="/cart" component={CartPage} />
       <Route path="/checkout" component={CheckoutPage} />
       <Route path="/how-to-play" component={HowToPlayPage} />
       <Route path="/about-us" component={AboutUsPage} />
