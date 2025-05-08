@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, X } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, getImageUrl } from '@/lib/utils';
 import { Competition } from '@shared/schema';
 
 interface SimpleCartItemProps {
@@ -23,19 +23,8 @@ export const SimpleCartItem: React.FC<SimpleCartItemProps> = ({
   const ticketPrice = item.competitionPrice || competition.ticketPrice || 4.99;
   const totalPrice = ticketPrice * ticketCount;
   
-  // Get the image URL with proper path handling
-  const getImageUrl = () => {
-    const imgUrl = competition.imageUrl || item.competitionImageUrl;
-    if (!imgUrl) return null;
-    
-    // Add localhost prefix for upload paths
-    if (imgUrl.startsWith('/uploads/')) {
-      return `http://localhost:5000${imgUrl}`;
-    }
-    return imgUrl;
-  };
-  
-  const imageUrl = getImageUrl();
+  // Use the utility function to get the image URL
+  const imageUrl = getImageUrl(item.competitionImageUrl || competition?.imageUrl);
   
   return (
     <div className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">

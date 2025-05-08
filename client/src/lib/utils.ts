@@ -6,6 +6,22 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Process image URL to ensure it's properly formatted for display
+ * Handles both remote URLs and local uploads
+ */
+export function getImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  
+  // For upload paths, use the current host
+  if (url.startsWith('/uploads/')) {
+    return `${window.location.origin}${url}`;
+  }
+  
+  // All other URLs are returned as-is
+  return url;
+}
+
+/**
  * Format price to currency string
  */
 export function formatPrice(price: number): string {
