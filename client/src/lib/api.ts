@@ -50,8 +50,8 @@ export const cartApi = {
 
 // Payment API
 export const paymentApi = {
-  createPaymentIntent: (amount: number) => 
-    apiRequest("POST", "/api/create-payment-intent", { amount }).then(res => res.json()),
+  createPaymentIntent: () => 
+    apiRequest("POST", "/api/create-payment-intent").then(res => res.json()),
 };
 
 // User API
