@@ -57,77 +57,32 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
         redirect: "always",
       });
 
-      // With redirect="always", the code below won't run because the browser 
-      // should immediately redirect to /payment-success
-      // This is just a safety fallback
-      if (result && 'error' in result) {
+      // With redirect="always", we should never reach this code
+      // This is just a safety fallback in case redirect fails
+      
+      // Check for errors
+      if (result?.error) {
         console.error("Stripe confirmation error:", result.error);
         toast({
           title: "Payment failed",
-          description: result.error.message,
+          description: result.error.message || "Payment could not be processed",
           variant: "destructive",
         });
-      } else if (result && 'paymentIntent' in result && result.paymentIntent?.status === 'succeeded') {
-        console.log("🔴 Payment succeeded, payment intent ID:", result.paymentIntent.id);
-        
-        try {
-          // Process the payment on the backend
-          console.log("🔴 PAYMENT FLOW - STEP 1: Calling backend /api/process-payment with payment intent ID:", result.paymentIntent.id);
-          
-          // Show the complete request details
-          const requestBody = JSON.stringify({ paymentIntentId: result.paymentIntent.id });
-          console.log("🔴 PAYMENT FLOW - Request body:", requestBody);
-          console.log("🔴 PAYMENT FLOW - Request URL:", "/api/process-payment");
-          
-          const response = await fetch("/api/process-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: requestBody,
-            credentials: "include" // Important: include credentials for auth
-          });
-          
-          // Log HTTP status for debugging
-          console.log("🔴 PAYMENT FLOW - Response status:", response.status);
-          console.log("🔴 PAYMENT FLOW - Response headers:", 
-            Array.from(response.headers.entries()).reduce((obj: Record<string, string>, [key, value]) => {
-              obj[key] = value;
-              return obj;
-            }, {})
-          );
-          
-          console.log("🔴 Backend /api/process-payment response status:", response.status);
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error("🔴 Process payment error response:", errorText);
-            throw new Error(`Failed to process payment: ${response.statusText}`);
-          }
-          
-          const result = await response.json();
-          console.log("🔴 Backend processing result:", result);
-          
-          toast({
-            title: "Payment successful",
-            description: "Thank you for your purchase!",
-          });
-          
-          onSuccess();
-        } catch (processError) {
-          console.error("🔴 Backend processing error:", processError);
-          toast({
-            title: "Payment error",
-            description: "Your payment was successful, but we encountered an issue finalizing your purchase. Please contact support.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Payment processing",
-          description: "Your payment is being processed. You'll receive confirmation shortly.",
-        });
-        // Still consider this a success as the payment is being processed
-        onSuccess();
+        return;
       }
+      
+      // This code should not execute with redirect="always"
+      // We're keeping it only as a fallback if the redirect somehow fails
+      console.warn("⚠️ Payment redirect did not occur! Using fallback flow");
+      
+      // Redirect manually to payment success page
+      window.location.href = "/payment-success";
+      
+      // Show a success message while redirecting
+      toast({
+        title: "Payment successful",
+        description: "Redirecting to confirmation page...",
+      });
     } catch (err) {
       console.error("Payment error:", err);
       toast({
