@@ -34,7 +34,7 @@ export default function MyEntriesPage() {
     isLoading: entriesLoading,
     error: entriesError
   } = useQuery<Entry[]>({
-    queryKey: ["/api/my-entries"],
+    queryKey: ["/api/user/entries"],
     enabled: !!user,
   });
   

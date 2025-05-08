@@ -22,6 +22,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerCartRoutes(app);
   registerSiteConfigRoutes(app);
   
+  // User entry endpoints
+  app.get("/api/user/entries", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const entries = await storage.getUserEntries(userId);
+      
+      res.json(entries);
+    } catch (error: any) {
+      console.error("Error fetching user entries:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/user/wins", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const entries = await storage.getUserWinningEntries(userId);
+      
+      res.json(entries);
+    } catch (error: any) {
+      console.error("Error fetching user wins:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Backward compatibility for existing client code
+  app.get("/api/my-entries", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const entries = await storage.getUserEntries(userId);
+      
+      res.json(entries);
+    } catch (error: any) {
+      console.error("Error fetching user entries:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/my-wins", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      const entries = await storage.getUserWinningEntries(userId);
+      
+      res.json(entries);
+    } catch (error: any) {
+      console.error("Error fetching user wins:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
