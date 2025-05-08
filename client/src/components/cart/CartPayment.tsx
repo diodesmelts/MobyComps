@@ -57,25 +57,25 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
         redirect: "always",
       });
 
-      // This code will only run if redirect is NOT always or doesn't happen
-      // We're keeping it for safety but with redirect:'always', we should 
-      // always be redirected to /payment-success
-      if (result.error) {
+      // With redirect="always", the code below won't run because the browser 
+      // should immediately redirect to /payment-success
+      // This is just a safety fallback
+      if (result && 'error' in result) {
         console.error("Stripe confirmation error:", result.error);
         toast({
           title: "Payment failed",
           description: result.error.message,
           variant: "destructive",
         });
-      } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-        console.log("🔴 Payment succeeded, payment intent ID:", paymentIntent.id);
+      } else if (result && 'paymentIntent' in result && result.paymentIntent?.status === 'succeeded') {
+        console.log("🔴 Payment succeeded, payment intent ID:", result.paymentIntent.id);
         
         try {
           // Process the payment on the backend
-          console.log("🔴 PAYMENT FLOW - STEP 1: Calling backend /api/process-payment with payment intent ID:", paymentIntent.id);
+          console.log("🔴 PAYMENT FLOW - STEP 1: Calling backend /api/process-payment with payment intent ID:", result.paymentIntent.id);
           
           // Show the complete request details
-          const requestBody = JSON.stringify({ paymentIntentId: paymentIntent.id });
+          const requestBody = JSON.stringify({ paymentIntentId: result.paymentIntent.id });
           console.log("🔴 PAYMENT FLOW - Request body:", requestBody);
           console.log("🔴 PAYMENT FLOW - Request URL:", "/api/process-payment");
           
