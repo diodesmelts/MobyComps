@@ -164,8 +164,13 @@ export default function CartPage() {
     return cartItems.reduce((sum: number, item: any) => {
       const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
       
-      // First try to get competition price from our competitions data
-      let competition = competitionsData?.find((c: any) => c.id === item.competitionId);
+      // First check if the cart item has price information
+      if (item.competitionPrice) {
+        return sum + (item.competitionPrice * ticketCount);
+      }
+      
+      // If not, try to get competition price from our competitions data
+      const competition = competitionsData?.find((c: any) => c.id === item.competitionId);
       let ticketPrice = 0;
       
       if (competition) {
@@ -273,14 +278,25 @@ export default function CartPage() {
                     id: item.competitionId,
                     title: item.competitionTitle,
                     imageUrl: item.competitionImageUrl,
-                    ticketPrice: 4.99, // Default price if not available
+                    ticketPrice: item.competitionPrice || 4.99, // Use price from cart item if available
                     // Add minimum required fields
                     description: "",
-                    maxTickets: 0,
-                    ticketsSold: 0,
-                    status: "live",
+                    maxTickets: item.competitionMaxTickets || 0,
+                    ticketsSold: item.competitionTicketsSold || 0,
+                    status: item.competitionStatus || "live",
+                    category: item.competitionCategory || null
                   };
                   console.log("Created competition from cart data:", competition);
+                  
+                  // Log the image URL for debugging
+                  if (item.competitionImageUrl) {
+                    console.log("Original image URL:", item.competitionImageUrl);
+                    // Fix relative URLs if needed
+                    if (item.competitionImageUrl.startsWith('/')) {
+                      const fixedUrl = `http://localhost:5000${item.competitionImageUrl}`;
+                      console.log("Fixed upload URL:", fixedUrl);
+                    }
+                  }
                 }
                 
                 // Still show loading placeholder if we don't have competition data

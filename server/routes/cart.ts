@@ -39,7 +39,12 @@ export function registerCartRoutes(app: Express) {
           return {
             ...itemObj,
             competitionTitle: competition?.title || `Competition #${item.competitionId}`,
-            competitionImageUrl: competition?.imageUrl || ""
+            competitionImageUrl: competition?.imageUrl || "",
+            competitionPrice: competition?.ticketPrice || 0,
+            competitionMaxTickets: competition?.maxTickets || 0,
+            competitionTicketsSold: competition?.ticketsSold || 0,
+            competitionStatus: competition?.status || "live",
+            competitionCategory: competition?.category || null
           };
         })
       );
@@ -84,7 +89,12 @@ export function registerCartRoutes(app: Express) {
       const responseItem = {
         ...cartItem,
         competitionTitle: competition.title,
-        competitionImageUrl: competition.imageUrl
+        competitionImageUrl: competition.imageUrl,
+        competitionPrice: competition.ticketPrice,
+        competitionMaxTickets: competition.maxTickets,
+        competitionTicketsSold: competition.ticketsSold,
+        competitionStatus: competition.status,
+        competitionCategory: competition.category
       };
       
       res.status(201).json(responseItem);

@@ -20,18 +20,29 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
 }) => {
   const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
   const ticketNumbers = item.ticketNumbers ? item.ticketNumbers.split(',').map(Number) : [];
-  const totalPrice = competition.ticketPrice * ticketCount;
+  
+  // Use competition price from cart item if available, or fall back to competition object
+  const ticketPrice = item.competitionPrice || competition.ticketPrice || 4.99;
+  const totalPrice = ticketPrice * ticketCount;
   
   return (
     <div className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
-        {/* Use a static branded placeholder that matches the competition's theme */}
-        <div className="w-full h-full bg-[#002D5C] flex items-center justify-center">
-          <div className="text-white text-center p-1">
-            <div className="text-xs font-bold">MOBY</div>
-            <div className="text-[8px]">COMPS</div>
+        {(competition.imageUrl || item.competitionImageUrl) ? (
+          <Image 
+            src={competition.imageUrl || item.competitionImageUrl} 
+            alt={competition.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          // Fallback to branded placeholder if no image
+          <div className="w-full h-full bg-[#002D5C] flex items-center justify-center">
+            <div className="text-white text-center p-1">
+              <div className="text-xs font-bold">MOBY</div>
+              <div className="text-[8px]">COMPS</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       
       <div className="flex-grow">
@@ -57,7 +68,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
         
         <div className="text-sm text-gray-600 mb-2">
           <span>
-            {ticketCount} {ticketCount === 1 ? 'ticket' : 'tickets'} at {formatPrice(competition.ticketPrice)} each
+            {ticketCount} {ticketCount === 1 ? 'ticket' : 'tickets'} at {formatPrice(ticketPrice)} each
           </span>
         </div>
         
