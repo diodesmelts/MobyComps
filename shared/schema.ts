@@ -5,7 +5,7 @@ import { z } from "zod";
 // Enums
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
 export const competitionStatusEnum = pgEnum('competition_status', ['draft', 'live', 'completed', 'cancelled']);
-export const categoryEnum = pgEnum('category', ['electronics', 'travel', 'beauty', 'household', 'cash_prizes', 'family']);
+export const categoryEnum = pgEnum('category', ['electronics', 'kids', 'days_out', 'beauty', 'household', 'cash_prizes', 'family']);
 export const ticketStatusEnum = pgEnum('ticket_status', ['available', 'reserved', 'purchased']);
 export const entryStatusEnum = pgEnum('entry_status', ['active', 'won', 'lost']);
 

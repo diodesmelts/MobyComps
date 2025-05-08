@@ -31,7 +31,8 @@ const categories = [
   { value: "cash_prizes", label: "Cash Prizes" },
   { value: "family", label: "Family" },
   { value: "household", label: "Household" },
-  { value: "travel", label: "Travel" },
+  { value: "kids", label: "Kids" },
+  { value: "days_out", label: "Days Out" },
   { value: "beauty", label: "Beauty" },
 ];
 
