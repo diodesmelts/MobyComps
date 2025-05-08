@@ -42,6 +42,7 @@ export interface IStorage {
   // Ticket operations
   getTicket(competitionId: number, number: number): Promise<Ticket | undefined>;
   getTicketById(id: number): Promise<Ticket | undefined>;
+  getTicketsByNumbers(competitionId: number, numbers: number[]): Promise<Ticket[]>;
   listTickets(competitionId: number, status?: string): Promise<Ticket[]>;
   createTicket(ticket: InsertTicket): Promise<Ticket>;
   reserveTickets(competitionId: number, numbers: number[], sessionId: string, expiryMinutes: number): Promise<Ticket[]>;
@@ -260,6 +261,19 @@ export class DatabaseStorage implements IStorage {
       .from(tickets)
       .where(eq(tickets.id, id));
     return ticket;
+  }
+  
+  async getTicketsByNumbers(competitionId: number, numbers: number[]): Promise<Ticket[]> {
+    const result = await db
+      .select()
+      .from(tickets)
+      .where(
+        and(
+          eq(tickets.competitionId, competitionId),
+          inArray(tickets.number, numbers)
+        )
+      );
+    return result;
   }
   
   async listTickets(competitionId: number, status?: string): Promise<Ticket[]> {

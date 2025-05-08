@@ -201,22 +201,27 @@ export function registerCartRoutes(app: Express) {
       
       const purchasedTickets: any[] = [];
       
+      // First, get actual cart items with their reserved ticket numbers
+      const cartItems = await storage.getCartItems(sessionId);
+      
       // Process each cart item
-      for (const item of cartItemsData) {
-        const { competitionId, ticketCount } = item;
+      for (const item of cartItems) {
+        const { competitionId, ticketNumbers } = item;
+        const ticketNumbersArray = ticketNumbers.split(',').map(num => parseInt(num.trim()));
         
-        // Get available tickets
-        const tickets = await storage.listTickets(competitionId, 'available');
-        const ticketNumbers = tickets.slice(0, ticketCount).map(t => t.id);
+        // Get the actual ticket IDs for these numbers
+        const ticketsToProcess = await storage.getTicketsByNumbers(competitionId, ticketNumbersArray);
+        const ticketIds = ticketsToProcess.map(t => t.id);
         
-        if (ticketNumbers.length < ticketCount) {
+        if (ticketIds.length !== ticketNumbersArray.length) {
+          console.warn(`Some tickets for competition ${competitionId} could not be found or are no longer available`);
           return res.status(400).json({ 
-            error: `Not enough tickets available for competition ${competitionId}` 
+            error: `Some tickets for competition ${competitionId} are no longer available` 
           });
         }
         
         // Purchase tickets
-        const purchased = await storage.purchaseTickets(ticketNumbers, userId);
+        const purchased = await storage.purchaseTickets(ticketIds, userId);
         purchasedTickets.push(...purchased);
         
         // Update competition tickets sold count
@@ -226,7 +231,7 @@ export function registerCartRoutes(app: Express) {
         await storage.createEntry({
           userId,
           competitionId,
-          ticketIds: ticketNumbers.join(','),
+          ticketIds: ticketIds.join(','),
           status: 'active'
         });
       }
