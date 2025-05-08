@@ -28,32 +28,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User entry endpoints
   app.get("/api/user/entries", async (req, res) => {
     try {
+      console.log("🔍 STEP 5 - GET /api/user/entries called");
+      
       if (!req.isAuthenticated()) {
+        console.log("🔍 STEP 5 - User not authenticated");
         return res.status(401).json({ message: "Not authenticated" });
       }
       
       const userId = (req.user as any).id;
+      console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
+      
+      // Direct DB verification of user
+      const userQuery = `SELECT id, username, email FROM users WHERE id = $1`;
+      const userResult = await db.execute(userQuery, [userId]);
+      console.log(`🔍 STEP 5 - Found user:`, userResult);
+      
+      // Direct DB verification of entries
+      const entriesQuery = `SELECT * FROM entries WHERE user_id = $1`;
+      const entriesResult = await db.execute(entriesQuery, [userId]);
+      console.log(`🔍 STEP 5 - Direct DB entries query found ${entriesResult.rowCount} entries:`, entriesResult.rows);
+      
+      // Get entries via storage
       const entries = await storage.getUserEntries(userId);
+      console.log(`🔍 STEP 5 - Storage getUserEntries returned ${entries.length} entries:`, entries);
       
       res.json(entries);
     } catch (error: any) {
-      console.error("Error fetching user entries:", error);
+      console.error("❌ Error fetching user entries:", error);
       res.status(500).json({ error: error.message });
     }
   });
   
   app.get("/api/user/wins", async (req, res) => {
     try {
+      console.log("🔍 GET /api/user/wins called");
+      
       if (!req.isAuthenticated()) {
+        console.log("🔍 User not authenticated");
         return res.status(401).json({ message: "Not authenticated" });
       }
       
       const userId = (req.user as any).id;
+      console.log(`🔍 Fetching winning entries for user ID: ${userId}`);
+      
       const entries = await storage.getUserWinningEntries(userId);
+      console.log(`🔍 Found ${entries.length} winning entries:`, entries);
       
       res.json(entries);
     } catch (error: any) {
-      console.error("Error fetching user wins:", error);
+      console.error("❌ Error fetching user wins:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -61,16 +84,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Backward compatibility for existing client code
   app.get("/api/my-entries", async (req, res) => {
     try {
+      console.log("🔍 STEP 5 - GET /api/my-entries called");
+      
       if (!req.isAuthenticated()) {
+        console.log("🔍 STEP 5 - User not authenticated");
         return res.status(401).json({ message: "Not authenticated" });
       }
       
       const userId = (req.user as any).id;
+      console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
+      
+      // Direct DB verification of entries
+      const entriesQuery = `SELECT * FROM entries WHERE user_id = $1`;
+      const entriesResult = await db.execute(entriesQuery, [userId]);
+      console.log(`🔍 STEP 5 - Direct DB entries query found ${entriesResult.rowCount} entries:`, entriesResult.rows);
+      
       const entries = await storage.getUserEntries(userId);
+      console.log(`🔍 STEP 5 - getUserEntries returned ${entries.length} entries:`, entries);
       
       res.json(entries);
     } catch (error: any) {
-      console.error("Error fetching user entries:", error);
+      console.error("❌ Error fetching user entries:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -251,22 +285,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           try {
             console.log(`🚨 Before purchaseTickets() - Checking current ticket status...`);
             // Direct DB query to check ticket status before update
-            const query = `SELECT * FROM tickets WHERE id = ANY($1)`;
-            const ticketsBefore = await db.execute(query, [ticketIds]);
-            console.log(`🚨 Current ticket status:`, ticketsBefore.rows);
+            console.log(`🚨 STEP 3 - Before purchaseTickets() - User ID: ${userId}, Ticket IDs: ${JSON.stringify(ticketIds)}`);
+            const queryBefore = `SELECT id, competition_id, status, user_id, number FROM tickets WHERE id = ANY($1)`;
+            const ticketsBefore = await db.execute(queryBefore, [ticketIds]);
+            console.log(`🚨 STEP 3 - Current ticket status:`, ticketsBefore);
             
             const updatedTickets = await storage.purchaseTickets(ticketIds, userId);
-            console.log(`🚨 Updated ${updatedTickets.length} tickets to purchased status:`, updatedTickets);
+            console.log(`🚨 STEP 3 - Updated ${updatedTickets.length} tickets to purchased status:`, updatedTickets);
             
-            console.log(`🚨 After purchaseTickets() - Verifying ticket status update...`);
+            console.log(`🚨 STEP 3 - After purchaseTickets() - Verifying ticket status update...`);
             // Direct DB query to check ticket status after update
-            const ticketsAfter = await db.execute(query, [ticketIds]);
-            console.log(`🚨 Updated ticket status:`, ticketsAfter.rows);
+            const queryAfter = `SELECT id, competition_id, status, user_id, number FROM tickets WHERE id = ANY($1)`;
+            const ticketsAfter = await db.execute(queryAfter, [ticketIds]);
+            console.log(`🚨 STEP 3 - Updated ticket status:`, ticketsAfter);
             
             ticketsProcessed += updatedTickets.length;
             
             // Create entry record in the database
-            console.log(`🚨 Creating entry record for user ${userId}, competition ${item.competitionId}...`);
+            console.log(`🚨 STEP 4 - Creating entry record for user ${userId}, competition ${item.competitionId}...`);
             const entry = await storage.createEntry({
               userId: userId,
               competitionId: item.competitionId,
@@ -275,12 +311,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               stripePaymentId: paymentIntentId,
             });
             
-            console.log(`🚨 Created new entry:`, entry);
+            console.log(`🚨 STEP 4 - Created new entry:`, entry);
             
             // Verify entry was created
-            console.log(`🚨 Verifying entry creation...`);
-            const entryVerification = await db.select().from(entries).where(eq(entries.id, entry.id));
-            console.log(`🚨 Entry verification:`, entryVerification);
+            console.log(`🚨 STEP 4 - Verifying entry creation...`);
+            const entryQuery = `SELECT * FROM entries WHERE id = $1`;
+            const entryVerification = await db.execute(entryQuery, [entry.id]);
+            console.log(`🚨 STEP 4 - Entry verification:`, entryVerification);
             
             entriesCreated++;
           } catch (dbError) {

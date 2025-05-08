@@ -68,13 +68,28 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
         
         try {
           // Process the payment on the backend
-          console.log("🔴 Calling backend /api/process-payment with payment intent ID:", paymentIntent.id);
+          console.log("🔴 PAYMENT FLOW - STEP 1: Calling backend /api/process-payment with payment intent ID:", paymentIntent.id);
+          
+          // Show the complete request details
+          const requestBody = JSON.stringify({ paymentIntentId: paymentIntent.id });
+          console.log("🔴 PAYMENT FLOW - Request body:", requestBody);
+          console.log("🔴 PAYMENT FLOW - Request URL:", "/api/process-payment");
+          
           const response = await fetch("/api/process-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
+            body: requestBody,
             credentials: "include" // Important: include credentials for auth
           });
+          
+          // Log HTTP status for debugging
+          console.log("🔴 PAYMENT FLOW - Response status:", response.status);
+          console.log("🔴 PAYMENT FLOW - Response headers:", 
+            Array.from(response.headers.entries()).reduce((obj: Record<string, string>, [key, value]) => {
+              obj[key] = value;
+              return obj;
+            }, {})
+          );
           
           console.log("🔴 Backend /api/process-payment response status:", response.status);
           
