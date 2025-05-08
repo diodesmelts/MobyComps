@@ -110,10 +110,10 @@ export default function HomePage() {
                 NINJA AIR FRYER
               </h1>
               <p className="text-xl md:text-3xl font-bold mb-8 text-[#C3DC6F] drop-shadow-lg tracking-wider">DRAW 10TH MAY 9PM</p>
-              <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-bold rounded-full px-8 py-6">
+              <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-bold rounded-2xl px-10 py-7 text-lg">
                 <Link href="/competitions" className="flex items-center">
                   Enter now
-                  <Ticket className="ml-2 h-5 w-5" />
+                  <Ticket className="ml-3 h-6 w-6" />
                 </Link>
               </Button>
             </div>
