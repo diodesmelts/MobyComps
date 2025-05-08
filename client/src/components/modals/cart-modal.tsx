@@ -122,8 +122,8 @@ export function CartModal() {
           {/* Timer */}
           {cartItems && cartItems.length > 0 && (
             <div className="bg-[#C3DC6F]/20 p-2 flex items-center justify-center space-x-2 rounded mb-4">
-              <Clock className="h-5 w-5 text-[#002D5C]" />
-              <span className="text-sm font-medium text-[#002D5C] countdown-pulse">
+              <Clock className="h-5 w-5 text-[#002147]" />
+              <span className="text-sm font-medium text-[#002147] countdown-pulse">
                 Your tickets are reserved for {timeRemaining}
               </span>
             </div>
@@ -132,7 +132,7 @@ export function CartModal() {
           {/* Cart Items */}
           {isLoadingCompetitions ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-[#002D5C]" />
+              <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
             </div>
           ) : !cartItems || cartItems.length === 0 ? (
             <div className="text-center py-8 space-y-3">
@@ -140,7 +140,7 @@ export function CartModal() {
               <p className="text-gray-500">Your cart is empty</p>
               <Button 
                 variant="outline" 
-                className="border-[#002D5C] text-[#002D5C]"
+                className="border-[#002147] text-[#002147]"
                 onClick={closeCart}
               >
                 Browse Competitions
@@ -173,7 +173,7 @@ export function CartModal() {
               <span className="text-gray-600">
                 Subtotal ({cartItems.reduce((sum: number, item: any) => sum + (item.ticketNumbers ? item.ticketNumbers.split(',').length : 0), 0)} tickets):
               </span>
-              <span className="font-medium text-[#002D5C]">{formatPrice(total)}</span>
+              <span className="font-medium text-[#002147]">{formatPrice(total)}</span>
             </div>
             
             <Button 
