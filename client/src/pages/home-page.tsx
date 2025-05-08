@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { CompetitionCard } from "@/components/ui/competition-card";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { Loader2, ArrowRight, Filter, Ticket } from "lucide-react";
+import { Loader2, ArrowRight, Filter, Ticket, CalendarDays, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import paymentCardsImage from "../assets/payment-cards.png";
 
@@ -212,42 +212,64 @@ export default function HomePage() {
         </section>
         
         {/* How It Works */}
-        <section className="py-20 bg-gray-100">
-          <div className="max-w-6xl mx-auto px-4">
+        <section className="py-24 bg-gradient-to-br from-[#002147]/5 to-[#002147]/10 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-24 h-24 bg-[#C3DC6F]/20 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 bg-[#C3DC6F]/30 rounded-full translate-x-1/2 translate-y-1/2"></div>
+          
+          <div className="max-w-6xl mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-extrabold text-[#002D5C]">
+              <div className="inline-block mb-4">
+                <span className="bg-[#C3DC6F]/30 text-[#002147] text-sm font-bold uppercase tracking-wider px-4 py-2 rounded-full">Simple Steps</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-[#002147] mb-4">
                 How It Works
               </h2>
-              <p className="text-xl text-gray-700 mt-4 max-w-2xl mx-auto">
+              <div className="h-1 w-20 bg-[#C3DC6F] mx-auto my-6"></div>
+              <p className="text-xl text-gray-700 max-w-2xl mx-auto">
                 Winning with Moby Comps is quick and easy
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
-              <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
-                <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">1</div>
-                <h3 className="text-xl font-bold text-[#002D5C] mb-3 mt-4">Buy Tickets</h3>
-                <p className="text-gray-600">Choose a competition, select your tickets, and make a secure payment.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-4xl mx-auto relative">
+              {/* Connecting line */}
+              <div className="hidden md:block absolute top-24 left-0 w-full h-1 bg-gray-200 z-0"></div>
+              
+              {/* Step 1 */}
+              <div className="bg-white rounded-xl p-8 shadow-md text-center relative z-10 border-b-4 border-[#C3DC6F] transition-transform hover:-translate-y-2 duration-300">
+                <div className="w-16 h-16 bg-[#002147] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 absolute -top-8 left-1/2 transform -translate-x-1/2 shadow-lg">1</div>
+                <div className="mt-8 mb-4">
+                  <Ticket className="w-12 h-12 mx-auto text-[#C3DC6F]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#002147] mb-3">Choose & Buy</h3>
+                <p className="text-gray-600">Browse competitions, select your tickets, and make a secure payment.</p>
               </div>
               
-              <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
-                <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">2</div>
-                <h3 className="text-xl font-bold text-[#002D5C] mb-3 mt-4">Reveal Result</h3>
-                <p className="text-gray-600">Winners are automatically selected on the draw date and notified immediately.</p>
+              {/* Step 2 */}
+              <div className="bg-white rounded-xl p-8 shadow-md text-center relative z-10 border-b-4 border-[#C3DC6F] transition-transform hover:-translate-y-2 duration-300">
+                <div className="w-16 h-16 bg-[#002147] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 absolute -top-8 left-1/2 transform -translate-x-1/2 shadow-lg">2</div>
+                <div className="mt-8 mb-4">
+                  <CalendarDays className="w-12 h-12 mx-auto text-[#C3DC6F]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#002147] mb-3">Draw Date</h3>
+                <p className="text-gray-600">Winners are selected on the draw date with instant notifications.</p>
               </div>
               
-              <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
-                <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">3</div>
-                <h3 className="text-xl font-bold text-[#002D5C] mb-3 mt-4">Claim Prize</h3>
+              {/* Step 3 */}
+              <div className="bg-white rounded-xl p-8 shadow-md text-center relative z-10 border-b-4 border-[#C3DC6F] transition-transform hover:-translate-y-2 duration-300">
+                <div className="w-16 h-16 bg-[#002147] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 absolute -top-8 left-1/2 transform -translate-x-1/2 shadow-lg">3</div>
+                <div className="mt-8 mb-4">
+                  <Gift className="w-12 h-12 mx-auto text-[#C3DC6F]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#002147] mb-3">Get Your Prize</h3>
                 <p className="text-gray-600">If you win, we'll contact you to arrange delivery of your prize!</p>
               </div>
             </div>
             
-            <div className="text-center mt-14">
-              <Button asChild variant="outline" className="border-[#002D5C] text-[#002D5C] hover:bg-[#002D5C] hover:text-white transition-colors px-6 py-5 text-base">
+            <div className="text-center mt-16">
+              <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-semibold px-8 py-4 text-base rounded-full shadow-md transition-all hover:shadow-lg">
                 <Link href="/how-to-play" className="flex items-center">
                   Learn More About How To Play
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
