@@ -32,6 +32,11 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
           src={imageUrl} 
           alt={title}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            console.error("Competition card image failed to load:", imageUrl);
+            e.currentTarget.style.display = 'none';
+          }}
+          onLoad={() => console.log("Competition card image loaded successfully")}
         />
         
         {/* Draw date badge */}

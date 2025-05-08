@@ -533,6 +533,23 @@ export default function AdminCompetitionsPage() {
                                           src={competitionToEdit.imageUrl} 
                                           alt={competitionToEdit.title}
                                           className="w-full h-full object-cover"
+                                          onError={(e) => {
+                                            console.error("Image failed to load:", competitionToEdit.imageUrl);
+                                            e.currentTarget.style.display = 'none';
+                                          }}
+                                          onLoad={() => console.log("Competition image loaded successfully")}
+                                        />
+                                      </div>
+                                    )}
+                                    
+                                    {/* Show image preview for newly selected file */}
+                                    {value && value[0] && (
+                                      <div className="w-full h-40 bg-gray-100 rounded-md overflow-hidden mt-2">
+                                        <img 
+                                          src={URL.createObjectURL(value[0])} 
+                                          alt="Image preview"
+                                          className="w-full h-full object-cover"
+                                          onLoad={() => console.log("New image preview loaded successfully")}
                                         />
                                       </div>
                                     )}
@@ -765,6 +782,11 @@ export default function AdminCompetitionsPage() {
                                       src={competition.imageUrl} 
                                       alt={competition.title}
                                       className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        console.error("List image failed to load:", competition.imageUrl);
+                                        e.currentTarget.style.display = 'none';
+                                      }}
+                                      onLoad={() => console.log("Competition list image loaded successfully")}
                                     />
                                   </div>
                                   <div>
