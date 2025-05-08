@@ -177,7 +177,7 @@ export function CartModal() {
             </div>
             
             <Button 
-              className="w-full py-6 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-medium rounded-md text-center flex items-center justify-center"
+              className="w-full py-6 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-medium rounded-md text-center flex items-center justify-center"
               onClick={handleCheckout}
               disabled={isProcessing}
             >

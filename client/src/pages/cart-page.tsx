@@ -221,8 +221,8 @@ export default function CartPage() {
       <Layout title="Your Cart">
         <div className="container mx-auto py-12 flex items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center space-y-4">
-            <Loader2 className="h-12 w-12 animate-spin text-[#002D5C]" />
-            <p className="text-lg text-[#002D5C]">Loading your cart...</p>
+            <Loader2 className="h-12 w-12 animate-spin text-[#002147]" />
+            <p className="text-lg text-[#002147]">Loading your cart...</p>
           </div>
         </div>
       </Layout>
@@ -235,10 +235,10 @@ export default function CartPage() {
         <div className="container mx-auto py-12 flex flex-col items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center space-y-6 max-w-md mx-auto text-center">
             <ShoppingBag className="h-16 w-16 text-gray-300" />
-            <h1 className="text-2xl font-bold text-[#002D5C]">Your cart is empty</h1>
+            <h1 className="text-2xl font-bold text-[#002147]">Your cart is empty</h1>
             <p className="text-gray-600">You haven't added any tickets to your cart yet.</p>
             <Button 
-              className="mt-4 bg-[#002D5C] hover:bg-[#002D5C]/90"
+              className="mt-4 bg-[#002147] hover:bg-[#002147]/90"
               onClick={() => setLocation("/competitions")}
             >
               <ShoppingBag className="mr-2 h-4 w-4" />
@@ -256,7 +256,7 @@ export default function CartPage() {
         <div className="flex items-center mb-6">
           <Button 
             variant="ghost" 
-            className="text-[#002D5C]"
+            className="text-[#002147]"
             onClick={() => setLocation("/competitions")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -268,10 +268,10 @@ export default function CartPage() {
           {/* Cart Items Section */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-[#002D5C]">Your Cart</h1>
+              <h1 className="text-2xl font-bold text-[#002147]">Your Cart</h1>
               <Button 
                 variant="outline" 
-                className="border-[#002D5C] text-[#002D5C]"
+                className="border-[#002147] text-[#002147]"
                 onClick={() => clearCart()}
               >
                 {false ? (
