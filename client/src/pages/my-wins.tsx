@@ -160,7 +160,7 @@ export default function MyWinsPage() {
                 <p className="text-gray-600 mb-6">
                   You haven't won any competitions yet. Keep entering to increase your chances!
                 </p>
-                <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                   <Link href="/competitions">Browse Competitions</Link>
                 </Button>
               </CardContent>
@@ -217,19 +217,19 @@ export default function MyWinsPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div className="flex items-center text-sm text-gray-600">
-                            <Calendar className="h-4 w-4 mr-2 text-[#8EE000]" />
+                            <Calendar className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                             <span>Won on: {formatDate(win.createdAt)}</span>
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
-                            <Trophy className="h-4 w-4 mr-2 text-[#8EE000]" />
+                            <Trophy className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                             <span>Winning Ticket: #{win.ticketIds.split(',')[0]}</span>
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
-                            <ShoppingCart className="h-4 w-4 mr-2 text-[#8EE000]" />
+                            <ShoppingCart className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                             <span>Total Entries: {getTicketCount(win)}</span>
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
-                            <Truck className="h-4 w-4 mr-2 text-[#8EE000]" />
+                            <Truck className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                             <span>
                               {deliveryStatus === 'processing' ? 'Processing your prize' : 
                                deliveryStatus === 'shipped' ? 'Shipped on ' + formatDate(new Date(Date.now() - 2*24*60*60*1000)) : 
@@ -248,12 +248,12 @@ export default function MyWinsPage() {
                               <div className={`flex flex-col items-center ${
                                 deliveryStatus === 'processing' || 
                                 deliveryStatus === 'shipped' || 
-                                deliveryStatus === 'delivered' ? 'text-[#8EE000]' : 'text-gray-400'
+                                deliveryStatus === 'delivered' ? 'text-[#C3DC6F]' : 'text-gray-400'
                               }`}>
                                 <div className={`rounded-full h-5 w-5 flex items-center justify-center ${
                                   deliveryStatus === 'processing' || 
                                   deliveryStatus === 'shipped' || 
-                                  deliveryStatus === 'delivered' ? 'bg-[#8EE000]' : 'bg-gray-300'
+                                  deliveryStatus === 'delivered' ? 'bg-[#C3DC6F]' : 'bg-gray-300'
                                 }`}>
                                   <CheckIcon className="h-3 w-3 text-white" />
                                 </div>
@@ -262,11 +262,11 @@ export default function MyWinsPage() {
                               
                               <div className={`flex flex-col items-center ${
                                 deliveryStatus === 'shipped' || 
-                                deliveryStatus === 'delivered' ? 'text-[#8EE000]' : 'text-gray-400'
+                                deliveryStatus === 'delivered' ? 'text-[#C3DC6F]' : 'text-gray-400'
                               }`}>
                                 <div className={`rounded-full h-5 w-5 flex items-center justify-center ${
                                   deliveryStatus === 'shipped' || 
-                                  deliveryStatus === 'delivered' ? 'bg-[#8EE000]' : 'bg-gray-300'
+                                  deliveryStatus === 'delivered' ? 'bg-[#C3DC6F]' : 'bg-gray-300'
                                 }`}>
                                   <CheckIcon className="h-3 w-3 text-white" />
                                 </div>
@@ -274,10 +274,10 @@ export default function MyWinsPage() {
                               </div>
                               
                               <div className={`flex flex-col items-center ${
-                                deliveryStatus === 'delivered' ? 'text-[#8EE000]' : 'text-gray-400'
+                                deliveryStatus === 'delivered' ? 'text-[#C3DC6F]' : 'text-gray-400'
                               }`}>
                                 <div className={`rounded-full h-5 w-5 flex items-center justify-center ${
-                                  deliveryStatus === 'delivered' ? 'bg-[#8EE000]' : 'bg-gray-300'
+                                  deliveryStatus === 'delivered' ? 'bg-[#C3DC6F]' : 'bg-gray-300'
                                 }`}>
                                   <CheckIcon className="h-3 w-3 text-white" />
                                 </div>

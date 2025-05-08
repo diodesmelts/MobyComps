@@ -206,7 +206,7 @@ export function Header() {
   return (
     <header>
       {/* Marketing Banner */}
-      <div className="bg-[#8EE000] py-2 px-4 text-[#002D5C] text-center text-sm font-medium flex justify-center items-center">
+      <div className="bg-[#C3DC6F] py-2 px-4 text-[#002D5C] text-center text-sm font-medium flex justify-center items-center">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
         </svg>
@@ -228,7 +228,7 @@ export function Header() {
               ) : (
                 <>
                   <span className="text-white uppercase tracking-wider mr-1">MOBY</span>
-                  <span className="text-[#8EE000] text-sm uppercase">COMPS</span>
+                  <span className="text-[#C3DC6F] text-sm uppercase">COMPS</span>
                 </>
               )}
             </Link>
@@ -242,7 +242,7 @@ export function Header() {
                 href={item.href}
                 className={cn(
                   "px-3 py-2 rounded hover:bg-[#002D5C]/80", 
-                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#8EE000]"
+                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#C3DC6F]"
                 )}
               >
                 {item.label}
@@ -255,7 +255,7 @@ export function Header() {
                 href={item.href}
                 className={cn(
                   "px-3 py-2 rounded hover:bg-[#002D5C]/80", 
-                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#8EE000]"
+                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#C3DC6F]"
                 )}
               >
                 {item.label}
@@ -274,7 +274,7 @@ export function Header() {
             >
               <ShoppingCart className="h-5 w-5" />
               {cartItems && cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#8EE000] text-[#002D5C] rounded-full w-4 h-4 text-xs flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-[#C3DC6F] text-[#002D5C] rounded-full w-4 h-4 text-xs flex items-center justify-center">
                   {cartItems.length}
                 </span>
               )}
@@ -283,7 +283,7 @@ export function Header() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="hidden md:flex items-center bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] font-medium px-3 py-1.5 rounded-md text-sm">
+                  <Button className="hidden md:flex items-center bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-medium px-3 py-1.5 rounded-md text-sm">
                     <span className="bg-[#002D5C] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2">
                       {user.username.charAt(0).toUpperCase()}
                     </span>
@@ -333,7 +333,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="hidden md:flex bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+              <Button asChild className="hidden md:flex bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                 <Link href="/auth">Sign In</Link>
               </Button>
             )}
@@ -358,7 +358,7 @@ export function Header() {
                       ) : (
                         <>
                           <span className="text-white uppercase tracking-wider mr-1">MOBY</span>
-                          <span className="text-[#8EE000] text-sm uppercase">COMPS</span>
+                          <span className="text-[#C3DC6F] text-sm uppercase">COMPS</span>
                         </>
                       )}
                     </div>
@@ -377,7 +377,7 @@ export function Header() {
                             variant="ghost" 
                             className={cn(
                               "w-full justify-start text-lg", 
-                              location === item.href && "bg-white/10 border-l-4 border-[#8EE000] pl-3"
+                              location === item.href && "bg-white/10 border-l-4 border-[#C3DC6F] pl-3"
                             )}
                           >
                             {item.label}
@@ -396,7 +396,7 @@ export function Header() {
                                 variant="ghost" 
                                 className={cn(
                                   "w-full justify-start text-lg", 
-                                  location === item.href && "bg-white/10 border-l-4 border-[#8EE000] pl-3"
+                                  location === item.href && "bg-white/10 border-l-4 border-[#C3DC6F] pl-3"
                                 )}
                               >
                                 {item.label}
@@ -436,7 +436,7 @@ export function Header() {
                     ) : (
                       <SheetClose asChild>
                         <Link href="/auth">
-                          <Button className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+                          <Button className="w-full bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                             Sign In
                           </Button>
                         </Link>

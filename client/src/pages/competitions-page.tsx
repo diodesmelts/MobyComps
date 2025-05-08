@@ -109,7 +109,7 @@ export default function CompetitionsPage() {
           {/* Page Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-[#002D5C]">
-              <span className="text-[#8EE000]">Browse & Discover</span> All Competitions
+              <span className="text-[#C3DC6F]">Browse & Discover</span> All Competitions
             </h1>
             <p className="text-gray-600 mt-2">
               Explore our full range of competitions and find your perfect prize.
@@ -127,7 +127,7 @@ export default function CompetitionsPage() {
                   onChange={(e) => setSearchInput(e.target.value)}
                   className="mr-2"
                 />
-                <Button type="submit" variant="secondary" className="bg-[#8EE000] text-[#002D5C]">
+                <Button type="submit" variant="secondary" className="bg-[#C3DC6F] text-[#002D5C]">
                   <Search className="h-4 w-4" />
                 </Button>
               </form>

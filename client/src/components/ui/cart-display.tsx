@@ -206,7 +206,7 @@ export function CartDisplay({
           </div>
           
           <Button 
-            className="w-full py-3 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] font-medium rounded-md text-center flex items-center justify-center"
+            className="w-full py-3 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-medium rounded-md text-center flex items-center justify-center"
             onClick={onCheckout}
             disabled={isProcessing}
           >

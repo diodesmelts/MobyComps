@@ -3,7 +3,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-[#002D5C] text-white border-t-4 border-[#8EE000] mt-8">
+    <footer className="bg-[#002D5C] text-white border-t-4 border-[#C3DC6F] mt-8">
       <div className="container mx-auto p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
@@ -45,24 +45,24 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li><Link href="/competitions?category=electronics" className="hover:text-[#8EE000]">Electronics</Link></li>
-              <li><Link href="/competitions?category=travel" className="hover:text-[#8EE000]">Travel</Link></li>
-              <li><Link href="/competitions?category=cash_prizes" className="hover:text-[#8EE000]">Cash Prizes</Link></li>
-              <li><Link href="/competitions?category=household" className="hover:text-[#8EE000]">Household</Link></li>
-              <li><Link href="/competitions?category=beauty" className="hover:text-[#8EE000]">Beauty</Link></li>
-              <li><Link href="/competitions?category=family" className="hover:text-[#8EE000]">Family</Link></li>
+              <li><Link href="/competitions?category=electronics" className="hover:text-[#C3DC6F]">Electronics</Link></li>
+              <li><Link href="/competitions?category=travel" className="hover:text-[#C3DC6F]">Travel</Link></li>
+              <li><Link href="/competitions?category=cash_prizes" className="hover:text-[#C3DC6F]">Cash Prizes</Link></li>
+              <li><Link href="/competitions?category=household" className="hover:text-[#C3DC6F]">Household</Link></li>
+              <li><Link href="/competitions?category=beauty" className="hover:text-[#C3DC6F]">Beauty</Link></li>
+              <li><Link href="/competitions?category=family" className="hover:text-[#C3DC6F]">Family</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-lg font-semibold mb-4">Information</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li><Link href="/how-to-play" className="hover:text-[#8EE000]">How to Play</Link></li>
-              <li><Link href="/faqs" className="hover:text-[#8EE000]">FAQs</Link></li>
-              <li><Link href="/about-us" className="hover:text-[#8EE000]">About Us</Link></li>
-              <li><Link href="/terms" className="hover:text-[#8EE000]">Terms & Conditions</Link></li>
-              <li><Link href="/privacy" className="hover:text-[#8EE000]">Privacy Policy</Link></li>
-              <li><Link href="/contact" className="hover:text-[#8EE000]">Contact Us</Link></li>
+              <li><Link href="/how-to-play" className="hover:text-[#C3DC6F]">How to Play</Link></li>
+              <li><Link href="/faqs" className="hover:text-[#C3DC6F]">FAQs</Link></li>
+              <li><Link href="/about-us" className="hover:text-[#C3DC6F]">About Us</Link></li>
+              <li><Link href="/terms" className="hover:text-[#C3DC6F]">Terms & Conditions</Link></li>
+              <li><Link href="/privacy" className="hover:text-[#C3DC6F]">Privacy Policy</Link></li>
+              <li><Link href="/contact" className="hover:text-[#C3DC6F]">Contact Us</Link></li>
             </ul>
           </div>
           
@@ -70,20 +70,20 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-3 text-sm text-gray-300">
               <li className="flex items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#8EE000] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#C3DC6F] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <span>support@mobycomps.com</span>
               </li>
               <li className="flex items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#8EE000] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-[#C3DC6F] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 <span>0800 123 4567</span>
               </li>
               <li>
                 <div className="mt-4">
-                  <div className="text-[#8EE000] mb-2">Secure payments with</div>
+                  <div className="text-[#C3DC6F] mb-2">Secure payments with</div>
                   <div className="flex items-center space-x-3">
                     <div className="bg-white rounded px-2 py-1">
                       <svg width="36" height="24" viewBox="0 0 36 24" fill="none" xmlns="http://www.w3.org/2000/svg">

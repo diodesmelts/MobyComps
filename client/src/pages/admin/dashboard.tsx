@@ -100,7 +100,7 @@ export default function AdminDashboard() {
               <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/admin/site-content">Site Content</Link>
               </Button>
-              <Button asChild size="sm" className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] ml-auto md:ml-0">
+              <Button asChild size="sm" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] ml-auto md:ml-0">
                 <Link href="/admin/competitions?new=true">Create Competition</Link>
               </Button>
             </div>
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                   
                   {(stats.recentCompetitions || []).slice(0, 2).map((comp, index) => (
                     <div key={`comp-${index}`} className="flex items-start">
-                      <div className="w-9 h-9 rounded-full bg-[#8EE000]/20 flex items-center justify-center text-[#002D5C] mr-3">
+                      <div className="w-9 h-9 rounded-full bg-[#C3DC6F]/20 flex items-center justify-center text-[#002D5C] mr-3">
                         <Package className="h-5 w-5" />
                       </div>
                       <div className="flex-1">
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
                               <span className="text-sm">{competition.ticketsSold} / {competition.maxTickets}</span>
                               <div className="w-24 bg-gray-200 rounded-full h-2 ml-2">
                                 <div 
-                                  className="bg-[#8EE000] rounded-full h-2" 
+                                  className="bg-[#C3DC6F] rounded-full h-2" 
                                   style={{ width: `${(competition.ticketsSold / competition.maxTickets) * 100}%` }}
                                 ></div>
                               </div>

@@ -209,7 +209,7 @@ export default function FAQsPage() {
                     <AccordionItem key={idx} value={`result-${idx}`}>
                       <AccordionTrigger className="text-left font-medium">
                         {result.question}
-                        <span className="ml-2 text-xs bg-[#8EE000]/20 text-[#002D5C] px-2 py-0.5 rounded-full">
+                        <span className="ml-2 text-xs bg-[#C3DC6F]/20 text-[#002D5C] px-2 py-0.5 rounded-full">
                           {result.category}
                         </span>
                       </AccordionTrigger>
@@ -260,7 +260,7 @@ export default function FAQsPage() {
           
           {/* Contact Support */}
           <div className="max-w-3xl mx-auto mt-12 bg-[#002D5C] text-white rounded-lg shadow-md p-8 text-center">
-            <HelpCircle className="h-12 w-12 text-[#8EE000] mx-auto mb-4" />
+            <HelpCircle className="h-12 w-12 text-[#C3DC6F] mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Still Have Questions?</h2>
             <p className="text-gray-300 mb-6 max-w-xl mx-auto">
               If you couldn't find the answer you were looking for, our friendly support team is ready to help.
@@ -270,7 +270,7 @@ export default function FAQsPage() {
                 <Mail className="h-4 w-4 mr-2" />
                 <a href="mailto:support@mobycomps.com">Email Support</a>
               </Button>
-              <Button className="bg-[#8EE000] text-[#002D5C] hover:bg-[#8EE000]/90">
+              <Button className="bg-[#C3DC6F] text-[#002D5C] hover:bg-[#C3DC6F]/90">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 <a href="https://wa.me/4401234567890">Live Chat</a>
               </Button>

@@ -119,7 +119,7 @@ export function CartModal() {
         <div className="flex-1 overflow-auto p-4">
           {/* Timer */}
           {cartItems && cartItems.length > 0 && (
-            <div className="bg-[#8EE000]/20 p-2 flex items-center justify-center space-x-2 rounded mb-4">
+            <div className="bg-[#C3DC6F]/20 p-2 flex items-center justify-center space-x-2 rounded mb-4">
               <Clock className="h-5 w-5 text-[#002D5C]" />
               <span className="text-sm font-medium text-[#002D5C] countdown-pulse">
                 Your tickets are reserved for {timeRemaining}
@@ -175,7 +175,7 @@ export function CartModal() {
             </div>
             
             <Button 
-              className="w-full py-6 bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] font-medium rounded-md text-center flex items-center justify-center"
+              className="w-full py-6 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-medium rounded-md text-center flex items-center justify-center"
               onClick={handleCheckout}
               disabled={isProcessing}
             >

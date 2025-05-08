@@ -134,7 +134,7 @@ export default function MyEntriesPage() {
                     <p className="text-gray-600 mb-6">
                       You don't have any active competition entries yet.
                     </p>
-                    <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+                    <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                       <Link href="/competitions">Browse Competitions</Link>
                     </Button>
                   </CardContent>
@@ -163,26 +163,26 @@ export default function MyEntriesPage() {
                               <h3 className="text-xl font-semibold text-[#002D5C]">
                                 {competition?.title || "Competition"}
                               </h3>
-                              <div className="bg-[#8EE000]/20 text-[#002D5C] text-xs font-medium rounded-full px-3 py-1">
+                              <div className="bg-[#C3DC6F]/20 text-[#002D5C] text-xs font-medium rounded-full px-3 py-1">
                                 Active
                               </div>
                             </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                               <div className="flex items-center text-sm text-gray-600">
-                                <Calendar className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <Calendar className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Draw Date: {competition ? formatDate(competition.drawDate) : 'Unknown'}</span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
-                                <Ticket className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <Ticket className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Tickets: {getTicketCount(entry)}</span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
-                                <Clock className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <Clock className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Purchased: {formatDate(entry.createdAt)}</span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
-                                <ShoppingCart className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <ShoppingCart className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Order ID: #{entry.id}</span>
                               </div>
                             </div>
@@ -218,7 +218,7 @@ export default function MyEntriesPage() {
                     <p className="text-gray-600 mb-6">
                       You don't have any completed competition entries yet.
                     </p>
-                    <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+                    <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                       <Link href="/competitions">Browse Competitions</Link>
                     </Button>
                   </CardContent>
@@ -257,26 +257,26 @@ export default function MyEntriesPage() {
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                               <div className="flex items-center text-sm text-gray-600">
-                                <Calendar className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <Calendar className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Draw Date: {competition ? formatDate(competition.drawDate) : 'Unknown'}</span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
-                                <Ticket className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <Ticket className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Tickets: {getTicketCount(entry)}</span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
-                                <Clock className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <Clock className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Purchased: {formatDate(entry.createdAt)}</span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
-                                <ShoppingCart className="h-4 w-4 mr-2 text-[#8EE000]" />
+                                <ShoppingCart className="h-4 w-4 mr-2 text-[#C3DC6F]" />
                                 <span>Order ID: #{entry.id}</span>
                               </div>
                             </div>
                             
                             <div className="flex justify-end mt-4">
                               {entry.status === 'won' ? (
-                                <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+                                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                                   <Link href="/my-wins">View Win Details</Link>
                                 </Button>
                               ) : (

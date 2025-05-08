@@ -263,7 +263,7 @@ export default function AuthPage() {
 
                         <Button
                           type="submit"
-                          className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]"
+                          className="w-full bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]"
                           disabled={registerMutation.isPending}
                         >
                           {registerMutation.isPending ? (
@@ -306,7 +306,7 @@ export default function AuthPage() {
                 <div className="space-y-4">
                   <div className="flex items-start">
                     <svg
-                      className="h-6 w-6 text-[#8EE000] mr-2 flex-shrink-0"
+                      className="h-6 w-6 text-[#C3DC6F] mr-2 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -323,7 +323,7 @@ export default function AuthPage() {
                   </div>
                   <div className="flex items-start">
                     <svg
-                      className="h-6 w-6 text-[#8EE000] mr-2 flex-shrink-0"
+                      className="h-6 w-6 text-[#C3DC6F] mr-2 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -340,7 +340,7 @@ export default function AuthPage() {
                   </div>
                   <div className="flex items-start">
                     <svg
-                      className="h-6 w-6 text-[#8EE000] mr-2 flex-shrink-0"
+                      className="h-6 w-6 text-[#C3DC6F] mr-2 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -357,7 +357,7 @@ export default function AuthPage() {
                   </div>
                   <div className="flex items-start">
                     <svg
-                      className="h-6 w-6 text-[#8EE000] mr-2 flex-shrink-0"
+                      className="h-6 w-6 text-[#C3DC6F] mr-2 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -376,7 +376,7 @@ export default function AuthPage() {
               </div>
 
               <div className="bg-[#002D5C]/50 p-4 rounded-lg">
-                <h3 className="text-[#8EE000] font-semibold mb-2">Latest Winner</h3>
+                <h3 className="text-[#C3DC6F] font-semibold mb-2">Latest Winner</h3>
                 <p className="text-sm">
                   "I never thought I'd win! The iPad Pro arrived within 3 days of the draw. Can't
                   recommend Moby Comps enough!" - Sarah T.

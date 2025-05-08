@@ -662,7 +662,7 @@ export default function AdminCompetitionsPage() {
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-[#002D5C]">Manage Competitions</h1>
                 <Button 
-                  className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]"
+                  className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]"
                   onClick={() => navigate("/admin/competitions?new=true")}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -696,7 +696,7 @@ export default function AdminCompetitionsPage() {
                           : `You don't have any ${activeTab} competitions.`}
                       </p>
                       <Button 
-                        className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]"
+                        className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]"
                         onClick={() => navigate("/admin/competitions?new=true")}
                       >
                         Create First Competition
@@ -753,7 +753,7 @@ export default function AdminCompetitionsPage() {
                                   <span>{competition.ticketsSold} / {competition.maxTickets}</span>
                                   <div className="w-16 bg-gray-200 rounded-full h-1.5 ml-2">
                                     <div 
-                                      className="bg-[#8EE000] rounded-full h-1.5" 
+                                      className="bg-[#C3DC6F] rounded-full h-1.5" 
                                       style={{ width: `${(competition.ticketsSold / competition.maxTickets) * 100}%` }}
                                     ></div>
                                   </div>

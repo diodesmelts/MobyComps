@@ -150,11 +150,11 @@ export default function CompetitionDetail() {
                 <h3 className="font-medium text-[#002D5C]">Draw information:</h3>
                 <ul className="text-sm text-gray-700 space-y-1">
                   <li className="flex items-start">
-                    <Calendar className="h-5 w-5 mr-2 text-[#8EE000] flex-shrink-0" />
+                    <Calendar className="h-5 w-5 mr-2 text-[#C3DC6F] flex-shrink-0" />
                     Draw date: {formatDate(competition.drawDate)}
                   </li>
                   <li className="flex items-start">
-                    <AlertCircle className="h-5 w-5 mr-2 text-[#8EE000] flex-shrink-0" />
+                    <AlertCircle className="h-5 w-5 mr-2 text-[#C3DC6F] flex-shrink-0" />
                     Competition will close sooner if the maximum entries are received
                   </li>
                 </ul>
@@ -218,7 +218,7 @@ export default function CompetitionDetail() {
               <div className="p-4 space-y-4">
                 {/* Draw Date & Price */}
                 <div className="flex justify-between items-center">
-                  <div className="bg-[#8EE000]/20 text-[#002D5C] text-xs font-medium rounded-full px-3 py-1 flex items-center">
+                  <div className="bg-[#C3DC6F]/20 text-[#002D5C] text-xs font-medium rounded-full px-3 py-1 flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
                     Draw: {formatDate(competition.drawDate)}
                   </div>
@@ -270,7 +270,7 @@ export default function CompetitionDetail() {
                   
                   <Button
                     onClick={openCart}
-                    className="w-full bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] py-2.5 px-4 rounded-md flex items-center justify-center space-x-2"
+                    className="w-full bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] py-2.5 px-4 rounded-md flex items-center justify-center space-x-2"
                     disabled={!quizAnswered}
                   >
                     <ShoppingCart className="h-5 w-5" />

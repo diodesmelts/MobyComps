@@ -33,7 +33,7 @@ export default function HowToPlayPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {/* Step 1 */}
               <div className="bg-white rounded-lg shadow-md p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#8EE000] border-r-[80px] border-r-transparent"></div>
+                <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#C3DC6F] border-r-[80px] border-r-transparent"></div>
                 <span className="absolute top-3 left-4 text-[#002D5C] font-bold text-xl">1</span>
                 
                 <div className="mb-6 mt-6 flex justify-center">
@@ -45,19 +45,19 @@ export default function HowToPlayPage() {
                 <h3 className="text-xl font-semibold text-[#002D5C] mb-3 text-center">Buy Tickets</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Browse our live competitions</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Answer a simple question</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Choose your lucky ticket numbers</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Complete secure payment</span>
                   </li>
                 </ul>
@@ -65,7 +65,7 @@ export default function HowToPlayPage() {
               
               {/* Step 2 */}
               <div className="bg-white rounded-lg shadow-md p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#8EE000] border-r-[80px] border-r-transparent"></div>
+                <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#C3DC6F] border-r-[80px] border-r-transparent"></div>
                 <span className="absolute top-3 left-4 text-[#002D5C] font-bold text-xl">2</span>
                 
                 <div className="mb-6 mt-6 flex justify-center">
@@ -77,19 +77,19 @@ export default function HowToPlayPage() {
                 <h3 className="text-xl font-semibold text-[#002D5C] mb-3 text-center">Await the Draw</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>All draws occur on specified date</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Winners are chosen by automated system</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Results are published immediately</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Winners notified by email and text</span>
                   </li>
                 </ul>
@@ -97,7 +97,7 @@ export default function HowToPlayPage() {
               
               {/* Step 3 */}
               <div className="bg-white rounded-lg shadow-md p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#8EE000] border-r-[80px] border-r-transparent"></div>
+                <div className="absolute top-0 left-0 w-0 h-0 border-t-[80px] border-t-[#C3DC6F] border-r-[80px] border-r-transparent"></div>
                 <span className="absolute top-3 left-4 text-[#002D5C] font-bold text-xl">3</span>
                 
                 <div className="mb-6 mt-6 flex justify-center">
@@ -109,19 +109,19 @@ export default function HowToPlayPage() {
                 <h3 className="text-xl font-semibold text-[#002D5C] mb-3 text-center">Claim Your Prize</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Confirm your delivery details</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Choose between prize or cash alternative</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Receive your prize within 14 days</span>
                   </li>
                   <li className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-[#8EE000] mt-0.5 mr-2 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#C3DC6F] mt-0.5 mr-2 flex-shrink-0" />
                     <span>Share your win story (optional)</span>
                   </li>
                 </ul>
@@ -129,7 +129,7 @@ export default function HowToPlayPage() {
             </div>
             
             <div className="text-center mt-10">
-              <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+              <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                 <Link href="/competitions">Browse Competitions</Link>
               </Button>
             </div>
@@ -150,7 +150,7 @@ export default function HowToPlayPage() {
               {/* FAQ Item */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-start mb-3">
-                  <HelpCircle className="h-6 w-6 text-[#8EE000] mr-3 flex-shrink-0" />
+                  <HelpCircle className="h-6 w-6 text-[#C3DC6F] mr-3 flex-shrink-0" />
                   <h3 className="text-lg font-medium text-[#002D5C]">How are winners selected?</h3>
                 </div>
                 <p className="text-gray-600 ml-9">
@@ -161,7 +161,7 @@ export default function HowToPlayPage() {
               {/* FAQ Item */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-start mb-3">
-                  <HelpCircle className="h-6 w-6 text-[#8EE000] mr-3 flex-shrink-0" />
+                  <HelpCircle className="h-6 w-6 text-[#C3DC6F] mr-3 flex-shrink-0" />
                   <h3 className="text-lg font-medium text-[#002D5C]">Can I choose my ticket number?</h3>
                 </div>
                 <p className="text-gray-600 ml-9">
@@ -172,7 +172,7 @@ export default function HowToPlayPage() {
               {/* FAQ Item */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-start mb-3">
-                  <HelpCircle className="h-6 w-6 text-[#8EE000] mr-3 flex-shrink-0" />
+                  <HelpCircle className="h-6 w-6 text-[#C3DC6F] mr-3 flex-shrink-0" />
                   <h3 className="text-lg font-medium text-[#002D5C]">How will I know if I've won?</h3>
                 </div>
                 <p className="text-gray-600 ml-9">
@@ -183,7 +183,7 @@ export default function HowToPlayPage() {
               {/* FAQ Item */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-start mb-3">
-                  <HelpCircle className="h-6 w-6 text-[#8EE000] mr-3 flex-shrink-0" />
+                  <HelpCircle className="h-6 w-6 text-[#C3DC6F] mr-3 flex-shrink-0" />
                   <h3 className="text-lg font-medium text-[#002D5C]">What happens if I win?</h3>
                 </div>
                 <p className="text-gray-600 ml-9">
@@ -194,7 +194,7 @@ export default function HowToPlayPage() {
               {/* FAQ Item */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-start mb-3">
-                  <HelpCircle className="h-6 w-6 text-[#8EE000] mr-3 flex-shrink-0" />
+                  <HelpCircle className="h-6 w-6 text-[#C3DC6F] mr-3 flex-shrink-0" />
                   <h3 className="text-lg font-medium text-[#002D5C]">How long does delivery take?</h3>
                 </div>
                 <p className="text-gray-600 ml-9">
@@ -205,7 +205,7 @@ export default function HowToPlayPage() {
               {/* FAQ Item */}
               <div className="bg-gray-50 rounded-lg p-6">
                 <div className="flex items-start mb-3">
-                  <HelpCircle className="h-6 w-6 text-[#8EE000] mr-3 flex-shrink-0" />
+                  <HelpCircle className="h-6 w-6 text-[#C3DC6F] mr-3 flex-shrink-0" />
                   <h3 className="text-lg font-medium text-[#002D5C]">Are the competitions regulated?</h3>
                 </div>
                 <p className="text-gray-600 ml-9">
@@ -236,7 +236,7 @@ export default function HowToPlayPage() {
               {/* Testimonial */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 bg-[#8EE000] rounded-full flex items-center justify-center text-[#002D5C] font-bold text-xl">
+                  <div className="h-12 w-12 bg-[#C3DC6F] rounded-full flex items-center justify-center text-[#002D5C] font-bold text-xl">
                     J
                   </div>
                   <div className="ml-3">
@@ -252,7 +252,7 @@ export default function HowToPlayPage() {
               {/* Testimonial */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 bg-[#8EE000] rounded-full flex items-center justify-center text-[#002D5C] font-bold text-xl">
+                  <div className="h-12 w-12 bg-[#C3DC6F] rounded-full flex items-center justify-center text-[#002D5C] font-bold text-xl">
                     S
                   </div>
                   <div className="ml-3">
@@ -268,7 +268,7 @@ export default function HowToPlayPage() {
               {/* Testimonial */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 bg-[#8EE000] rounded-full flex items-center justify-center text-[#002D5C] font-bold text-xl">
+                  <div className="h-12 w-12 bg-[#C3DC6F] rounded-full flex items-center justify-center text-[#002D5C] font-bold text-xl">
                     M
                   </div>
                   <div className="ml-3">
@@ -291,7 +291,7 @@ export default function HowToPlayPage() {
             <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
               With tickets from just £1, amazing prizes, and transparent draws, there's never been a better time to enter!
             </p>
-            <Button asChild size="lg" className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+            <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
               <Link href="/competitions">Browse Competitions</Link>
             </Button>
           </div>

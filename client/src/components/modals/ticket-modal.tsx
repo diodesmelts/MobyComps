@@ -134,7 +134,7 @@ export function TicketModal({
         
         {/* Timer display - only show if there are already items in cart */}
         {cartTimeRemaining > 0 && (
-          <div className="bg-[#8EE000]/20 p-2 flex items-center justify-center space-x-2 rounded">
+          <div className="bg-[#C3DC6F]/20 p-2 flex items-center justify-center space-x-2 rounded">
             <Clock className="h-5 w-5 text-[#002D5C]" />
             <span className="text-sm font-medium text-[#002D5C] countdown-pulse">
               Your selected tickets are reserved for {timeRemaining} minutes

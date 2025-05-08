@@ -35,7 +35,7 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
           className="w-full h-full object-cover transition-transform hover:scale-105 duration-200"
         />
         {/* Win badge */}
-        <div className="absolute top-3 left-3 bg-[#8EE000] text-[#002D5C] font-bold px-4 py-1 rounded-sm text-lg">
+        <div className="absolute top-3 left-3 bg-[#C3DC6F] text-[#002D5C] font-bold px-4 py-1 rounded-sm text-lg">
           Win
         </div>
         {/* Draw date label */}

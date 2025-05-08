@@ -41,8 +41,8 @@ export default function HomePage() {
                 BEAUTIFUL<br/>
                 NINJA AIR FRYER
               </h1>
-              <p className="text-xl md:text-2xl font-semibold mb-8 text-[#8EE000]">DRAW 10TH MAY 9PM</p>
-              <Button asChild size="lg" className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C] font-semibold">
+              <p className="text-xl md:text-2xl font-semibold mb-8 text-[#C3DC6F]">DRAW 10TH MAY 9PM</p>
+              <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-semibold">
                 <Link href="/competitions">
                   Enter now
                   <svg className="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,7 +65,7 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold text-[#002D5C]">Live Competitions</h2>
-              <p className="text-gray-600 mt-2">Don't miss your chance to win these <span className="text-[#8EE000] font-medium">amazing prizes</span>! New competitions added regularly.</p>
+              <p className="text-gray-600 mt-2">Don't miss your chance to win these <span className="text-[#C3DC6F] font-medium">amazing prizes</span>! New competitions added regularly.</p>
             </div>
             
             {isLoading ? (

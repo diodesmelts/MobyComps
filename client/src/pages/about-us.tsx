@@ -26,7 +26,7 @@ export default function AboutUsPage() {
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-[#002D5C] mb-4">Our Story</h2>
-                <div className="h-1 w-20 bg-[#8EE000] mx-auto"></div>
+                <div className="h-1 w-20 bg-[#C3DC6F] mx-auto"></div>
               </div>
               
               <div className="prose prose-lg mx-auto text-gray-700">
@@ -63,7 +63,7 @@ export default function AboutUsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {/* Value */}
               <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <div className="w-16 h-16 bg-[#8EE000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#C3DC6F]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trophy className="h-8 w-8 text-[#002D5C]" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#002D5C] mb-3">Fairness</h3>
@@ -74,7 +74,7 @@ export default function AboutUsPage() {
               
               {/* Value */}
               <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <div className="w-16 h-16 bg-[#8EE000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#C3DC6F]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield className="h-8 w-8 text-[#002D5C]" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#002D5C] mb-3">Integrity</h3>
@@ -85,7 +85,7 @@ export default function AboutUsPage() {
               
               {/* Value */}
               <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <div className="w-16 h-16 bg-[#8EE000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#C3DC6F]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="h-8 w-8 text-[#002D5C]" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#002D5C] mb-3">Community</h3>
@@ -111,7 +111,7 @@ export default function AboutUsPage() {
               {/* Difference Item */}
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <Check className="h-6 w-6 text-[#8EE000]" />
+                  <Check className="h-6 w-6 text-[#C3DC6F]" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-[#002D5C] mb-2">Transparent Draw Process</h3>
@@ -124,7 +124,7 @@ export default function AboutUsPage() {
               {/* Difference Item */}
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <Check className="h-6 w-6 text-[#8EE000]" />
+                  <Check className="h-6 w-6 text-[#C3DC6F]" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-[#002D5C] mb-2">Affordable Entry Points</h3>
@@ -137,7 +137,7 @@ export default function AboutUsPage() {
               {/* Difference Item */}
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <Check className="h-6 w-6 text-[#8EE000]" />
+                  <Check className="h-6 w-6 text-[#C3DC6F]" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-[#002D5C] mb-2">Guaranteed Prize Delivery</h3>
@@ -150,7 +150,7 @@ export default function AboutUsPage() {
               {/* Difference Item */}
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <Check className="h-6 w-6 text-[#8EE000]" />
+                  <Check className="h-6 w-6 text-[#C3DC6F]" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-[#002D5C] mb-2">Responsive Customer Support</h3>
@@ -163,7 +163,7 @@ export default function AboutUsPage() {
               {/* Difference Item */}
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <Check className="h-6 w-6 text-[#8EE000]" />
+                  <Check className="h-6 w-6 text-[#C3DC6F]" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-[#002D5C] mb-2">Limited Ticket Numbers</h3>
@@ -176,7 +176,7 @@ export default function AboutUsPage() {
               {/* Difference Item */}
               <div className="flex items-start">
                 <div className="flex-shrink-0 mt-1">
-                  <Check className="h-6 w-6 text-[#8EE000]" />
+                  <Check className="h-6 w-6 text-[#C3DC6F]" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-[#002D5C] mb-2">Cash Alternatives</h3>
@@ -252,7 +252,7 @@ export default function AboutUsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               {/* Contact Method */}
               <div className="bg-white/10 rounded-lg p-6 text-center">
-                <div className="w-12 h-12 bg-[#8EE000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-[#C3DC6F] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Mail className="h-6 w-6 text-[#002D5C]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Email Us</h3>
@@ -262,7 +262,7 @@ export default function AboutUsPage() {
               
               {/* Contact Method */}
               <div className="bg-white/10 rounded-lg p-6 text-center">
-                <div className="w-12 h-12 bg-[#8EE000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-[#C3DC6F] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Phone className="h-6 w-6 text-[#002D5C]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Call Us</h3>
@@ -272,7 +272,7 @@ export default function AboutUsPage() {
               
               {/* Contact Method */}
               <div className="bg-white/10 rounded-lg p-6 text-center">
-                <div className="w-12 h-12 bg-[#8EE000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-[#C3DC6F] rounded-full flex items-center justify-center mx-auto mb-4">
                   <MapPin className="h-6 w-6 text-[#002D5C]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Visit Us</h3>
@@ -282,7 +282,7 @@ export default function AboutUsPage() {
             </div>
             
             <div className="text-center mt-12">
-              <Button asChild className="bg-[#8EE000] hover:bg-[#8EE000]/90 text-[#002D5C]">
+              <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
                 <Link href="/competitions">Explore Our Competitions</Link>
               </Button>
             </div>

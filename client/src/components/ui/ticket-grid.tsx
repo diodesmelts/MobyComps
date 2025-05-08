@@ -235,8 +235,8 @@ export function TicketGrid({
                 className={cn(
                   "h-10 w-full rounded flex items-center justify-center text-sm font-medium transition-all",
                   {
-                    'border-2 border-[#8EE000] bg-[#8EE000]/10 text-[#002D5C]': buttonState === 'selected',
-                    'border border-gray-300 hover:bg-[#8EE000]/10 hover:border-[#8EE000] text-gray-700': buttonState === 'available',
+                    'border-2 border-[#C3DC6F] bg-[#C3DC6F]/10 text-[#002D5C]': buttonState === 'selected',
+                    'border border-gray-300 hover:bg-[#C3DC6F]/10 hover:border-[#C3DC6F] text-gray-700': buttonState === 'available',
                     'border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed': buttonState === 'purchased',
                   }
                 )}
@@ -267,7 +267,7 @@ export function TicketGrid({
       {/* Confirm Button */}
       <div className="pt-4 border-t border-gray-200 flex justify-end">
         <Button 
-          className="px-6 py-2.5 bg-[#8EE000] text-[#002D5C] font-medium rounded-md hover:bg-[#8EE000]/90"
+          className="px-6 py-2.5 bg-[#C3DC6F] text-[#002D5C] font-medium rounded-md hover:bg-[#C3DC6F]/90"
           disabled={selectedTickets.length === 0 || loading || isLoadingTickets}
           onClick={onConfirmSelection}
         >
