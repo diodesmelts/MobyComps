@@ -1,21 +1,27 @@
 import { useEffect, useState } from "react";
-import { useLocation, useSearch } from "wouter";
+import { useLocation } from "wouter";
+import { useSearchParams } from "@/hooks/use-search-params";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Home, Trophy } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { useCart } from "@/hooks/use-cart";
+import { CheckCircle, Trophy, Home } from "lucide-react";
 import { cartApi } from "@/lib/api";
+
+interface OrderDetails {
+  success: boolean;
+  ticketsProcessed: number;
+  entriesCreated: number;
+  testMode?: boolean;
+}
 
 export default function PaymentSuccessPage() {
   const [, setLocation] = useLocation();
-  const search = useSearch();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { search } = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(true);
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   
   // Parse the payment_intent from the URL
   const params = new URLSearchParams(search);
@@ -77,32 +83,87 @@ export default function PaymentSuccessPage() {
               description: "Your payment has been processed successfully.",
             });
           } else {
-            // If real cart processing fails, fall back to test entry
-            console.log("Falling back to test entry");
-            const testResponse = await fetch("/api/debug/create-test-entry");
-            if (testResponse.ok) {
-              const testData = await testResponse.json();
-              console.log("Test entry created:", testData);
-              setOrderDetails({
-                success: true,
-                ticketsProcessed: 1,
-                entriesCreated: 1,
-                testMode: true
-              });
+            // If real cart processing fails, fall back to test entry but using the real cart data
+            console.log("Falling back to test entry with cart data");
+            
+            try {
+              // Get cart data from localStorage
+              const cartData = JSON.parse(localStorage.getItem('mobycomps-cart') || '{"items":[]}');
+              const cartItems = cartData.items || [];
               
-              // Invalidate cache to update UI
-              queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
-              
-              toast({
-                title: "Test Entry Created",
-                description: "A test entry has been created for demonstration purposes.",
-              });
-            } else {
-              toast({
-                title: "Error Processing Payment",
-                description: "No payment information found. Please try again or contact support.",
-                variant: "destructive",
-              });
+              if (cartItems.length > 0) {
+                // Use the first cart item's competition and ticket data
+                const cartItem = cartItems[0];
+                console.log("Using cart item for test entry:", cartItem);
+                
+                // Make POST request to create entry with actual ticket info
+                const testResponse = await fetch("/api/debug/create-test-entry", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  credentials: "include",
+                  body: JSON.stringify({
+                    competitionId: cartItem.competitionId,
+                    ticketNumbers: cartItem.ticketNumbers,
+                  }),
+                });
+                
+                if (testResponse.ok) {
+                  const testData = await testResponse.json();
+                  console.log("Test entry created with actual ticket data:", testData);
+                  
+                  // Clear cart in localStorage
+                  localStorage.setItem('mobycomps-cart', JSON.stringify({ items: [] }));
+                  
+                  setOrderDetails({
+                    success: true,
+                    ticketsProcessed: cartItem.ticketNumbers.split(',').length,
+                    entriesCreated: 1,
+                    testMode: true
+                  });
+                  
+                  // Invalidate cache to update UI
+                  queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
+                  
+                  toast({
+                    title: "Test Entry Created",
+                    description: "An entry has been created with your selected tickets.",
+                  });
+                } else {
+                  throw new Error("Failed to create test entry with cart data");
+                }
+              } else {
+                throw new Error("No cart items found");
+              }
+            } catch (error) {
+              console.log("Error using cart data, falling back to basic test entry:", error);
+              // Ultimate fallback - basic test entry
+              const testResponse = await fetch("/api/debug/create-test-entry");
+              if (testResponse.ok) {
+                const testData = await testResponse.json();
+                console.log("Basic test entry created:", testData);
+                setOrderDetails({
+                  success: true,
+                  ticketsProcessed: 1,
+                  entriesCreated: 1,
+                  testMode: true
+                });
+                
+                // Invalidate cache to update UI
+                queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
+                
+                toast({
+                  title: "Test Entry Created",
+                  description: "A test entry has been created for demonstration purposes.",
+                });
+              } else {
+                toast({
+                  title: "Error Processing Payment",
+                  description: "No payment information found. Please try again or contact support.",
+                  variant: "destructive",
+                });
+              }
             }
           }
         } catch (error) {

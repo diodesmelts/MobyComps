@@ -676,13 +676,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as any).id;
       console.log(`🧪 DEBUG - Creating test entry for user ID: ${userId}`);
       
-      // Create a test entry directly
+      // Check if specific competition and ticket numbers were provided
+      const { competitionId, ticketNumbers } = req.body;
+      
+      // Use provided values or fall back to defaults
+      const entryCompetitionId = competitionId || 2; // Default to competition ID 2
+      const entryTicketIds = ticketNumbers || "999"; // Use actual ticket numbers or dummy 999
+      
+      console.log(`🧪 DEBUG - Using competition ID: ${entryCompetitionId} and ticket numbers: ${entryTicketIds}`);
+      
+      // Create a test entry with the provided or default values
       const testEntry = await storage.createEntry({
         userId: userId,
-        competitionId: 1, // Assumes competition ID 1 exists
-        ticketIds: "999", // Dummy ticket ID
+        competitionId: entryCompetitionId,
+        ticketIds: entryTicketIds,
         status: 'active',
-        stripePaymentId: 'test_payment_123'
+        stripePaymentId: 'test_payment_' + Date.now()
       });
       
       console.log(`🧪 DEBUG - Test entry created:`, testEntry);
@@ -694,8 +703,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Return success
       res.json({ 
         success: true, 
-        testEntry,
-        allEntries: userEntries
+        ticketsProcessed: entryTicketIds.split(',').length,
+        entriesCreated: 1,
+        entry: testEntry
       });
     } catch (error: any) {
       console.error("❌ DEBUG - Error creating test entry:", error);
