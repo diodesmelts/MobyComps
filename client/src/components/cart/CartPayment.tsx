@@ -133,8 +133,8 @@ export default function CartPayment() {
     setError(null);
 
     try {
-      console.log("Initializing payment for amount:", totalAmount);
-      const { clientSecret } = await paymentApi.createPaymentIntent(totalAmount);
+      console.log("Initializing payment...");
+      const { clientSecret } = await paymentApi.createPaymentIntent();
       setClientSecret(clientSecret);
     } catch (err: any) {
       console.error("Payment initialization error:", err);

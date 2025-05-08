@@ -108,7 +108,7 @@ export default function CartSummary() {
     }
 
     try {
-      const { clientSecret } = await paymentApi.createPaymentIntent(totalAmount);
+      const { clientSecret } = await paymentApi.createPaymentIntent();
       setClientSecret(clientSecret);
       setIsPaymentOpen(true);
     } catch (error) {
