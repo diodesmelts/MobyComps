@@ -4,6 +4,10 @@ export default {
   darkMode: ["class"],
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    fontFamily: {
+      sans: ['Open Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      heading: ['Open Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+    },
     extend: {
       borderRadius: {
         lg: "var(--radius)",

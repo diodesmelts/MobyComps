@@ -51,7 +51,7 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
       {/* Content */}
       <div className="p-4 flex flex-col flex-grow">
         {/* Title */}
-        <h3 className="text-xl font-bold text-[#002D5C] mb-3 text-center">{title}</h3>
+        <h3 className="text-xl font-extrabold text-[#002D5C] mb-3 text-center leading-tight">{title}</h3>
         
         {/* Win chance badge */}
         <div className="flex justify-center mb-4">
