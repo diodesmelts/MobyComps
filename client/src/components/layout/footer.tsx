@@ -45,13 +45,48 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li><Link href="/competitions?category=electronics" className="hover:text-[#C3DC6F]">Electronics</Link></li>
-              <li><Link href="/competitions?category=kids" className="hover:text-[#C3DC6F]">Kids</Link></li>
-              <li><Link href="/competitions?category=days_out" className="hover:text-[#C3DC6F]">Days Out</Link></li>
-              <li><Link href="/competitions?category=cash_prizes" className="hover:text-[#C3DC6F]">Cash Prizes</Link></li>
-              <li><Link href="/competitions?category=household" className="hover:text-[#C3DC6F]">Household</Link></li>
-              <li><Link href="/competitions?category=beauty" className="hover:text-[#C3DC6F]">Beauty</Link></li>
-              <li><Link href="/competitions?category=family" className="hover:text-[#C3DC6F]">Family</Link></li>
+              <li>
+                <Link href="/competitions?category=electronics" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>
+                  Electronics
+                </Link>
+              </li>
+              <li>
+                <Link href="/competitions?category=kids" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
+                  Kids
+                </Link>
+              </li>
+              <li>
+                <Link href="/competitions?category=days_out" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
+                  Days Out
+                </Link>
+              </li>
+              <li>
+                <Link href="/competitions?category=cash_prizes" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+                  Cash Prizes
+                </Link>
+              </li>
+              <li>
+                <Link href="/competitions?category=household" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#8B5CF6]"></span>
+                  Household
+                </Link>
+              </li>
+              <li>
+                <Link href="/competitions?category=beauty" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#F97316]"></span>
+                  Beauty
+                </Link>
+              </li>
+              <li>
+                <Link href="/competitions?category=family" className="hover:text-[#C3DC6F] flex items-center gap-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#EC4899]"></span>
+                  Family
+                </Link>
+              </li>
             </ul>
           </div>
           

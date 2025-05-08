@@ -24,16 +24,16 @@ import {
 } from "@/components/ui/pagination";
 import { Search, Filter, Loader2 } from "lucide-react";
 
-// Category options
+// Category options with color dots
 const categories = [
-  { value: "all", label: "All Prizes" },
-  { value: "electronics", label: "Electronics" },
-  { value: "cash_prizes", label: "Cash Prizes" },
-  { value: "family", label: "Family" },
-  { value: "household", label: "Household" },
-  { value: "kids", label: "Kids" },
-  { value: "days_out", label: "Days Out" },
-  { value: "beauty", label: "Beauty" },
+  { value: "all", label: "All Prizes", color: "#6366F1" }, // Indigo
+  { value: "electronics", label: "Electronics", color: "#2563EB" }, // Blue
+  { value: "cash_prizes", label: "Cash Prizes", color: "#10B981" }, // Emerald
+  { value: "family", label: "Family", color: "#EC4899" }, // Pink
+  { value: "household", label: "Household", color: "#8B5CF6" }, // Violet
+  { value: "kids", label: "Kids", color: "#F59E0B" }, // Amber
+  { value: "days_out", label: "Days Out", color: "#EF4444" }, // Red
+  { value: "beauty", label: "Beauty", color: "#F97316" }, // Orange
 ];
 
 export default function CompetitionsPage() {
@@ -170,8 +170,12 @@ export default function CompetitionsPage() {
                 <TabsTrigger 
                   key={category.value} 
                   value={category.value}
-                  className="px-4 py-2"
+                  className="px-4 py-2 flex items-center gap-2"
                 >
+                  <span 
+                    className="inline-block w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: category.color }}
+                  ></span>
                   {category.label}
                 </TabsTrigger>
               ))}

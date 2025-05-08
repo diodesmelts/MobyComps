@@ -368,13 +368,48 @@ export default function AdminCompetitionsPage() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      <SelectItem value="electronics">Electronics</SelectItem>
-                                      <SelectItem value="kids">Kids</SelectItem>
-                                      <SelectItem value="days_out">Days Out</SelectItem>
-                                      <SelectItem value="beauty">Beauty</SelectItem>
-                                      <SelectItem value="household">Household</SelectItem>
-                                      <SelectItem value="cash_prizes">Cash Prizes</SelectItem>
-                                      <SelectItem value="family">Family</SelectItem>
+                                      <SelectItem value="electronics" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>
+                                          Electronics
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="kids" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
+                                          Kids
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="days_out" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
+                                          Days Out
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="beauty" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#F97316]"></span>
+                                          Beauty
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="household" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#8B5CF6]"></span>
+                                          Household
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="cash_prizes" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+                                          Cash Prizes
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="family" className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#EC4899]"></span>
+                                          Family
+                                        </div>
+                                      </SelectItem>
                                     </SelectContent>
                                   </Select>
                                   <FormMessage />
