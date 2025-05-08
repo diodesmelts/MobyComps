@@ -186,7 +186,7 @@ export default function AdminCompetitionsPage() {
           const formData = new FormData();
           formData.append("image", values.imageFile[0]);
           
-          const response = await fetch("/api/upload/image", {
+          const response = await fetch("/api/uploads/image", {
             method: "POST",
             body: formData,
             credentials: 'include'
