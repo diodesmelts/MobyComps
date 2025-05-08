@@ -1,11 +1,12 @@
-import { formatPrice } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Trash2, Image } from "lucide-react";
 import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
+import { Competition } from "@shared/schema";
 
 interface CartItemDisplayProps {
   item: any;
-  competition: any;
+  competition: Competition;
   onRemove: () => void;
   isRemoving: boolean;
 }
@@ -16,25 +17,27 @@ export function CartItemDisplay({
   onRemove,
   isRemoving
 }: CartItemDisplayProps) {
-  if (!competition) return null;
+  if (!competition) {
+    return null;
+  }
   
   const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
-  const ticketPrice = competition?.ticketPrice || 0;
-  const total = ticketPrice * ticketCount;
+  const ticketPrice = competition.ticketPrice || 0;
+  const total = ticketCount * ticketPrice;
   
   return (
-    <div className="flex flex-col md:flex-row gap-4 p-4 border rounded-lg bg-white">
+    <div className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
       {/* Competition Image */}
-      <div className="w-full md:w-24 h-24 rounded-md overflow-hidden flex-shrink-0">
+      <div className="w-20 h-20 flex-shrink-0 rounded-md overflow-hidden">
         {competition.imageUrl ? (
-          <img
-            src={competition.imageUrl}
+          <img 
+            src={competition.imageUrl} 
             alt={competition.title}
             className="w-full h-full object-cover"
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <Image className="h-10 w-10 text-gray-400" />
+            <span className="text-gray-400 text-xs">No Image</span>
           </div>
         )}
       </div>

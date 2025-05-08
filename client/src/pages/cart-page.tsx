@@ -158,7 +158,7 @@ export default function CartPage() {
                   Total Tickets:
                 </span>
                 <span className="font-medium">
-                  {cart.items.reduce((sum, item) => {
+                  {cartItems.reduce((sum: number, item: any) => {
                     return sum + (item.ticketNumbers ? item.ticketNumbers.split(',').length : 0);
                   }, 0)}
                 </span>
@@ -169,7 +169,7 @@ export default function CartPage() {
                   Total Competitions:
                 </span>
                 <span className="font-medium">
-                  {cart.items.length}
+                  {cartItems.length}
                 </span>
               </div>
               
