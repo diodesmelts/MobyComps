@@ -184,8 +184,8 @@ export default function CheckoutPage() {
       <Layout title="Checkout" description="Complete your purchase">
         <div className="container mx-auto py-12 flex items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center space-y-4">
-            <Loader2 className="h-12 w-12 animate-spin text-[#002D5C]" />
-            <p className="text-lg text-[#002D5C]">Preparing checkout...</p>
+            <Loader2 className="h-12 w-12 animate-spin text-[#002147]" />
+            <p className="text-lg text-[#002147]">Preparing checkout...</p>
           </div>
         </div>
       </Layout>
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
             
             <div className="mt-6 text-sm text-gray-500">
               <p>
-                <CheckCircle2 className="inline-block h-4 w-4 mr-1 text-[#002D5C]" />
+                <CheckCircle2 className="inline-block h-4 w-4 mr-1 text-[#002147]" />
                 Your payment information is secure and encrypted
               </p>
             </div>
@@ -238,7 +238,7 @@ export default function CheckoutPage() {
           
           {/* Order Summary */}
           <div className="bg-white rounded-lg shadow-md p-6 h-fit">
-            <h2 className="text-xl font-bold text-[#002D5C] mb-4">Order Summary</h2>
+            <h2 className="text-xl font-bold text-[#002147] mb-4">Order Summary</h2>
             
             <div className="space-y-4">
               <div className="flex justify-between">
@@ -251,8 +251,8 @@ export default function CheckoutPage() {
               </div>
               
               <div className="flex justify-between font-bold text-lg">
-                <span className="text-[#002D5C]">Total:</span>
-                <span className="text-[#002D5C]">{formatPrice(calculateTotal())}</span>
+                <span className="text-[#002147]">Total:</span>
+                <span className="text-[#002147]">{formatPrice(calculateTotal())}</span>
               </div>
             </div>
           </div>
