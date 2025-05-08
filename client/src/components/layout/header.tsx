@@ -217,7 +217,7 @@ export function Header() {
       
       {/* Navigation */}
       <nav className="bg-[#002D5C] text-white shadow-md">
-        <div className="container py-3 flex flex-wrap justify-between items-center">
+        <div className="container py-4 flex flex-wrap justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="font-bold text-2xl text-white flex items-center">
@@ -225,7 +225,7 @@ export function Header() {
                 <img 
                   src={siteConfig.logo} 
                   alt="Moby Comps Logo" 
-                  className="h-10 max-w-[160px] object-contain"
+                  className="h-8 max-w-[160px] object-contain"
                 />
               ) : (
                 <>
@@ -237,14 +237,14 @@ export function Header() {
           </div>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-1 text-sm">
+          <div className="hidden md:flex space-x-6 text-sm">
             {navItems.map((item) => (
               <Link 
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "px-3 py-2 rounded hover:bg-[#002D5C]/80", 
-                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#C3DC6F]"
+                  "px-1 py-1 hover:text-[#C3DC6F]", 
+                  location === item.href && "border-b-2 border-[#C3DC6F]"
                 )}
               >
                 {item.label}
@@ -256,8 +256,8 @@ export function Header() {
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "px-3 py-2 rounded hover:bg-[#002D5C]/80", 
-                  location === item.href && "bg-[#002D5C]/30 border-b-2 border-[#C3DC6F]"
+                  "px-1 py-1 hover:text-[#C3DC6F]", 
+                  location === item.href && "border-b-2 border-[#C3DC6F]"
                 )}
               >
                 {item.label}
@@ -335,9 +335,14 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="hidden md:flex bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
-                <Link href="/auth">Sign In</Link>
-              </Button>
+              <div className="hidden md:flex space-x-2">
+                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
+                  <Link href="/auth">Login</Link>
+                </Button>
+                <Button asChild variant="outline" className="text-white border-white hover:bg-white/10">
+                  <Link href="/auth?register=true">Register</Link>
+                </Button>
+              </div>
             )}
             
             {/* Mobile menu button */}
