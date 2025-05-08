@@ -103,12 +103,12 @@ export default function HomePage() {
           
           <div className="container relative z-10 text-white">
             <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-7xl font-medium mb-6 font-['Open_Sans']">
-                Win this<br/>
-                beautiful<br/>
-                Ninja Air Fryer
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 uppercase tracking-wide drop-shadow-md">
+                WIN THIS<br/>
+                BEAUTIFUL<br/>
+                NINJA AIR FRYER
               </h1>
-              <p className="text-xl md:text-2xl font-medium mb-8 text-[#C3DC6F]">Draw 10th May at 9PM</p>
+              <p className="text-xl md:text-3xl font-semibold mb-8 text-[#C3DC6F] drop-shadow-md">DRAW 10TH MAY 9PM</p>
               <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-semibold">
                 <Link href="/competitions">
                   Enter now
