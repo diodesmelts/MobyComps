@@ -65,7 +65,7 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
         
         {/* Price */}
         <div className="text-center my-4">
-          <span className="text-3xl font-bold text-[#C3DC6F]">{formatPrice(ticketPrice)}</span>
+          <span className="text-3xl font-bold text-gray-900">{formatPrice(ticketPrice)}</span>
         </div>
 
         {/* Progress bar */}
