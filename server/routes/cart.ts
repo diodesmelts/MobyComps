@@ -172,73 +172,109 @@ export function registerCartRoutes(app: Express) {
   // Process successful payment
   app.post("/api/process-payment", async (req, res) => {
     try {
+      console.log("🔍 Processing payment - start");
       // This is a simplified version - in production, use Stripe webhooks
       const { paymentIntentId } = req.body;
       
       if (!paymentIntentId) {
+        console.log("❌ Error: Payment intent ID is missing");
         return res.status(400).json({ error: "Payment intent ID is required" });
       }
+      
+      console.log(`📌 Processing payment intent: ${paymentIntentId}`);
       
       // Retrieve payment intent
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
       
       if (paymentIntent.status !== 'succeeded') {
+        console.log(`❌ Payment intent status is not 'succeeded', current status: ${paymentIntent.status}`);
         return res.status(400).json({ error: "Payment has not been completed" });
       }
       
+      console.log(`✅ Payment intent verified successfully: ${paymentIntent.id}`);
+      
       const sessionId = paymentIntent.metadata.sessionId;
+      console.log(`📌 Session ID from payment intent: ${sessionId}`);
+      
       const cartItemsData = JSON.parse(paymentIntent.metadata.cartItems || "[]");
+      console.log(`📌 Cart items from payment intent metadata:`, cartItemsData);
       
       if (!req.isAuthenticated()) {
+        console.log("❌ Error: User not authenticated");
         return res.status(401).json({ error: "User must be logged in to complete purchase" });
       }
       
       // Get user ID safely
       const userId = req.user ? (req.user as any).id : null;
       if (!userId) {
+        console.log("❌ Error: User ID not found");
         return res.status(401).json({ error: "User authentication required" });
       }
+      
+      console.log(`📌 Processing purchase for user ID: ${userId}`);
       
       const purchasedTickets: any[] = [];
       
       // First, get actual cart items with their reserved ticket numbers
       const cartItems = await storage.getCartItems(sessionId);
+      console.log(`📌 Retrieved cart items from database:`, cartItems);
+      
+      if (cartItems.length === 0) {
+        console.log("⚠️ Warning: No cart items found for this session");
+      }
       
       // Process each cart item
       for (const item of cartItems) {
         const { competitionId, ticketNumbers } = item;
+        console.log(`📌 Processing cart item: Competition ID ${competitionId}, Ticket Numbers: ${ticketNumbers}`);
+        
         const ticketNumbersArray = ticketNumbers.split(',').map(num => parseInt(num.trim()));
+        console.log(`📌 Parsed ticket numbers:`, ticketNumbersArray);
         
         // Get the actual ticket IDs for these numbers
         const ticketsToProcess = await storage.getTicketsByNumbers(competitionId, ticketNumbersArray);
+        console.log(`📌 Retrieved tickets from database:`, ticketsToProcess);
+        
         const ticketIds = ticketsToProcess.map(t => t.id);
+        console.log(`📌 Ticket IDs to purchase:`, ticketIds);
         
         if (ticketIds.length !== ticketNumbersArray.length) {
-          console.warn(`Some tickets for competition ${competitionId} could not be found or are no longer available`);
+          console.warn(`❌ Error: Some tickets for competition ${competitionId} could not be found or are no longer available`);
+          console.warn(`Expected ${ticketNumbersArray.length} tickets, found ${ticketIds.length}`);
           return res.status(400).json({ 
             error: `Some tickets for competition ${competitionId} are no longer available` 
           });
         }
         
         // Purchase tickets
+        console.log(`📌 Calling purchaseTickets with ticket IDs:`, ticketIds, `and user ID: ${userId}`);
         const purchased = await storage.purchaseTickets(ticketIds, userId);
+        console.log(`✅ Tickets successfully marked as purchased:`, purchased);
         purchasedTickets.push(...purchased);
         
         // Update competition tickets sold count
+        console.log(`📌 Updating competition's tickets sold count (Competition ID: ${competitionId}, Count: ${purchased.length})`);
         await storage.incrementTicketsSold(competitionId, purchased.length);
         
         // Create entry
-        await storage.createEntry({
+        const entryData = {
           userId,
           competitionId,
           ticketIds: ticketIds.join(','),
-          status: 'active'
-        });
+          status: 'active' as const, // Use const assertion to match the expected enum type
+          stripePaymentId: paymentIntentId
+        };
+        console.log(`📌 Creating entry with data:`, entryData);
+        const newEntry = await storage.createEntry(entryData);
+        console.log(`✅ Entry created successfully:`, newEntry);
       }
       
       // Clear cart
+      console.log(`📌 Clearing cart for session: ${sessionId}`);
       await storage.clearCart(sessionId);
+      console.log(`✅ Cart cleared successfully`);
       
+      console.log("✅ Payment processing completed successfully");
       res.json({ 
         success: true, 
         message: "Payment processed successfully",

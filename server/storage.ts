@@ -385,31 +385,76 @@ export class DatabaseStorage implements IStorage {
   }
   
   async purchaseTickets(ticketIds: number[], userId: number): Promise<Ticket[]> {
+    console.log(`🎫 purchaseTickets - Processing tickets ${JSON.stringify(ticketIds)} for user ${userId}`);
+    
+    // First, verify the tickets we're trying to purchase
+    const ticketsToUpdate = await db
+      .select()
+      .from(tickets)
+      .where(inArray(tickets.id, ticketIds));
+    
+    console.log(`🎫 purchaseTickets - Found ${ticketsToUpdate.length} tickets to update`);
+    console.log(`🎫 purchaseTickets - Ticket details:`, ticketsToUpdate);
+    
+    if (ticketsToUpdate.length === 0) {
+      console.warn(`❌ purchaseTickets - No tickets found with IDs: ${ticketIds}`);
+      return [];
+    }
+    
+    if (ticketsToUpdate.length !== ticketIds.length) {
+      console.warn(`⚠️ purchaseTickets - Not all tickets were found. Expected ${ticketIds.length}, found ${ticketsToUpdate.length}`);
+    }
+    
+    // Check if any tickets are already purchased
+    const alreadyPurchased = ticketsToUpdate.filter(t => t.status === 'purchased');
+    if (alreadyPurchased.length > 0) {
+      console.warn(`⚠️ purchaseTickets - ${alreadyPurchased.length} tickets are already purchased:`, 
+        alreadyPurchased.map(t => `ID: ${t.id}, Number: ${t.number}`));
+    }
+    
     const now = new Date();
     
-    const purchasedTickets = await db
-      .update(tickets)
-      .set({
-        status: 'purchased',
-        userId,
-        purchasedAt: now,
-        reservedAt: null,
-        reservedUntil: null,
-        sessionId: null,
-      })
-      .where(inArray(tickets.id, ticketIds))
-      .returning();
-    
-    return purchasedTickets;
+    try {
+      console.log(`🎫 purchaseTickets - Updating tickets to purchased status...`);
+      const purchasedTickets = await db
+        .update(tickets)
+        .set({
+          status: 'purchased',
+          userId,
+          purchasedAt: now,
+          reservedAt: null,
+          reservedUntil: null,
+          sessionId: null,
+        })
+        .where(inArray(tickets.id, ticketIds))
+        .returning();
+      
+      console.log(`✅ purchaseTickets - Successfully updated ${purchasedTickets.length} tickets to purchased status`);
+      console.log(`🎫 purchaseTickets - Updated ticket details:`, purchasedTickets);
+      
+      return purchasedTickets;
+    } catch (error) {
+      console.error(`❌ purchaseTickets - Error updating tickets:`, error);
+      throw error;
+    }
   }
   
   // Entry operations
   async createEntry(entry: InsertEntry): Promise<Entry> {
-    const [result] = await db
-      .insert(entries)
-      .values(entry)
-      .returning();
-    return result;
+    console.log(`📝 createEntry - Creating entry with data:`, entry);
+    
+    try {
+      const [result] = await db
+        .insert(entries)
+        .values(entry)
+        .returning();
+      
+      console.log(`✅ createEntry - Successfully created entry:`, result);
+      return result;
+    } catch (error) {
+      console.error(`❌ createEntry - Error creating entry:`, error);
+      throw error;
+    }
   }
   
   async getEntry(id: number): Promise<Entry | undefined> {
@@ -440,17 +485,61 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getUserEntries(userId: number): Promise<Entry[]> {
-    const userEntries = await db
-      .select({
-        entry: entries,
-        competition: competitions,
-      })
-      .from(entries)
-      .innerJoin(competitions, eq(entries.competitionId, competitions.id))
-      .where(eq(entries.userId, userId))
-      .orderBy(desc(entries.createdAt));
+    console.log(`🔍 getUserEntries - Fetching entries for user ID: ${userId}`);
     
-    return userEntries.map(({ entry }) => entry);
+    try {
+      // First, check if the user exists
+      const user = await db.select().from(users).where(eq(users.id, userId));
+      
+      if (user.length === 0) {
+        console.warn(`⚠️ getUserEntries - User with ID ${userId} not found`);
+      } else {
+        console.log(`👤 getUserEntries - Found user: ${user[0].username} (${user[0].email})`);
+      }
+      
+      // Check if any entries exist for this user at all
+      const entriesCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(entries)
+        .where(eq(entries.userId, userId));
+      
+      console.log(`📊 getUserEntries - Found ${entriesCount[0].count} total entries for user ID ${userId}`);
+      
+      if (entriesCount[0].count === 0) {
+        console.log(`ℹ️ getUserEntries - No entries found for user ID ${userId}`);
+        return [];
+      }
+      
+      // Now get the entries with competition details
+      const userEntries = await db
+        .select({
+          entry: entries,
+          competition: competitions,
+        })
+        .from(entries)
+        .innerJoin(competitions, eq(entries.competitionId, competitions.id))
+        .where(eq(entries.userId, userId))
+        .orderBy(desc(entries.createdAt));
+      
+      console.log(`✅ getUserEntries - Retrieved ${userEntries.length} entries with competition details`);
+      
+      // Debug log the entries
+      userEntries.forEach((entry, index) => {
+        console.log(`📌 Entry ${index + 1}:`, {
+          id: entry.entry.id,
+          competitionId: entry.entry.competitionId,
+          status: entry.entry.status,
+          competitionTitle: entry.competition.title,
+          ticketIds: entry.entry.ticketIds,
+          createdAt: entry.entry.createdAt
+        });
+      });
+      
+      return userEntries.map(({ entry }) => entry);
+    } catch (error) {
+      console.error(`❌ getUserEntries - Error fetching entries:`, error);
+      throw error;
+    }
   }
   
   async getUserWinningEntries(userId: number): Promise<Entry[]> {
