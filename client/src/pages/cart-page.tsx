@@ -6,6 +6,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Loader2, ShoppingBag, ArrowLeft, RefreshCw, ShoppingCart } from "lucide-react";
 import { formatPrice, formatCountdown } from "@/lib/utils";
 import { CartItemDisplay } from "../components/cart/CartItemDisplay";
+import { SimpleCartItem } from "../components/cart/SimpleCartItem";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -314,7 +315,7 @@ export default function CartPage() {
                 }
                 
                 return (
-                  <CartItemDisplay 
+                  <SimpleCartItem 
                     key={item.id}
                     item={item}
                     competition={competition}
