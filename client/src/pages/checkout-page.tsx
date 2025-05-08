@@ -84,7 +84,7 @@ const CheckoutForm = ({ clientSecret }: { clientSecret: string }) => {
       
       <Button 
         type="submit" 
-        className="w-full py-6 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-medium rounded-md text-center"
+        className="w-full py-6 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-medium rounded-md text-center"
         disabled={isProcessing || !stripe || !elements}
       >
         {isProcessing ? (
@@ -212,7 +212,7 @@ export default function CheckoutPage() {
       <div className="container mx-auto py-8 px-4">
         <Button 
           variant="ghost" 
-          className="text-[#002D5C] mb-6"
+          className="text-[#002147] mb-6"
           onClick={() => setLocation("/cart")}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
-            <h1 className="text-2xl font-bold text-[#002D5C] mb-6">Payment Details</h1>
+            <h1 className="text-2xl font-bold text-[#002147] mb-6">Payment Details</h1>
             
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutForm clientSecret={clientSecret} />

@@ -285,8 +285,8 @@ export default function CartPage() {
             
             {cartTimeRemaining > 0 && (
               <div className="bg-[#C3DC6F]/20 p-3 flex items-center space-x-2 rounded-md mb-6">
-                <div className="h-4 w-4 bg-[#002D5C] rounded-full animate-pulse"></div>
-                <p className="text-sm font-medium text-[#002D5C]">
+                <div className="h-4 w-4 bg-[#002147] rounded-full animate-pulse"></div>
+                <p className="text-sm font-medium text-[#002147]">
                   Your tickets are reserved for {timeRemaining}
                 </p>
               </div>
@@ -354,7 +354,7 @@ export default function CartPage() {
           
           {/* Order Summary Section */}
           <div className="bg-white rounded-lg shadow-md p-6 h-fit">
-            <h2 className="text-xl font-bold text-[#002D5C] mb-4">Order Summary</h2>
+            <h2 className="text-xl font-bold text-[#002147] mb-4">Order Summary</h2>
             
             <div className="space-y-4">
               <div className="flex justify-between">
@@ -380,12 +380,12 @@ export default function CartPage() {
               <Separator />
               
               <div className="flex justify-between font-bold text-lg">
-                <span className="text-[#002D5C]">Total:</span>
-                <span className="text-[#002D5C]">{formatPrice(calculateTotal())}</span>
+                <span className="text-[#002147]">Total:</span>
+                <span className="text-[#002147]">{formatPrice(calculateTotal())}</span>
               </div>
               
               <Button 
-                className="w-full py-6 mt-4 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-medium rounded-md text-center"
+                className="w-full py-6 mt-4 bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-medium rounded-md text-center"
                 onClick={handleCheckout}
                 disabled={isProcessing}
               >
