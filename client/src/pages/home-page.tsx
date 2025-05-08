@@ -125,7 +125,7 @@ export default function HomePage() {
         <section className="py-16 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C]">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-[#002D5C]">
                 Live Competitions
               </h2>
               <p className="text-xl text-gray-700 mt-4 max-w-2xl mx-auto">
@@ -197,7 +197,7 @@ export default function HomePage() {
         <section className="py-20 bg-gray-100">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C]">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-[#002D5C]">
                 How It Works
               </h2>
               <p className="text-xl text-gray-700 mt-4 max-w-2xl mx-auto">
@@ -208,19 +208,19 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
               <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
                 <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">1</div>
-                <h3 className="text-xl font-semibold text-[#002D5C] mb-3 mt-4">Buy Tickets</h3>
+                <h3 className="text-xl font-bold text-[#002D5C] mb-3 mt-4">Buy Tickets</h3>
                 <p className="text-gray-600">Choose a competition, select your tickets, and make a secure payment.</p>
               </div>
               
               <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
                 <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">2</div>
-                <h3 className="text-xl font-semibold text-[#002D5C] mb-3 mt-4">Reveal Result</h3>
+                <h3 className="text-xl font-bold text-[#002D5C] mb-3 mt-4">Reveal Result</h3>
                 <p className="text-gray-600">Winners are automatically selected on the draw date and notified immediately.</p>
               </div>
               
               <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
                 <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">3</div>
-                <h3 className="text-xl font-semibold text-[#002D5C] mb-3 mt-4">Claim Prize</h3>
+                <h3 className="text-xl font-bold text-[#002D5C] mb-3 mt-4">Claim Prize</h3>
                 <p className="text-gray-600">If you win, we'll contact you to arrange delivery of your prize!</p>
               </div>
             </div>
