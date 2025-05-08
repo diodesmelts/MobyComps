@@ -19,7 +19,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
   isRemoving
 }) => {
   const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
-  const ticketNumbers = item.ticketNumbers ? item.ticketNumbers.split(',') : [];
+  const ticketNumbers = item.ticketNumbers ? item.ticketNumbers.split(',').map(Number) : [];
   const totalPrice = competition.ticketPrice * ticketCount;
   
   return (
@@ -67,7 +67,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
         </div>
         
         <div className="flex flex-wrap gap-1 mb-2">
-          {ticketNumbers.slice(0, 5).map((number, index) => (
+          {ticketNumbers.slice(0, 5).map((number: number, index: number) => (
             <span
               key={index}
               className="text-xs bg-[#C3DC6F]/20 text-[#002D5C] px-2 py-1 rounded font-medium"
