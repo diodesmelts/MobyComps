@@ -28,12 +28,14 @@ export function registerUploadRoutes(app: Express) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
-  // Upload endpoint for images
-  app.post("/api/uploads/image", isAuthenticated, upload.single("image"), async (req, res) => {
+  // Handler function for image uploads
+  const handleImageUpload = async (req: Request, res: Response) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
       }
+      
+      console.log("File upload received:", req.file.originalname, req.file.mimetype, req.file.size);
 
       // For simplicity, just generate a unique filename
       const timestamp = Date.now();
@@ -46,6 +48,8 @@ export function registerUploadRoutes(app: Express) {
       // Return the URL that can be used to access the file
       const fileUrl = `/uploads/${filename}`;
       
+      console.log("File saved successfully:", filename, "URL:", fileUrl);
+      
       res.json({
         success: true,
         fileUrl,
@@ -53,9 +57,17 @@ export function registerUploadRoutes(app: Express) {
         filename
       });
     } catch (error: any) {
+      console.error("File upload error:", error);
       res.status(500).json({ error: error.message });
     }
-  });
+  };
+
+  // Register routes for both singular and plural versions
+  // Upload endpoint for images (plural - preferred)
+  app.post("/api/uploads/image", isAuthenticated, upload.single("image"), handleImageUpload);
+  
+  // Compatibility endpoint (singular)
+  app.post("/api/upload/image", isAuthenticated, upload.single("image"), handleImageUpload);
   
   // Simple upload endpoint without authentication for testing
   app.post("/api/upload-test", upload.single("image"), async (req, res) => {
