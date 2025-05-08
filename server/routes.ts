@@ -158,6 +158,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  app.post("/api/process-payment", async (req, res) => {
+    try {
+      console.log("💰 Processing payment...");
+      const { paymentIntentId } = req.body;
+      
+      if (!paymentIntentId) {
+        console.error("❌ Error: Missing payment intent ID");
+        return res.status(400).json({ error: "Missing payment intent ID" });
+      }
+      
+      console.log(`💰 Processing payment intent: ${paymentIntentId}`);
+      
+      // Retrieve the payment intent from Stripe to verify it's successful
+      const paymentIntent = await stripeService.getPaymentIntent(paymentIntentId);
+      console.log(`💰 Payment intent status: ${paymentIntent.status}`);
+      
+      if (paymentIntent.status !== 'succeeded') {
+        console.error(`❌ Payment intent ${paymentIntentId} has not succeeded. Status: ${paymentIntent.status}`);
+        return res.status(400).json({ error: "Payment not successful" });
+      }
+      
+      // Get the session ID from the metadata
+      const sessionId = paymentIntent.metadata.sessionId;
+      if (!sessionId) {
+        console.error("❌ No session ID found in payment intent metadata");
+        return res.status(400).json({ error: "No session ID associated with this payment" });
+      }
+      
+      console.log(`💰 Retrieved session ID from payment: ${sessionId}`);
+      
+      // Get cart items for this session
+      const cartItems = await storage.getCartItems(sessionId);
+      console.log(`💰 Retrieved ${cartItems.length} cart items for session`);
+      
+      if (cartItems.length === 0) {
+        console.error("❌ No cart items found for this session");
+        return res.status(400).json({ error: "No items in cart to process" });
+      }
+      
+      // Process each cart item
+      const userId = req.isAuthenticated() ? (req.user as any).id : null;
+      if (!userId) {
+        console.error("❌ User not authenticated");
+        return res.status(401).json({ error: "User not authenticated" });
+      }
+      
+      console.log(`💰 Processing purchase for user ID: ${userId}`);
+      
+      let entriesCreated = 0;
+      let ticketsProcessed = 0;
+      
+      for (const item of cartItems) {
+        try {
+          const ticketNumbers = item.ticketNumbers.split(',').map(n => parseInt(n.trim()));
+          
+          console.log(`💰 Processing tickets: ${JSON.stringify(ticketNumbers)} for competition ${item.competitionId}`);
+          
+          // Get the actual ticket records for these numbers
+          const tickets = await storage.getTicketsByNumbers(item.competitionId, ticketNumbers);
+          console.log(`💰 Retrieved ${tickets.length} ticket records: ${JSON.stringify(tickets.map(t => ({ id: t.id, number: t.number })))}`);
+          
+          if (tickets.length !== ticketNumbers.length) {
+            console.warn(`⚠️ Warning: Expected ${ticketNumbers.length} tickets, but found ${tickets.length}`);
+          }
+          
+          if (tickets.length === 0) {
+            console.error(`❌ No tickets found for competition ${item.competitionId} with numbers ${ticketNumbers}`);
+            continue;
+          }
+          
+          // Mark tickets as purchased
+          const ticketIds = tickets.map(ticket => ticket.id);
+          console.log(`💰 Marking tickets as purchased: ${JSON.stringify(ticketIds)}`);
+          
+          const updatedTickets = await storage.purchaseTickets(ticketIds, userId);
+          console.log(`💰 Updated ${updatedTickets.length} tickets to purchased status: ${JSON.stringify(updatedTickets.map(t => ({ id: t.id, number: t.number, status: t.status })))}`);
+          
+          ticketsProcessed += updatedTickets.length;
+          
+          // Create entry record in the database
+          const entry = await storage.createEntry({
+            userId: userId,
+            competitionId: item.competitionId,
+            ticketIds: ticketIds.join(','),
+            status: 'active',
+            stripePaymentId: paymentIntentId,
+          });
+          
+          console.log(`💰 Created new entry: ${JSON.stringify(entry)}`);
+          entriesCreated++;
+        } catch (itemError: any) {
+          console.error(`❌ Error processing cart item ${item.id}:`, itemError);
+        }
+      }
+      
+      console.log(`💰 Payment processing complete! ${ticketsProcessed} tickets purchased, ${entriesCreated} entries created`);
+      
+      res.json({
+        success: true,
+        ticketsProcessed,
+        entriesCreated,
+        message: "Payment processed successfully"
+      });
+    } catch (error: any) {
+      console.error("❌ Error processing payment:", error);
+      res.status(500).json({ 
+        error: error.message || "Failed to process payment" 
+      });
+    }
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   
