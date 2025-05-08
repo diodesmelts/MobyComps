@@ -83,7 +83,7 @@ export default function HomePage() {
       <main className="flex-grow">
         {/* Hero Banner */}
         <section 
-          className="relative w-full h-[550px] md:h-[600px] bg-[#002D5C] flex items-center" 
+          className="relative w-full h-[450px] md:h-[500px] bg-[#002D5C] flex items-center" 
           style={hasValidHeroBanner() ? {
             backgroundImage: `url(${getFullImageUrl(heroBanner!.value)})`,
             backgroundSize: 'cover',
