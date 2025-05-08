@@ -10,8 +10,8 @@ import { registerSiteConfigRoutes } from "./routes/site-config";
 import { stripeService } from "./services/StripeService";
 import { storage } from "./storage";
 import { db } from "./db";
-import { tickets, entries } from "@shared/schema";
-import { eq, inArray } from "drizzle-orm";
+import { tickets, entries, users } from "@shared/schema";
+import { eq, inArray, desc, and, sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
@@ -38,23 +38,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as any).id;
       console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
       
-      // Removed direct SQL queries and replaced with safer approach
+      if (!userId) {
+        console.error("❌ Invalid user ID:", userId);
+        return res.json([]);  // Return empty array
+      }
       
-      // Get entries via drizzle ORM query instead of raw SQL
       try {
-        // First, verify if user exists 
-        const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        // Get entries directly using SQL to avoid ORM issues
+        const result = await db.execute(
+          `SELECT e.*, c.title as competition_title, c.image_url as competition_image_url 
+           FROM entries e 
+           JOIN competitions c ON e.competition_id = c.id 
+           WHERE e.user_id = $1 
+           ORDER BY e.created_at DESC`,
+          [userId]
+        );
         
-        console.log(`🔍 STEP 5 - User check:`, user && user.length > 0 ? "Found" : "Not found");
+        console.log(`✅ STEP 5 - Found ${result.rows.length} entries directly with SQL`);
         
-        // Check if there are any entries in the table at all
-        console.log(`🔍 STEP 5 - Checking for entries table data...`);
+        // Convert the raw SQL result to Entry objects with competition details
+        const entries = result.rows.map(row => ({
+          id: parseInt(row.id, 10),
+          userId: parseInt(row.user_id, 10),
+          competitionId: parseInt(row.competition_id, 10),
+          ticketIds: row.ticket_ids,
+          status: row.status,
+          stripePaymentId: row.stripe_payment_id,
+          createdAt: new Date(row.created_at),
+          // Include competition details
+          competition: {
+            title: row.competition_title,
+            imageUrl: row.competition_image_url
+          }
+        }));
         
-        // Use the storage method which has been fixed
-        const userEntries = await storage.getUserEntries(userId);
-        console.log(`🔍 STEP 5 - Storage getUserEntries returned ${userEntries.length} entries`);
-        
-        res.json(userEntries);
+        res.json(entries);
       } catch (dbError) {
         console.error("❌ STEP 5 - Database error in entries route:", dbError);
         // Send back empty array instead of error to avoid breaking the frontend
@@ -117,9 +135,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Convert the raw SQL result to Entry objects with competition details
         const entries = result.rows.map(row => ({
-          id: row.id,
-          userId: row.user_id,
-          competitionId: row.competition_id,
+          id: parseInt(row.id, 10),
+          userId: parseInt(row.user_id, 10),
+          competitionId: parseInt(row.competition_id, 10),
           ticketIds: row.ticket_ids,
           status: row.status,
           stripePaymentId: row.stripe_payment_id,
