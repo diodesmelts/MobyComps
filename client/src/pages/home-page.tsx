@@ -1,17 +1,22 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { CompetitionCard } from "@/components/ui/competition-card";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function HomePage() {
+  // State for selected category
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  
   // Get featured competitions
   const { competitions, isLoading } = useCompetitions({
     featured: true,
-    limit: 3
+    limit: 6,
+    category: selectedCategory !== "all" ? selectedCategory : undefined
   });
   
   // Get hero banner from site config
@@ -30,6 +35,23 @@ export default function HomePage() {
       console.error("Error fetching hero banner:", error);
     }
   });
+  
+  // Category options with color dots
+  const categories = [
+    { value: "all", label: "All Prizes", color: "#6366F1" },
+    { value: "electronics", label: "Electronics", color: "#2563EB" },
+    { value: "cash_prizes", label: "Cash Prizes", color: "#10B981" },
+    { value: "family", label: "Family", color: "#EC4899" },
+    { value: "household", label: "Household", color: "#8B5CF6" },
+    { value: "kids", label: "Kids", color: "#F59E0B" },
+    { value: "days_out", label: "Days Out", color: "#EF4444" },
+    { value: "beauty", label: "Beauty", color: "#F97316" },
+  ];
+  
+  // Handle category change
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+  };
   
   // Default hero banner background - no need to display if image is missing
   const defaultHeroBgColor = "#002D5C";
@@ -99,20 +121,59 @@ export default function HomePage() {
           </div>
         </section>
         
-        {/* Featured Competitions */}
+        {/* Live Competitions */}
         <section className="py-12 bg-gray-50">
-          <div className="container">
-            <div className="text-center mb-10">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-6">
               <h2 className="text-3xl font-bold text-[#002D5C]">Live Competitions</h2>
-              <p className="text-gray-600 mt-2">Don't miss your chance to win these <span className="text-[#C3DC6F] font-medium">amazing prizes</span>! New competitions added regularly.</p>
+              <p className="text-gray-600 mt-2">
+                Don't miss your chance to win these <span className="text-[#C3DC6F] font-medium">amazing prizes</span>! New competitions added regularly.
+              </p>
+            </div>
+            
+            {/* Category Filter Buttons */}
+            <div className="flex flex-wrap justify-center gap-2 mb-6">
+              {categories.map((category) => (
+                <button
+                  key={category.value}
+                  onClick={() => handleCategoryChange(category.value)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                    selectedCategory === category.value
+                      ? "bg-[#002D5C] text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <span 
+                    className="inline-block w-2.5 h-2.5 rounded-full" 
+                    style={{ backgroundColor: category.color }}
+                  ></span>
+                  {category.label}
+                </button>
+              ))}
             </div>
             
             {isLoading ? (
               <div className="flex justify-center py-12">
                 <Loader2 className="h-12 w-12 animate-spin text-[#002D5C]" />
               </div>
+            ) : competitions?.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-lg shadow-sm">
+                <div className="mb-4">
+                  <Filter className="h-12 w-12 mx-auto text-gray-300" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-2">No competitions found</h3>
+                <p className="text-gray-600 mb-4">
+                  We couldn't find any competitions matching your criteria.
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSelectedCategory("all")}
+                >
+                  Reset Filters
+                </Button>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
                 {competitions?.map((competition) => (
                   <CompetitionCard key={competition.id} competition={competition} />
                 ))}
