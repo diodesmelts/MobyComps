@@ -272,11 +272,11 @@ export function Header() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="relative p-2 rounded-full bg-[#002147]/50 hover:bg-[#002147]/70"
+                className="relative p-2 rounded-full bg-white hover:bg-gray-100 border border-gray-200 shadow-sm"
                 onClick={() => setLocation('/cart')}
               >
-                <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-[#C3DC6F] text-[#002147] rounded-full w-4 h-4 text-xs flex items-center justify-center">
+                <ShoppingCart className="h-4 w-4 text-[#002147]" />
+                <span className="absolute -top-1 -right-1 bg-[#C3DC6F] text-[#002147] rounded-full w-4 h-4 text-[10px] font-semibold flex items-center justify-center shadow-sm">
                   {cartItems.length}
                 </span>
               </Button>
@@ -284,22 +284,22 @@ export function Header() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="relative p-2 rounded-full bg-[#002147]/50 hover:bg-[#002147]/70"
+                className="relative p-2 rounded-full bg-white hover:bg-gray-100 border border-gray-200 shadow-sm"
                 onClick={openCart}
               >
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-4 w-4 text-[#002147]" />
               </Button>
             )}
             
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="hidden md:flex items-center bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-medium px-3 py-1.5 rounded-md text-sm">
-                    <span className="bg-[#002147] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2">
+                  <Button className="hidden md:flex items-center bg-white hover:bg-gray-100 text-[#002147] font-semibold text-xs px-2 py-1 rounded-full shadow-sm border border-gray-200">
+                    <div className="bg-[#002147] text-white rounded-full w-7 h-7 flex items-center justify-center mr-2 shadow-sm">
                       {user.username.charAt(0).toUpperCase()}
-                    </span>
-                    {user.role === 'admin' ? 'Admin User' : user.username}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    </div>
+                    <span className="mr-1">{user.role === 'admin' ? 'Admin User' : user.username}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </Button>
@@ -345,10 +345,10 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex space-x-2">
-                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147]">
+                <Button asChild className="bg-white hover:bg-gray-100 text-[#002147] font-semibold px-4 py-1 text-xs rounded-full shadow-sm border border-gray-200">
                   <Link href="/auth">Login</Link>
                 </Button>
-                <Button asChild variant="outline" className="text-white border-white hover:bg-white/10">
+                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-semibold px-4 py-1 text-xs rounded-full shadow-sm">
                   <Link href="/auth?register=true">Register</Link>
                 </Button>
               </div>
@@ -357,8 +357,8 @@ export function Header() {
             {/* Mobile menu button */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden p-2 rounded-md bg-[#002147]/50 hover:bg-[#002147]/70">
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="icon" className="md:hidden p-2 rounded-full bg-white hover:bg-gray-100 border border-gray-200 shadow-sm">
+                  <Menu className="h-4 w-4 text-[#002147]" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-[#002147] text-white">
@@ -452,7 +452,7 @@ export function Header() {
                     ) : (
                       <SheetClose asChild>
                         <Link href="/auth">
-                          <Button className="w-full bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147]">
+                          <Button className="w-full bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147] font-semibold rounded-full shadow-sm text-sm">
                             Sign In
                           </Button>
                         </Link>
