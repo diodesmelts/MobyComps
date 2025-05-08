@@ -70,7 +70,7 @@ export default function PaymentSuccessPage() {
               <CheckCircle className="h-16 w-16 text-[#C3DC6F]" />
             </div>
             
-            <h1 className="text-3xl font-bold text-[#002D5C] mb-2">
+            <h1 className="text-3xl font-bold text-[#002147] mb-2">
               Thank You For Your Purchase!
             </h1>
             
@@ -93,7 +93,7 @@ export default function PaymentSuccessPage() {
             </div>
           ) : (
             <div className="border border-gray-200 rounded-md p-4 mb-8">
-              <h2 className="font-semibold text-lg text-[#002D5C] mb-4">Order Details</h2>
+              <h2 className="font-semibold text-lg text-[#002147] mb-4">Order Details</h2>
               
               {orderDetails ? (
                 <div className="space-y-2 text-sm">
@@ -119,8 +119,8 @@ export default function PaymentSuccessPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="bg-[#002D5C] hover:bg-[#002D5C]/90"
-              onClick={() => setLocation("/account")}
+              className="bg-[#002147] hover:bg-[#002147]/90"
+              onClick={() => setLocation("/my-entries")}
             >
               <Trophy className="h-4 w-4 mr-2" />
               View My Tickets
@@ -128,7 +128,7 @@ export default function PaymentSuccessPage() {
             
             <Button 
               variant="outline"
-              className="border-[#002D5C] text-[#002D5C]"
+              className="border-[#002147] text-[#002147]"
               onClick={() => setLocation("/")}
             >
               <Home className="h-4 w-4 mr-2" />
