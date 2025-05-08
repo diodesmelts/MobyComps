@@ -51,8 +51,11 @@ export interface IStorage {
   
   // Entry operations
   createEntry(entry: InsertEntry): Promise<Entry>;
+  getEntry(id: number): Promise<Entry | undefined>;
+  updateEntry(id: number, data: Partial<Entry>): Promise<Entry>;
   getUserEntries(userId: number): Promise<Entry[]>;
   getUserWinningEntries(userId: number): Promise<Entry[]>;
+  getCompetitionEntries(competitionId: number): Promise<Entry[]>;
   
   // Cart operations
   getCartItems(sessionId: string): Promise<CartItem[]>;

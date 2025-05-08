@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { z } from "zod";
 import { insertCompetitionSchema, updateCompetitionSchema, competitionStatusEnum, insertSiteConfigSchema } from "@shared/schema";
 import { ticketService } from "../services/ticket-service";
+import { drawService } from "../services/draw-service";
 
 // Middleware to ensure the user is an admin
 function isAdmin(req: any, res: any, next: any) {
@@ -248,6 +249,137 @@ export function registerAdminRoutes(app: Express) {
       res.json(config);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
+    }
+  });
+  
+  // New ticket sales endpoint
+  app.get("/api/admin/competitions/:id/ticket-sales", isAdmin, async (req, res) => {
+    try {
+      const competitionId = parseInt(req.params.id);
+      
+      // Get the competition
+      const competition = await storage.getCompetition(competitionId);
+      if (!competition) {
+        return res.status(404).json({ error: "Competition not found" });
+      }
+      
+      // Get all tickets for the competition
+      const tickets = await storage.listTickets(competitionId);
+      
+      // Calculate ticket statistics
+      const ticketStats = {
+        total: competition.maxTickets,
+        available: tickets.filter(t => t.status === 'available').length,
+        reserved: tickets.filter(t => t.status === 'reserved').length,
+        purchased: tickets.filter(t => t.status === 'purchased').length,
+        revenue: competition.ticketsSold * competition.ticketPrice,
+        percentageSold: (competition.ticketsSold / competition.maxTickets) * 100
+      };
+      
+      res.json({
+        competition,
+        ticketStats
+      });
+    } catch (error: any) {
+      console.error("Error fetching ticket sales:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Endpoint to get all ticket sales
+  app.get("/api/admin/ticket-sales", isAdmin, async (req, res) => {
+    try {
+      // Get all competitions
+      const { competitions } = await storage.listCompetitions();
+      
+      // Process each competition to get ticket statistics
+      const competitionSalesData = await Promise.all(
+        competitions.map(async (competition) => {
+          const tickets = await storage.listTickets(competition.id);
+          
+          return {
+            id: competition.id,
+            title: competition.title,
+            status: competition.status,
+            maxTickets: competition.maxTickets,
+            ticketsSold: competition.ticketsSold,
+            ticketPrice: competition.ticketPrice,
+            revenue: competition.ticketsSold * competition.ticketPrice,
+            percentageSold: (competition.ticketsSold / competition.maxTickets) * 100,
+            available: tickets.filter(t => t.status === 'available').length,
+            reserved: tickets.filter(t => t.status === 'reserved').length,
+            purchased: tickets.filter(t => t.status === 'purchased').length,
+            drawDate: competition.drawDate
+          };
+        })
+      );
+      
+      res.json(competitionSalesData);
+    } catch (error: any) {
+      console.error("Error fetching all ticket sales:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Endpoint to look up winning tickets
+  app.get("/api/admin/winning-ticket-lookup", isAdmin, async (req, res) => {
+    try {
+      const ticketNumber = req.query.ticketNumber ? parseInt(req.query.ticketNumber as string) : undefined;
+      const competitionId = req.query.competitionId ? parseInt(req.query.competitionId as string) : undefined;
+      
+      if (!ticketNumber || !competitionId) {
+        return res.status(400).json({ error: "Ticket number and competition ID are required" });
+      }
+      
+      // Find the ticket in the competition
+      const ticket = await storage.getTicket(competitionId, ticketNumber);
+      
+      if (!ticket) {
+        return res.status(404).json({ error: "Ticket not found" });
+      }
+      
+      // Get the competition
+      const competition = await storage.getCompetition(competitionId);
+      
+      // Get the user who owns the ticket (if purchased)
+      let user = null;
+      if (ticket.status === 'purchased' && ticket.userId) {
+        user = await storage.getUser(ticket.userId);
+      }
+      
+      res.json({
+        competition,
+        ticket,
+        user
+      });
+    } catch (error: any) {
+      console.error("Error looking up winning ticket:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Endpoint to trigger a draw for a competition (for testing)
+  app.post("/api/admin/competitions/:id/draw", isAdmin, async (req, res) => {
+    try {
+      const competitionId = parseInt(req.params.id);
+      
+      // Get the competition
+      const competition = await storage.getCompetition(competitionId);
+      if (!competition) {
+        return res.status(404).json({ error: "Competition not found" });
+      }
+      
+      if (competition.status !== 'live') {
+        return res.status(400).json({ error: "Competition is not live" });
+      }
+      
+      // Force draw the competition
+      const result = await drawService.performDraw(competitionId);
+      
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error performing draw:", error);
+      res.status(500).json({ error: error.message });
     }
   });
 }
