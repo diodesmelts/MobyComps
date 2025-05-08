@@ -7,6 +7,7 @@ import { CompetitionCard } from "@/components/ui/competition-card";
 import { useCompetitions } from "@/hooks/use-competitions";
 import { Loader2, ArrowRight, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import paymentCardsImage from "../assets/payment-cards.png";
 
 export default function HomePage() {
   // State for selected category
@@ -145,10 +146,8 @@ export default function HomePage() {
                 <span className="font-medium text-sm">Bank-Grade Encryption</span>
               </div>
               
-              <div className="flex items-center gap-2">
-                <img src="https://cdn.sanity.io/images/ijr8p1fo/production/a4d1607ae68c4132ce95a8f96b754d113640ffb5-24x16.svg" alt="Visa" className="h-6 w-auto" />
-                <img src="https://cdn.sanity.io/images/ijr8p1fo/production/cd13a7cd3e72af87ff8faf51bf96e7ad9e8cfeeb-24x16.svg" alt="Mastercard" className="h-6 w-auto" />
-                <img src="https://cdn.sanity.io/images/ijr8p1fo/production/5bdfeec3324cce53175efb9fb91fdea3e63eff04-24x16.svg" alt="Amex" className="h-6 w-auto" />
+              <div className="flex items-center">
+                <img src={paymentCardsImage} alt="Payment cards - Visa, Mastercard, American Express" className="h-8 w-auto" />
               </div>
             </div>
           </div>
