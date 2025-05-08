@@ -113,13 +113,19 @@ export default function CartPage() {
     }
   });
   
-  // Get competitions data using React Query
+  // Get ALL competitions data using React Query (including non-live ones)
   const { data: competitionsData, isLoading: isLoadingCompetitions } = useQuery({
-    queryKey: ["/api/competitions"],
-    select: (data: any) => {
-      console.log("Raw competitions data:", data);
-      return data?.competitions || [];
-    },
+    queryKey: ["/api/competitions", "allStatuses"],
+    queryFn: async () => {
+      // Explicitly request all competitions without status filtering
+      const response = await fetch('/api/competitions?status=');
+      if (!response.ok) {
+        throw new Error('Failed to fetch competitions');
+      }
+      const data = await response.json();
+      console.log("Fetched competitions with all statuses:", data);
+      return data.competitions;
+    }
   });
   
   // Use effect to check cart loading status and debug data

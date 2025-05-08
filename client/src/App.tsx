@@ -18,6 +18,7 @@ import MyWinsPage from "@/pages/my-wins";
 import AuthPage from "@/pages/auth-page";
 import CheckoutPage from "@/pages/checkout-page";
 import CartPage from "@/pages/cart-page";
+import PaymentSuccessPage from "@/pages/payment-success-page";
 import NotFound from "@/pages/not-found";
 
 // Admin pages
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/competition/:id" component={CompetitionDetail} />
       <Route path="/cart" component={CartPage} />
       <Route path="/checkout" component={CheckoutPage} />
+      <Route path="/payment-success" component={PaymentSuccessPage} />
       <Route path="/how-to-play" component={HowToPlayPage} />
       <Route path="/about-us" component={AboutUsPage} />
       <Route path="/faqs" component={FAQsPage} />
