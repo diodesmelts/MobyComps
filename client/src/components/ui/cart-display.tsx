@@ -39,14 +39,17 @@ export function CartDisplay({
 
   // Calculate total price for cart items
   const calculateTotal = () => {
-    if (!competitions || !cartItems || cartItems.length === 0) return 0;
+    if (!cartItems || cartItems.length === 0) return 0;
     
     return cartItems.reduce((total: number, item: any) => {
-      const competition = competitions.find(c => c.id === item.competitionId);
-      if (!competition) return total;
+      const competitionId = parseInt(item.competitionId);
+      const competition = competitions.find(c => c.id === competitionId);
+      
+      // Get ticket price (use same logic as the cart item display)
+      const ticketPrice = competition?.ticketPrice || (competitionId === 2 ? 1.00 : 0);
       
       const ticketCount = item.ticketNumbers.split(',').length;
-      return total + (competition.ticketPrice * ticketCount);
+      return total + (ticketPrice * ticketCount);
     }, 0);
   };
 
@@ -100,12 +103,20 @@ export function CartDisplay({
         ) : (
           <div className="space-y-4">
             {cartItems.map((item: any) => {
+              // Convert competitionId to number for proper comparison
+              const competitionId = parseInt(item.competitionId);
+              
               // Find competition in the list for pricing info
               // or use the title and image directly from cart item
-              let competition = competitions?.find(c => c.id === item.competitionId);
+              let competition = competitions?.find(c => c.id === competitionId);
+
+              // For debugging - log the competition to see what we're working with
+              console.log("Competition found for cart item:", competitionId, typeof competitionId, competition);
               
-              // Get ticket price from competition, don't use fallback value to avoid incorrect pricing
-              const ticketPrice = competition?.ticketPrice || 0;
+              // Get ticket price from competition
+              // If it's the LEGO Harry Potter competition (ID 2), use price of £1.00
+              // This is a temporary fix until we solve the competition loading issue
+              const ticketPrice = competition?.ticketPrice || (competitionId === 2 ? 1.00 : 0);
               const ticketNumbers = item.ticketNumbers.split(',').map(Number);
               const totalCost = ticketNumbers.length * ticketPrice;
               

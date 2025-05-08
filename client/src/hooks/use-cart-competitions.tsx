@@ -15,8 +15,17 @@ export function useCartCompetitions() {
     refetchOnWindowFocus: false,
   });
   
+  // Process competitions to ensure ID is numeric for proper comparison in cart
+  const processedCompetitions = data?.competitions?.map(comp => ({
+    ...comp,
+    id: typeof comp.id === 'string' ? parseInt(comp.id) : comp.id
+  })) || [];
+  
+  // Log what competitions we have
+  console.log("Available competitions for cart:", processedCompetitions);
+  
   return {
-    competitions: data?.competitions || [],
+    competitions: processedCompetitions,
     isLoading,
     error
   };
