@@ -201,8 +201,9 @@ export default function CheckoutPage() {
   const calculateTotal = () => {
     return cartItems.reduce((sum: number, item: any) => {
       const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
-      // Default price if not available
-      const ticketPrice = 4.99;
+      // Use the item's competition price (or 0 if not available)
+      const ticketPrice = item.competitionPrice || 0;
+      console.log(`Item: ${item.competitionTitle}, Count: ${ticketCount}, Price: ${ticketPrice}`);
       return sum + (ticketPrice * ticketCount);
     }, 0);
   };
