@@ -46,13 +46,16 @@ export default function MyEntriesPage() {
   
   // Fetch competitions data
   const {
-    data: competitions,
+    data: competitionsData,
     isLoading: competitionsLoading,
     error: competitionsError
-  } = useQuery<Competition[]>({
+  } = useQuery<{ competitions: Competition[] }>({
     queryKey: ["/api/competitions"],
     enabled: !!entries,
   });
+  
+  // Extract competitions array from response
+  const competitions = competitionsData?.competitions || [];
   
   // Loading state
   const isLoading = entriesLoading || competitionsLoading;
