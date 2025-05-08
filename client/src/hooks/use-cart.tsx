@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { CartContext } from "../contexts/cart-provider";
-import type { Competition } from "@shared/schema";
+import type { Competition } from "@/shared/schema";
 import { create } from "zustand";
 
 // Create a separate store for cart UI state since it's not in the context

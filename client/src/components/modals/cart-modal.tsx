@@ -123,7 +123,7 @@ export function CartModal() {
           {cartItems && cartItems.length > 0 && (
             <div className="bg-[#C3DC6F]/20 p-2 flex items-center justify-center space-x-2 rounded mb-4">
               <Clock className="h-5 w-5 text-[#002147]" />
-              <span className="text-sm font-medium text-[#002147] countdown-pulse">
+              <span className="text-xs font-semibold text-[#002147] countdown-pulse">
                 Your tickets are reserved for {timeRemaining}
               </span>
             </div>
