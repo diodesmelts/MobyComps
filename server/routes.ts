@@ -257,10 +257,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Direct DB validation for cart items
-      console.log(`🚨 STEP 2 - Verifying cart items with direct SQL...`);
-      const cartQuery = `SELECT * FROM cart_items WHERE session_id = $1`;
-      const cartResults = await db.execute(cartQuery, [sessionId]);
-      console.log(`🚨 STEP 2 - SQL cart verification found ${cartResults.rowCount} items:`, cartResults.rows);
+      try {
+        console.log(`🚨 STEP 2 - Verifying cart items with direct SQL...`);
+        const cartQuery = `SELECT * FROM cart_items WHERE session_id = $1`;
+        console.log(`🚨 STEP 2 - Executing SQL: "${cartQuery}" with params: ["${sessionId}"]`);
+        const cartResults = await db.execute(cartQuery, [sessionId]);
+        console.log(`🚨 STEP 2 - SQL cart verification found ${cartResults.rowCount} items:`, cartResults.rows);
+      } catch (sqlError) {
+        console.error(`❌ STEP 2 - SQL error in cart verification:`, sqlError);
+        // Continue execution, this is just for debugging
+      }
       
       // Process each cart item
       const userId = req.isAuthenticated() ? (req.user as any).id : null;
@@ -302,18 +308,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log(`🚨 Before purchaseTickets() - Checking current ticket status...`);
             // Direct DB query to check ticket status before update
             console.log(`🚨 STEP 3 - Before purchaseTickets() - User ID: ${userId}, Ticket IDs: ${JSON.stringify(ticketIds)}`);
-            const queryBefore = `SELECT id, competition_id, status, user_id, number FROM tickets WHERE id = ANY($1)`;
-            const ticketsBefore = await db.execute(queryBefore, [ticketIds]);
-            console.log(`🚨 STEP 3 - Current ticket status:`, ticketsBefore);
+            try {
+              const queryBefore = `SELECT id, competition_id, status, user_id, number FROM tickets WHERE id = ANY($1)`;
+              console.log(`🚨 STEP 3 - Executing SQL: "${queryBefore}" with ticket IDs: [${ticketIds}]`);
+              const ticketsBefore = await db.execute(queryBefore, [ticketIds]);
+              console.log(`🚨 STEP 3 - Current ticket status:`, ticketsBefore.rows);
+            } catch (sqlError) {
+              console.error(`❌ STEP 3 - SQL error checking tickets before:`, sqlError);
+            }
             
             const updatedTickets = await storage.purchaseTickets(ticketIds, userId);
             console.log(`🚨 STEP 3 - Updated ${updatedTickets.length} tickets to purchased status:`, updatedTickets);
             
             console.log(`🚨 STEP 3 - After purchaseTickets() - Verifying ticket status update...`);
-            // Direct DB query to check ticket status after update
-            const queryAfter = `SELECT id, competition_id, status, user_id, number FROM tickets WHERE id = ANY($1)`;
-            const ticketsAfter = await db.execute(queryAfter, [ticketIds]);
-            console.log(`🚨 STEP 3 - Updated ticket status:`, ticketsAfter);
+            try {
+              // Direct DB query to check ticket status after update
+              const queryAfter = `SELECT id, competition_id, status, user_id, number FROM tickets WHERE id = ANY($1)`;
+              console.log(`🚨 STEP 3 - Executing SQL: "${queryAfter}" with ticket IDs: [${ticketIds}]`);
+              const ticketsAfter = await db.execute(queryAfter, [ticketIds]);
+              console.log(`🚨 STEP 3 - Updated ticket status:`, ticketsAfter.rows);
+            } catch (sqlError) {
+              console.error(`❌ STEP 3 - SQL error checking tickets after:`, sqlError);
+            }
             
             ticketsProcessed += updatedTickets.length;
             
@@ -331,9 +347,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Verify entry was created
             console.log(`🚨 STEP 4 - Verifying entry creation...`);
-            const entryQuery = `SELECT * FROM entries WHERE id = $1`;
-            const entryVerification = await db.execute(entryQuery, [entry.id]);
-            console.log(`🚨 STEP 4 - Entry verification:`, entryVerification);
+            try {
+              const entryQuery = `SELECT * FROM entries WHERE id = $1`;
+              console.log(`🚨 STEP 4 - Executing SQL: "${entryQuery}" with entry ID: ${entry.id}`);
+              const entryVerification = await db.execute(entryQuery, [entry.id]);
+              console.log(`🚨 STEP 4 - Entry verification:`, entryVerification.rows);
+            } catch (sqlError) {
+              console.error(`❌ STEP 4 - SQL error verifying entry:`, sqlError);
+            }
             
             entriesCreated++;
           } catch (dbError) {

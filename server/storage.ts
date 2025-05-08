@@ -578,14 +578,22 @@ export class DatabaseStorage implements IStorage {
       }
       
       // Raw SQL query to debug entry issues
-      const rawQuery = `SELECT * FROM entries WHERE user_id = $1`;
-      const rawResult = await db.execute(rawQuery, [userId]);
-      console.log(`🔍 STEP 5 - Raw entries found via SQL: ${rawResult.rowCount} entries`, rawResult.rows);
-      
-      // Check schema structure
-      const schemaQuery = `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'entries'`;
-      const schemaResult = await db.execute(schemaQuery);
-      console.log(`🔍 STEP 5 - Entries table schema:`, schemaResult.rows);
+      try {
+        const rawQuery = `SELECT * FROM entries WHERE user_id = $1`;
+        const rawParams = [userId]; 
+        console.log(`🔍 STEP 5 - Executing SQL: "${rawQuery}" with params:`, rawParams);
+        const rawResult = await db.execute(rawQuery, rawParams);
+        console.log(`🔍 STEP 5 - Raw entries found via SQL: ${rawResult.rowCount} entries`, rawResult.rows);
+        
+        // Check schema structure
+        const schemaQuery = `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'entries'`;
+        console.log(`🔍 STEP 5 - Checking schema with query: "${schemaQuery}"`);
+        const schemaResult = await db.execute(schemaQuery);
+        console.log(`🔍 STEP 5 - Entries table schema:`, schemaResult.rows);
+      } catch (sqlError) {
+        console.error(`❌ STEP 5 - SQL error in diagnostic queries:`, sqlError);
+        // Don't throw, just log and continue
+      }
       
       // Check if any entries exist for this user at all
       const entriesCount = await db
@@ -599,9 +607,14 @@ export class DatabaseStorage implements IStorage {
         console.log(`ℹ️ STEP 5 - getUserEntries - No entries found for user ID ${userId}`);
         
         // Check overall entries count to see if any exist in the table
-        const totalEntriesQuery = `SELECT COUNT(*) FROM entries`;
-        const totalEntries = await db.execute(totalEntriesQuery);
-        console.log(`🔍 STEP 5 - Total entries in database:`, totalEntries.rows[0]);
+        try {
+          const totalEntriesQuery = `SELECT COUNT(*) FROM entries`;
+          console.log(`🔍 STEP 5 - Checking total entries with query: "${totalEntriesQuery}"`);
+          const totalEntries = await db.execute(totalEntriesQuery);
+          console.log(`🔍 STEP 5 - Total entries in database:`, totalEntries.rows[0]);
+        } catch (countError) {
+          console.error(`❌ STEP 5 - Error counting total entries:`, countError);
+        }
         
         return [];
       }
