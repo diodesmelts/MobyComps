@@ -662,13 +662,25 @@ export class DatabaseStorage implements IStorage {
       
       // Fallback to using Drizzle ORM if the SQL approach fails
       const userEntries = await db
-        .select()
+        .select({
+          entry: entries,
+          competition: competitions,
+        })
         .from(entries)
+        .innerJoin(competitions, eq(entries.competitionId, competitions.id))
         .where(eq(entries.userId, userId))
         .orderBy(desc(entries.createdAt));
       
       console.log(`✅ STEP 5 - getUserEntries - Retrieved ${userEntries.length} entries with Drizzle`);
-      return userEntries;
+      
+      // Convert the Drizzle results to have the same structure as the SQL results
+      return userEntries.map(row => ({
+        ...row.entry,
+        competition: {
+          title: row.competition.title,
+          imageUrl: row.competition.imageUrl
+        }
+      }));
       
     } catch (error) {
       console.error(`❌ STEP 5 - getUserEntries - Error fetching entries:`, error);
@@ -693,7 +705,13 @@ export class DatabaseStorage implements IStorage {
       )
       .orderBy(desc(entries.createdAt));
     
-    return winningEntries.map(({ entry }) => entry);
+    return winningEntries.map(row => ({
+      ...row.entry,
+      competition: {
+        title: row.competition.title,
+        imageUrl: row.competition.imageUrl
+      }
+    }));
   }
   
   // Cart operations
