@@ -41,7 +41,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
                 e.currentTarget.style.display = 'none';
                 const parent = e.currentTarget.parentElement;
                 if (parent) {
-                  parent.classList.add('bg-[#002D5C]');
+                  parent.classList.add('bg-[#002147]');
                   parent.innerHTML = `
                     <div class="flex items-center justify-center h-full">
                       <div class="text-white text-center p-1">
@@ -56,7 +56,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
           </div>
         ) : (
           // Fallback to branded placeholder if no image
-          <div className="w-full h-full bg-[#002D5C] flex items-center justify-center">
+          <div className="w-full h-full bg-[#002147] flex items-center justify-center">
             <div className="text-white text-center p-1">
               <div className="text-xs font-bold">MOBY</div>
               <div className="text-[8px]">COMPS</div>
@@ -67,7 +67,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
       
       <div className="flex-grow">
         <div className="flex justify-between mb-1">
-          <h3 className="font-semibold text-[#002D5C] truncate">
+          <h3 className="font-semibold text-[#002147] truncate">
             {competition.title}
           </h3>
           <Button
@@ -96,7 +96,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
           {ticketNumbers.slice(0, 5).map((number: number, index: number) => (
             <span
               key={index}
-              className="text-xs bg-[#C3DC6F]/20 text-[#002D5C] px-2 py-1 rounded font-medium"
+              className="text-xs bg-[#C3DC6F]/20 text-[#002147] px-2 py-1 rounded font-medium"
             >
               #{number}
             </span>
@@ -109,8 +109,8 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
         </div>
         
         <div className="flex justify-between items-center text-sm">
-          <span className="font-medium text-[#002D5C]">Total:</span>
-          <span className="font-bold text-[#002D5C]">{formatPrice(totalPrice)}</span>
+          <span className="font-medium text-[#002147]">Total:</span>
+          <span className="font-bold text-[#002147]">{formatPrice(totalPrice)}</span>
         </div>
       </div>
     </div>
