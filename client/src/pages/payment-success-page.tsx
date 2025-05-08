@@ -6,6 +6,8 @@ import { CheckCircle, Home, Trophy } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCart } from "@/hooks/use-cart";
+import { cartApi } from "@/lib/api";
 
 export default function PaymentSuccessPage() {
   const [, setLocation] = useLocation();

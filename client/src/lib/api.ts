@@ -42,10 +42,10 @@ export const cartApi = {
     apiRequest("POST", "/api/cart/add", { competitionId, ticketNumbers }).then(res => res.json()),
   
   removeFromCart: (cartItemId: string) => 
-    apiRequest("DELETE", `/api/cart/${cartItemId}`).then(res => res.json()),
+    apiRequest("DELETE", `/api/cart/remove/${cartItemId}`).then(res => res.ok),
   
   clearCart: () => 
-    apiRequest("DELETE", "/api/cart").then(res => res.json()),
+    apiRequest("DELETE", "/api/cart/clear").then(res => res.ok),
 };
 
 // Payment API
