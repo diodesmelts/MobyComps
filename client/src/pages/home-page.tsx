@@ -15,13 +15,9 @@ export default function HomePage() {
   });
   
   // Get hero banner from site config
-  const { data: heroBanner } = useQuery({
-    queryKey: ["/api/site-config/hero-banner"],
-    enabled: false,
+  const { data: heroBanner, isLoading: isHeroBannerLoading } = useQuery({
+    queryKey: ["/api/admin/site-config/hero-banner"],
   });
-  
-  // Default hero banner if none set in config
-  const defaultHeroBanner = "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2940&auto=format&fit=crop";
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -29,7 +25,17 @@ export default function HomePage() {
       
       <main className="flex-grow">
         {/* Hero Banner */}
-        <section className="relative w-full h-[500px] bg-[#002D5C] flex items-center">
+        <section 
+          className="relative w-full h-[500px] bg-[#002D5C] flex items-center" 
+          style={{
+            backgroundImage: heroBanner?.value ? `url(${heroBanner.value})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          {/* Overlay to ensure text readability on any image */}
+          <div className="absolute inset-0 bg-[#002D5C]/70"></div>
+          
           <div className="container relative z-10 text-white">
             <div className="max-w-3xl">
               <h1 className="text-5xl md:text-6xl font-bold mb-6">
