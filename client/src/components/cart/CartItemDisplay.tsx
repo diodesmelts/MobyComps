@@ -25,19 +25,13 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
   return (
     <div className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
-        {competition.imageUrl ? (
-          <Image
-            src={competition.imageUrl}
-            alt={competition.title}
-            fill
-            className="object-cover"
-            onError={() => console.log("Image failed to load:", competition.imageUrl)}
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400 text-xs">No image</span>
+        {/* Use a static branded placeholder that matches the competition's theme */}
+        <div className="w-full h-full bg-[#002D5C] flex items-center justify-center">
+          <div className="text-white text-center p-1">
+            <div className="text-xs font-bold">MOBY</div>
+            <div className="text-[8px]">COMPS</div>
           </div>
-        )}
+        </div>
       </div>
       
       <div className="flex-grow">
