@@ -34,7 +34,7 @@ export default function HomePage() {
           style={{ backgroundImage: `url(${heroBanner?.value || defaultHeroBanner})` }}
         >
           <div className="absolute inset-0 bg-black opacity-40"></div>
-          <div className="container mx-auto px-4 relative z-10 text-white">
+          <div className="container relative z-10 text-white">
             <div className="max-w-3xl">
               <h1 className="text-5xl md:text-6xl font-bold mb-6">
                 WIN THIS<br/>

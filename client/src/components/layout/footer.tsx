@@ -4,7 +4,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-[#002D5C] text-white border-t-4 border-[#C3DC6F] mt-8">
-      <div className="container mx-auto p-6 md:p-8">
+      <div className="container py-6 md:py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-4">About Moby Comps</h3>
@@ -113,7 +113,7 @@ export function Footer() {
       
       {/* Copyright */}
       <div className="bg-[#002D5C]/80 py-4 text-sm">
-        <div className="container mx-auto px-6 text-center text-gray-400">
+        <div className="container text-center text-gray-400">
           <p>© {new Date().getFullYear()} Moby Comps Ltd. All rights reserved. UK Registered Company No. 12345678</p>
           <p className="mt-1">All competitions are conducted in accordance with UK gambling regulations.</p>
         </div>

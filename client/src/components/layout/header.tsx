@@ -215,7 +215,7 @@ export function Header() {
       
       {/* Navigation */}
       <nav className="bg-[#002D5C] text-white shadow-md">
-        <div className="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+        <div className="container py-3 flex flex-wrap justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="font-bold text-2xl text-white flex items-center">
