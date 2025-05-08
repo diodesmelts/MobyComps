@@ -31,6 +31,7 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
             alt={competition.title}
             fill
             className="object-cover"
+            onError={() => console.log("Image failed to load:", competition.imageUrl)}
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
