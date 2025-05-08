@@ -37,15 +37,14 @@ export function registerUploadRoutes(app: Express) {
       
       console.log("File upload received:", req.file.originalname, req.file.mimetype, req.file.size);
 
-      // Generate a safe filename - timestamps plus sanitized original name
+      // Generate a very simple filename - just timestamp + extension
       const timestamp = Date.now();
-      // Remove any special characters, spaces, non-ASCII chars that could cause issues
-      const sanitizedName = req.file.originalname
-        .replace(/[^a-zA-Z0-9.-]/g, "-") // Replace any non-alphanumeric chars with hyphens
-        .replace(/--+/g, "-"); // Collapse multiple hyphens
+      // Extract file extension from original name
+      const fileExt = path.extname(req.file.originalname).toLowerCase() || '.png';
       
-      const filename = `${timestamp}-${sanitizedName}`;
-      console.log("Sanitized filename:", filename);
+      // Create a simple name without special characters
+      const filename = `${timestamp}${fileExt}`;
+      console.log("Simple filename:", filename, "Original:", req.file.originalname);
       
       // Write the file to disk
       const filePath = path.join(uploadsDir, filename);
@@ -99,17 +98,57 @@ export function registerUploadRoutes(app: Express) {
     try {
       console.log("Received request for file:", req.path);
       
-      // Only allow alphanumeric, dash, underscore and dot in filenames 
-      // This is a security check to prevent path traversal attacks
-      const sanitizedPath = req.path.replace(/[^a-zA-Z0-9\-._]/g, "");
-      const filepath = path.join(uploadsDir, sanitizedPath);
+      // First try direct file lookup
+      const directPath = path.join(uploadsDir, req.path);
       
-      console.log("Serving file:", filepath);
-      
-      // Check if file exists
-      if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
-        // Set the proper content type based on file extension
-        const ext = path.extname(filepath).toLowerCase();
+      // If direct path doesn't work, try to find the file by listing directory
+      if (!fs.existsSync(directPath) || !fs.statSync(directPath).isFile()) {
+        // Try to extract the timestamp part from the filename (which should be consistent)
+        const pathParts = req.path.split('-');
+        if (pathParts.length > 0) {
+          const timestamp = pathParts[0].replace(/\//g, '');
+          
+          // Find all files in uploads directory
+          const files = fs.readdirSync(uploadsDir);
+          
+          // Look for a file starting with the timestamp
+          const matchingFile = files.find(file => file.startsWith(timestamp));
+          
+          if (matchingFile) {
+            console.log("Found matching file by timestamp:", matchingFile);
+            const matchingFilePath = path.join(uploadsDir, matchingFile);
+            
+            // Set the proper content type based on file extension
+            const ext = path.extname(matchingFilePath).toLowerCase();
+            let contentType = 'application/octet-stream'; // Default content type
+            
+            if (ext === '.png') {
+              contentType = 'image/png';
+            } else if (ext === '.jpg' || ext === '.jpeg') {
+              contentType = 'image/jpeg';
+            } else if (ext === '.gif') {
+              contentType = 'image/gif';
+            } else if (ext === '.webp') {
+              contentType = 'image/webp';
+            }
+            
+            console.log("Serving file with content type:", contentType);
+            
+            // Ensure no caching issues
+            res.set({
+              'Content-Type': contentType,
+              'Cache-Control': 'public, max-age=31536000',
+              'Content-Disposition': 'inline'
+            });
+            
+            // Read file manually and send as buffer instead of using sendFile
+            const fileBuffer = fs.readFileSync(matchingFilePath);
+            return res.send(fileBuffer);
+          }
+        }
+      } else {
+        // Original file was found directly, serve it
+        const ext = path.extname(directPath).toLowerCase();
         let contentType = 'application/octet-stream'; // Default content type
         
         if (ext === '.png') {
@@ -132,12 +171,13 @@ export function registerUploadRoutes(app: Express) {
         });
         
         // Read file manually and send as buffer instead of using sendFile
-        const fileBuffer = fs.readFileSync(filepath);
+        const fileBuffer = fs.readFileSync(directPath);
         return res.send(fileBuffer);
-      } else {
-        console.log("File not found:", filepath);
-        next();
       }
+      
+      // If we get here, no matching file was found
+      console.log("No matching file found for:", req.path);
+      next();
     } catch (error) {
       console.error("Error serving uploaded file:", error);
       next();
