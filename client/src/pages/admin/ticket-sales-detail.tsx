@@ -23,7 +23,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { useAdminCompetitionTicketSales, useAdminDrawCompetition } from "@/hooks/use-admin";
-import { ArrowLeft, BarChart, Calendar, Clock, FilePieChart, Heart, HeartPulse, PercentCircle, Search, Tag, Ticket, Trophy, Users, Wallet } from "lucide-react";
+import { ArrowLeft, BarChart, Calendar, CheckCircle, Clock, Edit, FilePieChart, Heart, HeartPulse, PercentCircle, Search, Tag, Ticket, Trophy, Users, Wallet } from "lucide-react";
 
 export default function TicketSalesDetailPage() {
   const params = useParams<{ id: string }>();
@@ -322,21 +322,36 @@ export default function TicketSalesDetailPage() {
                     <div className="flex justify-between mb-1">
                       <span className="text-sm">Available ({Math.round(ticketStats.available / ticketStats.total * 100)}%)</span>
                     </div>
-                    <Progress value={ticketStats.available / ticketStats.total * 100} className="h-3 bg-gray-100" indicatorColor="bg-blue-500" />
+                    <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-blue-500 transition-all duration-500" 
+                        style={{ width: `${Math.round(ticketStats.available / ticketStats.total * 100)}%` }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-sm">Reserved ({Math.round(ticketStats.reserved / ticketStats.total * 100)}%)</span>
                     </div>
-                    <Progress value={ticketStats.reserved / ticketStats.total * 100} className="h-3 bg-gray-100" indicatorColor="bg-amber-500" />
+                    <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-amber-500 transition-all duration-500" 
+                        style={{ width: `${Math.round(ticketStats.reserved / ticketStats.total * 100)}%` }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-sm">Purchased ({Math.round(ticketStats.purchased / ticketStats.total * 100)}%)</span>
                     </div>
-                    <Progress value={ticketStats.purchased / ticketStats.total * 100} className="h-3 bg-gray-100" indicatorColor="bg-green-500" />
+                    <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-green-500 transition-all duration-500" 
+                        style={{ width: `${Math.round(ticketStats.purchased / ticketStats.total * 100)}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -390,11 +405,4 @@ export default function TicketSalesDetailPage() {
   );
 }
 
-// Missing components to make the code compile
-function CheckCircle(props: any) {
-  return <div {...props} />;
-}
-
-function Edit(props: any) {
-  return <div {...props} />;
-}
+// No longer need these placeholder components as we're importing from lucide-react

@@ -100,6 +100,12 @@ export default function AdminDashboard() {
               <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
                 <Link href="/admin/site-content">Site Content</Link>
               </Button>
+              <Button asChild variant="outline" size="sm" className="border-[#002D5C] text-[#002D5C]">
+                <Link href="/admin/ticket-sales">
+                  <Ticket className="h-4 w-4 mr-1" />
+                  Ticket Sales
+                </Link>
+              </Button>
               <Button asChild size="sm" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] ml-auto md:ml-0">
                 <Link href="/admin/competitions?new=true">Create Competition</Link>
               </Button>
