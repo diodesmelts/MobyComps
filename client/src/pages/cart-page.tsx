@@ -14,27 +14,26 @@ export default function CartPage() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { 
-    cart, 
-    isLoadingCart, 
+    cartItems, 
     removeFromCart, 
-    isPendingRemove, 
     clearCart, 
-    isPendingClear,
+    isRemoving,
     cartTimeRemaining,
   } = useCart();
+  const [isLoadingCart, setIsLoadingCart] = useState(true);
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   
   // If cart is empty and not loading, redirect to competitions
   useEffect(() => {
-    if (!isLoadingCart && cart?.items?.length === 0) {
+    if (!isLoadingCart && cartItems.length === 0) {
       toast({
         title: "Your cart is empty",
         description: "Please add items to your cart before checkout",
       });
       setLocation("/competitions");
     }
-  }, [isLoadingCart, cart, setLocation, toast]);
+  }, [isLoadingCart, cartItems, setLocation, toast]);
   
   const handleCheckout = () => {
     if (!user) {
@@ -46,9 +45,9 @@ export default function CartPage() {
   };
   
   const calculateTotal = () => {
-    if (!cart?.items || cart.items.length === 0) return 0;
+    if (!cartItems || cartItems.length === 0) return 0;
     
-    return cart.items.reduce((sum, item) => {
+    return cartItems.reduce((sum: number, item: any) => {
       const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
       const ticketPrice = item.competition?.ticketPrice || 0;
       return sum + (ticketPrice * ticketCount);
@@ -73,7 +72,7 @@ export default function CartPage() {
     );
   }
   
-  if (!cart || !cart.items || cart.items.length === 0) {
+  if (!cartItems || cartItems.length === 0) {
     return (
       <Layout title="Your Cart">
         <div className="container mx-auto py-12 flex flex-col items-center justify-center min-h-[60vh]">
@@ -117,9 +116,8 @@ export default function CartPage() {
                 variant="outline" 
                 className="border-[#002D5C] text-[#002D5C]"
                 onClick={() => clearCart()}
-                disabled={isPendingClear}
               >
-                {isPendingClear ? (
+                {false ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
                   <RefreshCw className="h-4 w-4 mr-2" />
@@ -138,13 +136,13 @@ export default function CartPage() {
             )}
             
             <div className="space-y-4">
-              {cart.items.map((item) => (
+              {cartItems.map((item: any) => (
                 <CartItemDisplay 
                   key={item.id}
                   item={item}
                   competition={item.competition}
                   onRemove={() => removeFromCart(item.id)}
-                  isRemoving={isPendingRemove}
+                  isRemoving={isRemoving === item.id}
                 />
               ))}
             </div>
