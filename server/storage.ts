@@ -264,16 +264,48 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getTicketsByNumbers(competitionId: number, numbers: number[]): Promise<Ticket[]> {
-    const result = await db
-      .select()
-      .from(tickets)
-      .where(
-        and(
-          eq(tickets.competitionId, competitionId),
-          inArray(tickets.number, numbers)
-        )
-      );
-    return result;
+    console.log(`🎯 getTicketsByNumbers - Looking for tickets with numbers ${JSON.stringify(numbers)} in competition ${competitionId}`);
+    
+    try {
+      // First check if the tickets even exist
+      const allTickets = await db
+        .select()
+        .from(tickets)
+        .where(eq(tickets.competitionId, competitionId));
+      
+      console.log(`🎯 getTicketsByNumbers - Competition has ${allTickets.length} total tickets`);
+      console.log(`🎯 getTicketsByNumbers - Sample of ticket numbers in db:`, allTickets.slice(0, 5).map(t => t.number));
+      
+      // Get the tickets with the specified numbers
+      const result = await db
+        .select()
+        .from(tickets)
+        .where(
+          and(
+            eq(tickets.competitionId, competitionId),
+            inArray(tickets.number, numbers)
+          )
+        );
+      
+      console.log(`🎯 getTicketsByNumbers - Found ${result.length} tickets out of ${numbers.length} requested`);
+      
+      if (result.length < numbers.length) {
+        console.warn(`⚠️ getTicketsByNumbers - Missing tickets!`, {
+          requested: numbers,
+          found: result.map(t => t.number)
+        });
+      }
+      
+      // Log the tickets and their status
+      result.forEach(ticket => {
+        console.log(`🎫 Ticket #${ticket.number} - status: ${ticket.status}, ID: ${ticket.id}`);
+      });
+      
+      return result;
+    } catch (error) {
+      console.error(`❌ getTicketsByNumbers - Error:`, error);
+      throw error;
+    }
   }
   
   async listTickets(competitionId: number, status?: string): Promise<Ticket[]> {

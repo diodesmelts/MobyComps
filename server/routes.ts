@@ -91,11 +91,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
+      console.log("💳 Creating payment intent...");
+      
       // Get cart items to calculate the total amount
       const sessionId = req.sessionID;
+      console.log(`💳 Session ID: ${sessionId}`);
+      
       const cartItems = await storage.getCartItems(sessionId);
+      console.log(`💳 Retrieved ${cartItems.length} cart items:`, cartItems);
       
       if (cartItems.length === 0) {
+        console.log("❌ Error: Cart is empty");
         return res.status(400).json({ 
           error: "Cart is empty" 
         });
@@ -103,22 +109,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Calculate total amount from cart items
       let totalAmount = 0;
+      const cartItemsDetails = [];
+      
       for (const item of cartItems) {
         const competition = await storage.getCompetition(item.competitionId);
-        if (!competition) continue;
+        if (!competition) {
+          console.warn(`⚠️ Competition not found for ID: ${item.competitionId}`);
+          continue;
+        }
         
         const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
-        totalAmount += ticketCount * competition.ticketPrice;
+        const itemTotal = ticketCount * competition.ticketPrice;
+        totalAmount += itemTotal;
+        
+        console.log(`💳 Item: ${competition.title}, Count: ${ticketCount}, Item Total: £${itemTotal}`);
+        
+        cartItemsDetails.push({
+          competitionId: item.competitionId,
+          competitionTitle: competition.title,
+          ticketNumbers: item.ticketNumbers,
+          ticketCount,
+          price: competition.ticketPrice,
+          total: itemTotal
+        });
       }
       
-      // Create payment intent
-      const paymentIntent = await stripeService.createPaymentIntent(totalAmount);
+      console.log(`💳 Total amount: £${totalAmount}`);
+      
+      // Create payment intent with metadata
+      const paymentIntent = await stripeService.createPaymentIntent(
+        totalAmount,
+        {
+          sessionId,
+          cartItems: JSON.stringify(cartItemsDetails)
+        }
+      );
+      
+      console.log(`✅ Payment intent created: ${paymentIntent.id}`);
       
       res.json({
         clientSecret: paymentIntent.client_secret
       });
     } catch (error: any) {
-      console.error("Error creating payment intent:", error);
+      console.error("❌ Error creating payment intent:", error);
       res.status(500).json({ 
         error: error.message || "Failed to create payment intent" 
       });

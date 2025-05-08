@@ -10,20 +10,24 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 class StripeService {
   // Create a payment intent for checkout
-  async createPaymentIntent(amount: number): Promise<Stripe.PaymentIntent> {
+  async createPaymentIntent(amount: number, metadata: Record<string, string> = {}): Promise<Stripe.PaymentIntent> {
     try {
+      console.log(`🔄 Creating payment intent for £${amount} with metadata:`, metadata);
+      
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // Convert to cents
         currency: "gbp",
         payment_method_types: ["card"],
         metadata: {
           integration_check: "moby_comps_payment",
+          ...metadata
         },
       });
 
+      console.log(`✅ Payment intent created successfully with ID: ${paymentIntent.id}`);
       return paymentIntent;
     } catch (error: any) {
-      console.error("Stripe payment intent creation error:", error.message);
+      console.error("❌ Stripe payment intent creation error:", error.message);
       throw new Error(`Failed to create payment intent: ${error.message}`);
     }
   }
