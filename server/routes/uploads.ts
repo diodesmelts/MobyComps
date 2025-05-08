@@ -94,6 +94,21 @@ export function registerUploadRoutes(app: Express) {
     
     // Check if file exists
     if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
+      // Set the proper content type based on file extension
+      const ext = path.extname(filepath).toLowerCase();
+      let contentType = 'application/octet-stream'; // Default content type
+      
+      if (ext === '.png') {
+        contentType = 'image/png';
+      } else if (ext === '.jpg' || ext === '.jpeg') {
+        contentType = 'image/jpeg';
+      } else if (ext === '.gif') {
+        contentType = 'image/gif';
+      } else if (ext === '.webp') {
+        contentType = 'image/webp';
+      }
+      
+      res.setHeader('Content-Type', contentType);
       res.sendFile(filepath);
     } else {
       next();
