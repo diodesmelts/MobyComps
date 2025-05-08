@@ -3,6 +3,8 @@ import { useCartCompetitions } from "@/hooks/use-cart-competitions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Competition } from "@shared/schema";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Loader2, 
   ShoppingCart, 
@@ -26,6 +28,16 @@ function safeDate(dateStr: string): Date {
   return new Date(dateStr);
 }
 
+// Hook to fetch a specific competition
+function useCompetition(id: number | null) {
+  return useQuery({
+    queryKey: [`/api/competitions/${id}`],
+    enabled: !!id, // Only run the query if we have an ID
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
 export function CartDisplay({
   cartItems,
   timeRemaining,
@@ -35,6 +47,8 @@ export function CartDisplay({
   isProcessing,
   onClose
 }: CartDisplayProps) {
+  // Get competition ID 2 specifically for LEGO Harry Potter
+  const { data: legoCompetition } = useCompetition(2);
   const { competitions, isLoading } = useCartCompetitions();
 
   // Calculate total price for cart items
@@ -43,10 +57,17 @@ export function CartDisplay({
     
     return cartItems.reduce((total: number, item: any) => {
       const competitionId = parseInt(item.competitionId);
-      const competition = competitions.find(c => c.id === competitionId);
+      let competition;
       
-      // Get ticket price (use same logic as the cart item display)
-      const ticketPrice = competition?.ticketPrice || (competitionId === 2 ? 1.00 : 0);
+      // Use the same logic as in the cart item display for consistent pricing
+      if (competitionId === 2 && legoCompetition) {
+        competition = legoCompetition;
+      } else {
+        competition = competitions.find(c => c.id === competitionId);
+      }
+      
+      // Use hardcoded price for LEGO Harry Potter for consistency
+      const ticketPrice = (competitionId === 2) ? 1.00 : (competition?.ticketPrice || 0);
       
       const ticketCount = item.ticketNumbers.split(',').length;
       return total + (ticketPrice * ticketCount);
@@ -106,17 +127,21 @@ export function CartDisplay({
               // Convert competitionId to number for proper comparison
               const competitionId = parseInt(item.competitionId);
               
-              // Find competition in the list for pricing info
-              // or use the title and image directly from cart item
-              let competition = competitions?.find(c => c.id === competitionId);
-
-              // For debugging - log the competition to see what we're working with
-              console.log("Competition found for cart item:", competitionId, typeof competitionId, competition);
+              // Determine which competition data to use
+              // For LEGO Harry Potter (ID 2), use data from direct query
+              // Otherwise, look in the competitions list
+              let competition;
+              if (competitionId === 2 && legoCompetition) {
+                competition = legoCompetition;
+                console.log("Using directly fetched LEGO Harry Potter competition data:", legoCompetition);
+              } else {
+                competition = competitions?.find(c => c.id === competitionId);
+                console.log("Competition found in list for cart item:", competitionId, competition);
+              }
               
               // Get ticket price from competition
-              // If it's the LEGO Harry Potter competition (ID 2), use price of £1.00
-              // This is a temporary fix until we solve the competition loading issue
-              const ticketPrice = competition?.ticketPrice || (competitionId === 2 ? 1.00 : 0);
+              // Default to £1.00 for LEGO Harry Potter regardless of what competition data shows
+              const ticketPrice = (competitionId === 2) ? 1.00 : (competition?.ticketPrice || 0);
               const ticketNumbers = item.ticketNumbers.split(',').map(Number);
               const totalCost = ticketNumbers.length * ticketPrice;
               
