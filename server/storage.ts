@@ -398,6 +398,33 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
   
+  async getEntry(id: number): Promise<Entry | undefined> {
+    const [entry] = await db
+      .select()
+      .from(entries)
+      .where(eq(entries.id, id));
+    return entry;
+  }
+  
+  async updateEntry(id: number, data: Partial<Entry>): Promise<Entry> {
+    const [entry] = await db
+      .update(entries)
+      .set(data)
+      .where(eq(entries.id, id))
+      .returning();
+    return entry;
+  }
+  
+  async getCompetitionEntries(competitionId: number): Promise<Entry[]> {
+    const competitionEntries = await db
+      .select()
+      .from(entries)
+      .where(eq(entries.competitionId, competitionId))
+      .orderBy(desc(entries.createdAt));
+    
+    return competitionEntries;
+  }
+  
   async getUserEntries(userId: number): Promise<Entry[]> {
     const userEntries = await db
       .select({

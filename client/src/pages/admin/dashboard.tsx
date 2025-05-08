@@ -8,7 +8,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useAdminStats } from "@/hooks/use-admin";
 import { Link } from "wouter";
 import { formatPrice, formatDate } from "@/lib/utils";
-import { Users, ShoppingBag, Calendar, CheckCircle, TrendingUp, Package, AlertCircle, Loader2 } from "lucide-react";
+import { Users, ShoppingBag, Calendar, CheckCircle, TrendingUp, Package, AlertCircle, Loader2, Ticket } from "lucide-react";
 
 export default function AdminDashboard() {
   const [period, setPeriod] = useState("week");

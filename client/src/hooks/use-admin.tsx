@@ -169,3 +169,84 @@ export function useAdminStats() {
     queryKey: ["/api/admin/stats"],
   });
 }
+
+// Hook to fetch ticket sales data for all competitions
+export function useAdminTicketSales() {
+  return useQuery<{
+    id: number;
+    title: string;
+    status: string;
+    maxTickets: number;
+    ticketsSold: number;
+    ticketPrice: number;
+    revenue: number;
+    percentageSold: number;
+    available: number;
+    reserved: number;
+    purchased: number;
+    drawDate: string;
+  }[]>({
+    queryKey: ["/api/admin/ticket-sales"],
+  });
+}
+
+// Hook to fetch ticket sales data for a specific competition
+export function useAdminCompetitionTicketSales(competitionId: number) {
+  return useQuery<{
+    competition: Competition;
+    ticketStats: {
+      total: number;
+      available: number;
+      reserved: number;
+      purchased: number;
+      revenue: number;
+      percentageSold: number;
+    };
+  }>({
+    queryKey: [`/api/admin/competitions/${competitionId}/ticket-sales`],
+    enabled: !!competitionId,
+  });
+}
+
+// Hook to look up a specific ticket
+export function useAdminWinningTicketLookup(competitionId?: number, ticketNumber?: number) {
+  return useQuery<{
+    competition: Competition;
+    ticket: Ticket;
+    user: User | null;
+  }>({
+    queryKey: [
+      `/api/admin/winning-ticket-lookup?competitionId=${competitionId}&ticketNumber=${ticketNumber}`
+    ],
+    enabled: !!competitionId && !!ticketNumber,
+  });
+}
+
+// Hook to trigger a draw for a competition
+export function useAdminDrawCompetition() {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (competitionId: number) => {
+      const res = await apiRequest("POST", `/api/admin/competitions/${competitionId}/draw`);
+      return res.json();
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/competitions"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/competitions/${variables}/ticket-sales`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/ticket-sales"] });
+      
+      toast({
+        title: "Draw completed",
+        description: `The competition draw has been completed successfully. Winning ticket: ${data.winningTicket?.number}`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Draw error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+}
