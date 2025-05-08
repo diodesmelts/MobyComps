@@ -142,7 +142,8 @@ export function registerCartRoutes(app: Express) {
       // Create payment intent
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(totalAmount * 100), // Convert to cents
-        currency: "usd",
+        currency: "gbp",
+        payment_method_types: ["card"],
         metadata: {
           sessionId,
           cartItems: JSON.stringify(cartItems.map(item => ({
