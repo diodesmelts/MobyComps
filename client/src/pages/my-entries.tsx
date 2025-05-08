@@ -60,9 +60,22 @@ export default function MyEntriesPage() {
   const activeEntries = entries?.filter(entry => entry.status === 'active') || [];
   const completedEntries = entries?.filter(entry => entry.status !== 'active') || [];
   
-  // Find competition for an entry
-  const getCompetition = (competitionId: number) => {
-    return competitions?.find(comp => comp.id === competitionId);
+  // Find competition for an entry - use embedded data or lookup as fallback
+  const getCompetition = (entry: any) => {
+    // First check if competition data is embedded in the entry (from our updated backend)
+    if (entry.competition && entry.competition.title) {
+      return {
+        ...entry.competition,
+        // Add default properties that might be needed
+        id: entry.competitionId,
+        drawDate: new Date().toISOString(), // Default draw date if not provided
+        ticketPrice: 0, // Default price if not available
+        ...entry.competition
+      };
+    }
+    
+    // Fallback to lookup by ID if embedded data not available
+    return competitions?.find(comp => comp.id === entry.competitionId);
   };
   
   // Get ticket count for an entry
@@ -147,7 +160,7 @@ export default function MyEntriesPage() {
               ) : (
                 <div className="space-y-4">
                   {activeEntries.map((entry) => {
-                    const competition = getCompetition(entry.competitionId);
+                    const competition = getCompetition(entry);
                     return (
                       <Card key={entry.id} className="overflow-hidden">
                         <div className="flex flex-col md:flex-row">
@@ -231,7 +244,7 @@ export default function MyEntriesPage() {
               ) : (
                 <div className="space-y-4">
                   {completedEntries.map((entry) => {
-                    const competition = getCompetition(entry.competitionId);
+                    const competition = getCompetition(entry);
                     return (
                       <Card key={entry.id} className="overflow-hidden">
                         <div className="flex flex-col md:flex-row">
