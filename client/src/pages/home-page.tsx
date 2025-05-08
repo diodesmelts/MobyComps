@@ -122,16 +122,14 @@ export default function HomePage() {
         </section>
         
         {/* Live Competitions */}
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-8">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C] mb-3">
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C]">
                 Live Competitions
-                <span className="text-[#C3DC6F] ml-2">🏆</span>
               </h2>
-              <p className="text-xl text-gray-700 mt-3 max-w-2xl mx-auto font-medium">
-                Don't miss your chance to win these <span className="text-[#C3DC6F] font-bold">amazing prizes</span>!
-                <span className="block mt-1">New competitions added regularly. Good luck!</span>
+              <p className="text-xl text-gray-700 mt-4 max-w-2xl mx-auto">
+                Don't miss your chance to win these <span className="text-[#C3DC6F] font-medium">amazing prizes</span>!
               </p>
             </div>
             
@@ -196,42 +194,42 @@ export default function HomePage() {
         </section>
         
         {/* How It Works */}
-        <section className="py-12 bg-white">
-          <div className="container">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C] mb-3">
+        <section className="py-20 bg-gray-100">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C]">
                 How It Works
-                <span className="text-[#C3DC6F] ml-2">🎯</span>
               </h2>
-              <p className="text-xl text-gray-700 mt-3 max-w-2xl mx-auto font-medium">
-                Winning with Moby Comps is quick and easy!
+              <p className="text-xl text-gray-700 mt-4 max-w-2xl mx-auto">
+                Winning with Moby Comps is quick and easy
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
-                <h3 className="text-xl font-semibold text-[#002D5C] mb-2">Buy Tickets</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
+              <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
+                <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">1</div>
+                <h3 className="text-xl font-semibold text-[#002D5C] mb-3 mt-4">Buy Tickets</h3>
                 <p className="text-gray-600">Choose a competition, select your tickets, and make a secure payment.</p>
               </div>
               
-              <div className="text-center">
-                <div className="w-16 h-16 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
-                <h3 className="text-xl font-semibold text-[#002D5C] mb-2">Reveal Result</h3>
+              <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
+                <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">2</div>
+                <h3 className="text-xl font-semibold text-[#002D5C] mb-3 mt-4">Reveal Result</h3>
                 <p className="text-gray-600">Winners are automatically selected on the draw date and notified immediately.</p>
               </div>
               
-              <div className="text-center">
-                <div className="w-16 h-16 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
-                <h3 className="text-xl font-semibold text-[#002D5C] mb-2">Claim Prize</h3>
+              <div className="bg-white rounded-lg p-8 shadow-sm text-center relative">
+                <div className="w-12 h-12 bg-[#002D5C] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-5 absolute -top-6 left-1/2 transform -translate-x-1/2">3</div>
+                <h3 className="text-xl font-semibold text-[#002D5C] mb-3 mt-4">Claim Prize</h3>
                 <p className="text-gray-600">If you win, we'll contact you to arrange delivery of your prize!</p>
               </div>
             </div>
             
-            <div className="text-center mt-10">
-              <Button asChild variant="outline" className="border-[#002D5C] text-[#002D5C]">
-                <Link href="/how-to-play">
+            <div className="text-center mt-14">
+              <Button asChild variant="outline" className="border-[#002D5C] text-[#002D5C] hover:bg-[#002D5C] hover:text-white transition-colors px-6 py-5 text-base">
+                <Link href="/how-to-play" className="flex items-center">
                   Learn More About How To Play
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

@@ -41,10 +41,10 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
         
         {/* Draw date badge */}
         <div className="absolute bottom-0 left-0 right-0 bg-[#002D5C] text-white text-sm font-medium py-2 px-4 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span className="text-[#C3DC6F] font-medium">DRAW DATE:</span> <span className="ml-1">{formattedDate}</span>
+          <div className="flex items-center">
+            <span className="text-[#C3DC6F] font-medium mr-2">DRAW DATE:</span> 
+            <span>{formattedDate}</span>
+          </div>
         </div>
       </div>
 
