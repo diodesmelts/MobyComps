@@ -43,11 +43,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get entries via drizzle ORM query instead of raw SQL
       try {
         // First, verify if user exists 
-        const user = await db.query.users.findFirst({
-          where: eq(entries.userId, userId)
-        });
+        const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
         
-        console.log(`🔍 STEP 5 - User check:`, user ? "Found" : "Not found");
+        console.log(`🔍 STEP 5 - User check:`, user && user.length > 0 ? "Found" : "Not found");
         
         // Check if there are any entries in the table at all
         console.log(`🔍 STEP 5 - Checking for entries table data...`);
@@ -105,11 +103,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
       
       try {
-        // Use the storage method 
-        const userEntries = await storage.getUserEntries(userId);
-        console.log(`🔍 STEP 5 - getUserEntries returned ${userEntries.length} entries`);
+        // Get entries directly using SQL to avoid ORM issues
+        const result = await db.execute(
+          `SELECT e.*, c.title as competition_title, c.image_url as competition_image_url 
+           FROM entries e 
+           JOIN competitions c ON e.competition_id = c.id 
+           WHERE e.user_id = $1 
+           ORDER BY e.created_at DESC`,
+          [userId]
+        );
         
-        res.json(userEntries);
+        console.log(`✅ STEP 5 - Found ${result.rows.length} entries directly with SQL`);
+        
+        // Convert the raw SQL result to Entry objects with competition details
+        const entries = result.rows.map(row => ({
+          id: row.id,
+          userId: row.user_id,
+          competitionId: row.competition_id,
+          ticketIds: row.ticket_ids,
+          status: row.status,
+          stripePaymentId: row.stripe_payment_id,
+          createdAt: new Date(row.created_at),
+          // Include competition details
+          competition: {
+            title: row.competition_title,
+            imageUrl: row.competition_image_url
+          }
+        }));
+        
+        res.json(entries);
       } catch (dbError) {
         console.error("❌ STEP 5 - Database error in my-entries route:", dbError);
         // Send back empty array instead of error

@@ -568,75 +568,97 @@ export class DatabaseStorage implements IStorage {
     console.log(`🔍 STEP 5 - getUserEntries - Fetching entries for user ID: ${userId}`);
     
     // Verify the userId parameter is valid
-    if (!userId || typeof userId !== 'number') {
+    if (!userId || isNaN(userId) || userId <= 0) {
       console.error(`❌ STEP 5 - getUserEntries - Invalid userId parameter: ${userId}`);
       return []; // Return empty array instead of throwing an error
     }
     
     try {
-      // First, check if the user exists using Drizzle ORM (safer than raw SQL)
-      console.log(`🔍 STEP 5 - getUserEntries - Checking if user exists`);
-      const user = await db.select().from(users).where(eq(users.id, userId));
+      console.log(`🔍 STEP 5 - getUserEntries - Using Drizzle ORM to fetch entries`);
       
-      if (user.length === 0) {
-        console.warn(`⚠️ STEP 5 - getUserEntries - User with ID ${userId} not found`);
-        return []; // Exit early if user doesn't exist
-      } 
-      
-      console.log(`👤 STEP 5 - getUserEntries - Found user: ${user[0].username} (${user[0].email})`);
-      
-      // Check directly for entries for this user using Drizzle ORM
-      console.log(`🔍 STEP 5 - getUserEntries - Checking if user has entries`);
-      const entriesCount = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(entries)
-        .where(eq(entries.userId, userId));
-      
-      const count = Number(entriesCount[0]?.count || 0);
-      console.log(`📊 STEP 5 - getUserEntries - Found ${count} total entries for user ID ${userId}`);
-      
-      if (count === 0) {
-        console.log(`ℹ️ STEP 5 - getUserEntries - No entries found for user ID ${userId}`);
-        return []; // Return empty array if no entries
+      // Log directly to see the structure of entries
+      try {
+        console.log(`🔍 STEP 5 - Database table info check`);
+        
+        // Log out the schema for reference
+        const entriesSchema = await db.execute(
+          `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'entries'`
+        );
+        console.log(`🔍 Table structure (entries):`, entriesSchema.rows);
+        
+        const usersSchema = await db.execute(
+          `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users'`
+        );
+        console.log(`🔍 Table structure (users):`, usersSchema.rows);
+        
+        // Check if the user exists
+        const userCheckResult = await db.execute(
+          `SELECT id, username, email FROM users WHERE id = $1`, 
+          [userId]
+        );
+        console.log(`🔍 User check results:`, userCheckResult.rows);
+        
+        if (userCheckResult.rows.length === 0) {
+          console.warn(`⚠️ STEP 5 - getUserEntries - User with ID ${userId} not found`);
+          return []; // Exit early if user doesn't exist
+        }
+        
+        // First check how many entries exist for this user
+        const countQueryResult = await db.execute(
+          `SELECT COUNT(*) FROM entries WHERE user_id = $1`,
+          [userId]
+        );
+        console.log(`🔍 Count result:`, countQueryResult.rows[0]);
+        
+        // If no entries, return empty array
+        if (parseInt(countQueryResult.rows[0].count) === 0) {
+          console.log(`ℹ️ STEP 5 - getUserEntries - No entries found for user ID ${userId}`);
+          return [];
+        }
+        
+        // Safely fetch the entries using a simple SQL query
+        const entriesResult = await db.execute(
+          `SELECT e.*, c.title as competition_title, c.image_url as competition_image_url 
+           FROM entries e 
+           JOIN competitions c ON e.competition_id = c.id 
+           WHERE e.user_id = $1 
+           ORDER BY e.created_at DESC`,
+          [userId]
+        );
+        
+        console.log(`✅ STEP 5 - Found ${entriesResult.rows.length} entries:`, entriesResult.rows);
+        
+        // Convert the raw SQL result to Entry objects
+        return entriesResult.rows.map(row => ({
+          id: row.id,
+          userId: row.user_id,
+          competitionId: row.competition_id,
+          ticketIds: row.ticket_ids,
+          status: row.status,
+          stripePaymentId: row.stripe_payment_id,
+          createdAt: new Date(row.created_at),
+          // Add competition details
+          competition: {
+            title: row.competition_title,
+            imageUrl: row.competition_image_url
+          }
+        }));
+        
+      } catch (sqlError) {
+        console.error(`❌ STEP 5 - SQL diagnostic error:`, sqlError);
+        // Try to continue with Drizzle if SQL fails
       }
       
-      // Get entries with competition details using Drizzle ORM (avoiding raw SQL)
-      console.log(`🔍 STEP 5 - getUserEntries - Fetching entries with competition details`);
+      // Fallback to using Drizzle ORM if the SQL approach fails
       const userEntries = await db
-        .select({
-          entry: entries,
-          competition: competitions,
-        })
+        .select()
         .from(entries)
-        .innerJoin(competitions, eq(entries.competitionId, competitions.id))
         .where(eq(entries.userId, userId))
         .orderBy(desc(entries.createdAt));
       
-      console.log(`✅ STEP 5 - getUserEntries - Retrieved ${userEntries.length} entries with competition details`);
+      console.log(`✅ STEP 5 - getUserEntries - Retrieved ${userEntries.length} entries with Drizzle`);
+      return userEntries;
       
-      // Safely handle case where no entries are found
-      if (!userEntries || userEntries.length === 0) {
-        console.log(`ℹ️ STEP 5 - getUserEntries - No entries with competition details found`);
-        return [];
-      }
-      
-      // Debug log the entries
-      userEntries.forEach((entry, index) => {
-        if (entry && entry.entry && entry.competition) {
-          console.log(`📌 STEP 5 - Entry ${index + 1}:`, {
-            id: entry.entry.id,
-            competitionId: entry.entry.competitionId,
-            status: entry.entry.status,
-            competitionTitle: entry.competition.title,
-            ticketIds: entry.entry.ticketIds,
-            createdAt: entry.entry.createdAt
-          });
-        } else {
-          console.warn(`⚠️ STEP 5 - Entry ${index + 1} has missing data:`, entry);
-        }
-      });
-      
-      return userEntries.map(({ entry }) => entry);
     } catch (error) {
       console.error(`❌ STEP 5 - getUserEntries - Error fetching entries:`, error);
       // Return empty array instead of throwing to prevent disrupting the frontend
