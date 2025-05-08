@@ -26,7 +26,46 @@ export default function CartPage() {
   });
   
   const cartItems = cartData || [];
-  const cartTimeRemaining = 600; // 10 minutes in seconds (placeholder)
+  
+  // Calculate time remaining based on the earliest expiration time in the cart
+  const [cartTimeRemaining, setCartTimeRemaining] = useState<number>(0);
+  
+  // Update the timer every second
+  useEffect(() => {
+    if (!cartItems.length) return;
+    
+    const calculateTimeRemaining = () => {
+      // Find earliest expiration time from cart items
+      const earliestExpiry = cartItems.reduce((earliest: Date | null, item: any) => {
+        if (!item.expiresAt) return earliest;
+        const expiryDate = new Date(item.expiresAt);
+        return !earliest || expiryDate < earliest ? expiryDate : earliest;
+      }, null);
+      
+      if (!earliestExpiry) return 0;
+      
+      // Calculate seconds between now and expiry
+      const now = new Date();
+      const diffMs = earliestExpiry.getTime() - now.getTime();
+      return Math.max(0, Math.floor(diffMs / 1000));
+    };
+    
+    // Initial calculation
+    setCartTimeRemaining(calculateTimeRemaining());
+    
+    // Set up interval to update every second
+    const interval = setInterval(() => {
+      const remaining = calculateTimeRemaining();
+      setCartTimeRemaining(remaining);
+      
+      // Clear interval when time is up
+      if (remaining <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [cartItems]);
   
   // Remove from cart mutation
   const { mutate: removeFromCart, isPending: isRemoving } = useMutation({
