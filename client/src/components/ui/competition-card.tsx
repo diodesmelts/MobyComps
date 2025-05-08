@@ -69,15 +69,18 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
         </div>
 
         {/* Progress bar */}
-        <div className="mt-3 mb-5">
-          <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
+        <div className="mt-3 mb-5 p-4 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
+          <div className="mb-2 text-center">
+            <span className="text-base font-semibold text-[#002D5C]">Tickets Sold</span>
+          </div>
+          <div className="relative h-5 w-full overflow-hidden rounded-full bg-gray-200 mb-3">
             <div
-              className="h-full w-full flex-1 competition-progress-indicator transition-all"
+              className="h-full w-full flex-1 competition-progress-indicator"
               style={{ transform: `translateX(-${100 - soldPercentage}%)` }}
             />
           </div>
-          <div className="flex justify-between text-sm text-gray-600 mt-2">
-            <span className="font-medium">TICKETS SOLD: {soldPercentage}%</span>
+          <div className="flex justify-between text-sm text-gray-700 font-medium">
+            <span className="text-[#002D5C]">{soldPercentage}%</span>
             <span>{ticketsSold}/{maxTickets}</span>
           </div>
         </div>
