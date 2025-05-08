@@ -517,7 +517,18 @@ export class DatabaseStorage implements IStorage {
         ]);
         
         console.log(`✅ STEP 4 - createEntry - Direct SQL insert successful:`, sqlResult.rows[0]);
-        return sqlResult.rows[0];
+        
+        // Convert to proper Entry type with correct type conversions
+        const row = sqlResult.rows[0];
+        return {
+          id: parseInt(row.id, 10),
+          userId: parseInt(row.user_id, 10),
+          competitionId: parseInt(row.competition_id, 10),
+          ticketIds: row.ticket_ids,
+          status: row.status,
+          stripePaymentId: row.stripe_payment_id,
+          createdAt: new Date(row.created_at)
+        };
       } catch (sqlError) {
         console.error(`❌ STEP 4 - createEntry - Direct SQL insert failed:`, sqlError);
         
@@ -628,11 +639,11 @@ export class DatabaseStorage implements IStorage {
         
         console.log(`✅ STEP 5 - Found ${entriesResult.rows.length} entries:`, entriesResult.rows);
         
-        // Convert the raw SQL result to Entry objects
+        // Convert the raw SQL result to Entry objects - with proper type casting
         return entriesResult.rows.map(row => ({
-          id: row.id,
-          userId: row.user_id,
-          competitionId: row.competition_id,
+          id: parseInt(row.id, 10),
+          userId: parseInt(row.user_id, 10),
+          competitionId: parseInt(row.competition_id, 10),
           ticketIds: row.ticket_ids,
           status: row.status,
           stripePaymentId: row.stripe_payment_id,
