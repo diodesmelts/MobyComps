@@ -36,6 +36,12 @@ export default function MyEntriesPage() {
   } = useQuery<Entry[]>({
     queryKey: ["/api/user/entries"],
     enabled: !!user,
+    onSuccess: (data) => {
+      console.log("Entries loaded successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error loading entries:", error);
+    }
   });
   
   // Fetch competitions data

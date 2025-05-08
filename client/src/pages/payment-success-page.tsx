@@ -46,8 +46,10 @@ export default function PaymentSuccessPage() {
         // Explicitly clear the cart on the client side
         await cartApi.clearCart();
         
-        // Invalidate cart queries to refresh cart count in UI
+        // Invalidate cart and entries queries to refresh UI
         queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/my-entries"] }); // Also refresh backup endpoint
         
         toast({
           title: "Payment Successful",
