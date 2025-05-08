@@ -197,63 +197,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post("/api/process-payment", async (req, res) => {
     try {
-      console.log("🚨 === PROCESSING PAYMENT - START ===");
-      console.log("🚨 Request received at /api/process-payment");
-      console.log("🚨 Request body:", req.body);
+      console.log("\n\n🚨 =============================================");
+      console.log("🚨 ==== PROCESSING PAYMENT FLOW STARTING ====");
+      console.log("🚨 =============================================");
+      console.log("🚨 STEP 1 - Request received at /api/process-payment");
+      console.log("🚨 STEP 1 - Request body:", req.body);
       
       const { paymentIntentId } = req.body;
       
       if (!paymentIntentId) {
-        console.error("❌ Error: Missing payment intent ID");
+        console.error("❌ STEP 1 - Error: Missing payment intent ID");
         return res.status(400).json({ error: "Missing payment intent ID" });
       }
       
-      console.log(`🚨 Processing payment intent: ${paymentIntentId}`);
+      console.log(`🚨 STEP 1 - Processing payment intent: ${paymentIntentId}`);
       
       // Check authentication status
-      console.log(`🚨 User authentication status: ${req.isAuthenticated()}`);
-      console.log(`🚨 User info:`, req.user);
+      console.log(`🚨 STEP 1 - User authentication status: ${req.isAuthenticated()}`);
+      console.log(`🚨 STEP 1 - User info:`, req.user);
       
       // Retrieve the payment intent from Stripe to verify it's successful
-      console.log(`🚨 Retrieving payment intent from Stripe...`);
+      console.log(`🚨 STEP 1 - Retrieving payment intent from Stripe...`);
       const paymentIntent = await stripeService.getPaymentIntent(paymentIntentId);
-      console.log(`🚨 Payment intent retrieved:`, paymentIntent);
-      console.log(`🚨 Payment intent status: ${paymentIntent.status}`);
-      console.log(`🚨 Payment intent metadata:`, paymentIntent.metadata);
+      console.log(`🚨 STEP 1 - Payment intent status: ${paymentIntent.status}`);
+      console.log(`🚨 STEP 1 - Payment intent metadata:`, paymentIntent.metadata);
       
       if (paymentIntent.status !== 'succeeded') {
-        console.error(`❌ Payment intent ${paymentIntentId} has not succeeded. Status: ${paymentIntent.status}`);
+        console.error(`❌ STEP 1 - Payment intent ${paymentIntentId} has not succeeded. Status: ${paymentIntent.status}`);
         return res.status(400).json({ error: "Payment not successful" });
       }
       
       // Get the session ID from the metadata
       const sessionId = paymentIntent.metadata.sessionId;
       if (!sessionId) {
-        console.error("❌ No session ID found in payment intent metadata");
+        console.error("❌ STEP 1 - No session ID found in payment intent metadata");
         return res.status(400).json({ error: "No session ID associated with this payment" });
       }
       
-      console.log(`🚨 Retrieved session ID from payment: ${sessionId}`);
-      console.log(`🚨 Current session ID:`, req.sessionID);
+      console.log(`🚨 STEP 1 - Retrieved session ID from payment: ${sessionId}`);
+      console.log(`🚨 STEP 1 - Current session ID:`, req.sessionID);
       
       // Get cart items for this session
-      console.log(`🚨 Fetching cart items for session ${sessionId}...`);
+      console.log(`\n🚨 STEP 2 - Fetching cart items for session ${sessionId}...`);
       const cartItems = await storage.getCartItems(sessionId);
-      console.log(`🚨 Retrieved ${cartItems.length} cart items for session:`, cartItems);
+      console.log(`🚨 STEP 2 - Retrieved ${cartItems.length} cart items for session:`, cartItems);
       
       if (cartItems.length === 0) {
-        console.error("❌ No cart items found for this session");
+        console.error("❌ STEP 2 - No cart items found for this session");
         return res.status(400).json({ error: "No items in cart to process" });
       }
+      
+      // Direct DB validation for cart items
+      console.log(`🚨 STEP 2 - Verifying cart items with direct SQL...`);
+      const cartQuery = `SELECT * FROM cart_items WHERE session_id = $1`;
+      const cartResults = await db.execute(cartQuery, [sessionId]);
+      console.log(`🚨 STEP 2 - SQL cart verification found ${cartResults.rowCount} items:`, cartResults.rows);
       
       // Process each cart item
       const userId = req.isAuthenticated() ? (req.user as any).id : null;
       if (!userId) {
-        console.error("❌ User not authenticated");
+        console.error("❌ STEP 2 - User not authenticated");
         return res.status(401).json({ error: "User not authenticated" });
       }
       
-      console.log(`🚨 Processing purchase for user ID: ${userId}`);
+      console.log(`\n🚨 STEP 3 - Processing purchase for user ID: ${userId}`);
       
       let entriesCreated = 0;
       let ticketsProcessed = 0;
@@ -330,12 +337,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      console.log(`🚨 Payment processing complete! ${ticketsProcessed} tickets purchased, ${entriesCreated} entries created`);
+      console.log(`\n🚨 STEP 5 - Payment processing complete! ${ticketsProcessed} tickets purchased, ${entriesCreated} entries created`);
       
       // Verify that entries exist for the user
-      console.log(`🚨 Verifying entries for user ${userId}...`);
+      console.log(`🚨 STEP 5 - Verifying entries for user ${userId}...`);
       const userEntries = await storage.getUserEntries(userId);
-      console.log(`🚨 User entries after processing:`, userEntries);
+      console.log(`🚨 STEP 5 - User entries after processing:`, userEntries);
       
       // Final response
       const result = {
@@ -346,8 +353,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Payment processed successfully"
       };
       
-      console.log(`🚨 Sending response:`, result);
-      console.log("🚨 === PROCESSING PAYMENT - END ===");
+      console.log(`\n🚨 STEP 6 - Sending response:`, result);
+      console.log("🚨 ==============================================");
+      console.log("🚨 ==== PROCESSING PAYMENT FLOW COMPLETED ====");
+      console.log("🚨 ==============================================");
       
       res.json(result);
     } catch (error: any) {
