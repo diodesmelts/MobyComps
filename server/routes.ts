@@ -9,6 +9,9 @@ import { registerCartRoutes } from "./routes/cart";
 import { registerSiteConfigRoutes } from "./routes/site-config";
 import { stripeService } from "./services/StripeService";
 import { storage } from "./storage";
+import { db } from "./db";
+import { tickets, entries } from "@shared/schema";
+import { eq, inArray } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
@@ -160,7 +163,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post("/api/process-payment", async (req, res) => {
     try {
-      console.log("💰 Processing payment...");
+      console.log("🚨 === PROCESSING PAYMENT - START ===");
+      console.log("🚨 Request received at /api/process-payment");
+      console.log("🚨 Request body:", req.body);
+      
       const { paymentIntentId } = req.body;
       
       if (!paymentIntentId) {
@@ -168,11 +174,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing payment intent ID" });
       }
       
-      console.log(`💰 Processing payment intent: ${paymentIntentId}`);
+      console.log(`🚨 Processing payment intent: ${paymentIntentId}`);
+      
+      // Check authentication status
+      console.log(`🚨 User authentication status: ${req.isAuthenticated()}`);
+      console.log(`🚨 User info:`, req.user);
       
       // Retrieve the payment intent from Stripe to verify it's successful
+      console.log(`🚨 Retrieving payment intent from Stripe...`);
       const paymentIntent = await stripeService.getPaymentIntent(paymentIntentId);
-      console.log(`💰 Payment intent status: ${paymentIntent.status}`);
+      console.log(`🚨 Payment intent retrieved:`, paymentIntent);
+      console.log(`🚨 Payment intent status: ${paymentIntent.status}`);
+      console.log(`🚨 Payment intent metadata:`, paymentIntent.metadata);
       
       if (paymentIntent.status !== 'succeeded') {
         console.error(`❌ Payment intent ${paymentIntentId} has not succeeded. Status: ${paymentIntent.status}`);
@@ -186,11 +199,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No session ID associated with this payment" });
       }
       
-      console.log(`💰 Retrieved session ID from payment: ${sessionId}`);
+      console.log(`🚨 Retrieved session ID from payment: ${sessionId}`);
+      console.log(`🚨 Current session ID:`, req.sessionID);
       
       // Get cart items for this session
+      console.log(`🚨 Fetching cart items for session ${sessionId}...`);
       const cartItems = await storage.getCartItems(sessionId);
-      console.log(`💰 Retrieved ${cartItems.length} cart items for session`);
+      console.log(`🚨 Retrieved ${cartItems.length} cart items for session:`, cartItems);
       
       if (cartItems.length === 0) {
         console.error("❌ No cart items found for this session");
@@ -204,7 +219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "User not authenticated" });
       }
       
-      console.log(`💰 Processing purchase for user ID: ${userId}`);
+      console.log(`🚨 Processing purchase for user ID: ${userId}`);
       
       let entriesCreated = 0;
       let ticketsProcessed = 0;
@@ -213,11 +228,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const ticketNumbers = item.ticketNumbers.split(',').map(n => parseInt(n.trim()));
           
-          console.log(`💰 Processing tickets: ${JSON.stringify(ticketNumbers)} for competition ${item.competitionId}`);
+          console.log(`🚨 Processing tickets: ${JSON.stringify(ticketNumbers)} for competition ${item.competitionId}`);
           
           // Get the actual ticket records for these numbers
+          console.log(`🚨 Fetching ticket records for competition ${item.competitionId}, numbers ${ticketNumbers}...`);
           const tickets = await storage.getTicketsByNumbers(item.competitionId, ticketNumbers);
-          console.log(`💰 Retrieved ${tickets.length} ticket records: ${JSON.stringify(tickets.map(t => ({ id: t.id, number: t.number })))}`);
+          console.log(`🚨 Retrieved ${tickets.length} ticket records:`, tickets);
           
           if (tickets.length !== ticketNumbers.length) {
             console.warn(`⚠️ Warning: Expected ${ticketNumbers.length} tickets, but found ${tickets.length}`);
@@ -230,41 +246,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Mark tickets as purchased
           const ticketIds = tickets.map(ticket => ticket.id);
-          console.log(`💰 Marking tickets as purchased: ${JSON.stringify(ticketIds)}`);
+          console.log(`🚨 Marking tickets as purchased: ${JSON.stringify(ticketIds)}`);
           
-          const updatedTickets = await storage.purchaseTickets(ticketIds, userId);
-          console.log(`💰 Updated ${updatedTickets.length} tickets to purchased status: ${JSON.stringify(updatedTickets.map(t => ({ id: t.id, number: t.number, status: t.status })))}`);
-          
-          ticketsProcessed += updatedTickets.length;
-          
-          // Create entry record in the database
-          const entry = await storage.createEntry({
-            userId: userId,
-            competitionId: item.competitionId,
-            ticketIds: ticketIds.join(','),
-            status: 'active',
-            stripePaymentId: paymentIntentId,
-          });
-          
-          console.log(`💰 Created new entry: ${JSON.stringify(entry)}`);
-          entriesCreated++;
+          try {
+            console.log(`🚨 Before purchaseTickets() - Checking current ticket status...`);
+            // Direct DB query to check ticket status before update
+            const query = `SELECT * FROM tickets WHERE id = ANY($1)`;
+            const ticketsBefore = await db.execute(query, [ticketIds]);
+            console.log(`🚨 Current ticket status:`, ticketsBefore.rows);
+            
+            const updatedTickets = await storage.purchaseTickets(ticketIds, userId);
+            console.log(`🚨 Updated ${updatedTickets.length} tickets to purchased status:`, updatedTickets);
+            
+            console.log(`🚨 After purchaseTickets() - Verifying ticket status update...`);
+            // Direct DB query to check ticket status after update
+            const ticketsAfter = await db.execute(query, [ticketIds]);
+            console.log(`🚨 Updated ticket status:`, ticketsAfter.rows);
+            
+            ticketsProcessed += updatedTickets.length;
+            
+            // Create entry record in the database
+            console.log(`🚨 Creating entry record for user ${userId}, competition ${item.competitionId}...`);
+            const entry = await storage.createEntry({
+              userId: userId,
+              competitionId: item.competitionId,
+              ticketIds: ticketIds.join(','),
+              status: 'active',
+              stripePaymentId: paymentIntentId,
+            });
+            
+            console.log(`🚨 Created new entry:`, entry);
+            
+            // Verify entry was created
+            console.log(`🚨 Verifying entry creation...`);
+            const entryVerification = await db.select().from(entries).where(eq(entries.id, entry.id));
+            console.log(`🚨 Entry verification:`, entryVerification);
+            
+            entriesCreated++;
+          } catch (dbError) {
+            console.error(`❌ Database error during ticket processing:`, dbError);
+            throw dbError;
+          }
         } catch (itemError: any) {
           console.error(`❌ Error processing cart item ${item.id}:`, itemError);
+          throw itemError; // Re-throw to catch at the outer level
         }
       }
       
-      console.log(`💰 Payment processing complete! ${ticketsProcessed} tickets purchased, ${entriesCreated} entries created`);
+      console.log(`🚨 Payment processing complete! ${ticketsProcessed} tickets purchased, ${entriesCreated} entries created`);
       
-      res.json({
+      // Verify that entries exist for the user
+      console.log(`🚨 Verifying entries for user ${userId}...`);
+      const userEntries = await storage.getUserEntries(userId);
+      console.log(`🚨 User entries after processing:`, userEntries);
+      
+      // Final response
+      const result = {
         success: true,
         ticketsProcessed,
         entriesCreated,
+        userEntries: userEntries.length,
         message: "Payment processed successfully"
-      });
+      };
+      
+      console.log(`🚨 Sending response:`, result);
+      console.log("🚨 === PROCESSING PAYMENT - END ===");
+      
+      res.json(result);
     } catch (error: any) {
       console.error("❌ Error processing payment:", error);
       res.status(500).json({ 
-        error: error.message || "Failed to process payment" 
+        error: error.message || "Failed to process payment",
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   });

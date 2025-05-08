@@ -64,12 +64,28 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
           variant: "destructive",
         });
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        console.log("Payment succeeded, processing backend...", paymentIntent.id);
+        console.log("🔴 Payment succeeded, payment intent ID:", paymentIntent.id);
         
         try {
           // Process the payment on the backend
-          const result = await paymentApi.processPayment(paymentIntent.id);
-          console.log("Backend processing result:", result);
+          console.log("🔴 Calling backend /api/process-payment with payment intent ID:", paymentIntent.id);
+          const response = await fetch("/api/process-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
+            credentials: "include" // Important: include credentials for auth
+          });
+          
+          console.log("🔴 Backend /api/process-payment response status:", response.status);
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error("🔴 Process payment error response:", errorText);
+            throw new Error(`Failed to process payment: ${response.statusText}`);
+          }
+          
+          const result = await response.json();
+          console.log("🔴 Backend processing result:", result);
           
           toast({
             title: "Payment successful",
@@ -78,7 +94,7 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
           
           onSuccess();
         } catch (processError) {
-          console.error("Backend processing error:", processError);
+          console.error("🔴 Backend processing error:", processError);
           toast({
             title: "Payment error",
             description: "Your payment was successful, but we encountered an issue finalizing your purchase. Please contact support.",
