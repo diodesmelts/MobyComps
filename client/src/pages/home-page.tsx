@@ -121,6 +121,39 @@ export default function HomePage() {
           </div>
         </section>
         
+        {/* Secure Payments Banner */}
+        <section className="py-4 bg-[#f8fafc] border-y border-gray-200">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
+              <div className="flex items-center">
+                <svg viewBox="0 0 60 25" xmlns="http://www.w3.org/2000/svg" width="80" height="30">
+                  <path d="M59.442 14.058h-7.124c0-1.364.732-1.835 1.544-1.835.732 0 1.232.236 1.464.473l.67-1.417c-.65-.473-1.572-.732-2.455-.732-2.153 0-3.598 1.126-3.598 3.57 0 2.13 1.307 3.346 3.504 3.346 1.84 0 3.995-1.157 3.995-3.405zm-7.124 0h-.082 1.7c0-1.364-.732-1.835-1.544-1.835-.732 0-1.232.236-1.464.473l-.67-1.417c.65-.473 1.572-.732 2.455-.732 2.153 0 3.598 1.126 3.598 3.57 0 2.13-1.307 3.346-3.504 3.346-1.84 0-3.995-1.157-3.995-3.405h3.507zm-9.415-3.482c-1.05 0-1.78.496-2.155 1.008l-.14-84h-3.1l.026 10.97h3.1l-.016-7.085c.31-.425.815-.797 1.547-.797.967 0 1.502.57 1.502 1.738v6.143h3.1v-6.555c0-2.373-1.14-3.602-3.294-3.602h-.57v4.257zm-10.765 0c-2.22 0-3.67.5-3.67.5l.002-1.5h-2.74l-.01 10.89h3.1l.013-6.89s.875-.416 2.096-.416c.608 0 .99.098 1.274.245l.944-2.276c-.565-.323-1.425-.554-1.425-.554h.415v.001zm-11.387.026c-1.232 0-2.04.588-2.463 1.04l-.165-.87h-2.714v10.527h3.1v-7.85c.472-.398 1.07-.673 1.73-.673.39 0 .664.05.975.166l.85-2.166c-.464-.147-.913-.174-1.314-.174zm-9.623-.026c-2.215 0-3.632 1.097-3.632 2.87 0 2.107 1.922 2.585 3.27 2.937.674.174 1.266.327 1.266.75 0 .446-.496.685-1.192.685-1.02 0-2.01-.413-2.58-.752l-.77 1.977c.652.392 1.875.752 3.194.752 2.194 0 3.857-1.082 3.857-2.973 0-2.044-1.844-2.537-3.144-2.874-.7-.18-1.328-.342-1.328-.75 0-.368.368-.608 1.05-.608.85 0 1.785.31 2.232.548l.73-1.902c-.625-.31-1.524-.56-2.822-.56h-.132zm0 0c-2.215 0-3.632 1.097-3.632 2.87 0 2.107 1.922 2.585 3.27 2.937.674.174 1.266.327 1.266.75 0 .446-.496.685-1.192.685-1.02 0-2.01-.413-2.58-.752l-.77 1.977c.652.392 1.875.752 3.194.752 2.194 0 3.857-1.082 3.857-2.973 0-2.044-1.844-2.537-3.144-2.874-.7-.18-1.328-.342-1.328-.75 0-.368.368-.608 1.05-.608.85 0 1.785.31 2.232.548l.73-1.902c-.625-.31-1.524-.56-2.822-.56h-.132zm-9.614 4.276c0 2.266 1.607 3.363 3.483 3.363.94 0 1.562-.21 2.2-.598l.002 2.277c0 .8-.625 1.172-1.68 1.172-.946 0-1.86-.236-2.388-.473l-.644 1.776c.634.365 1.865.698 3.16.698 2.37 0 4.382-.948 4.382-3.61V10.74h-2.687l-.136.732c-.577-.576-1.28-.897-2.315-.897-1.785 0-3.377 1.484-3.377 3.875v.4zm5.68.006c0 .797-.566 1.56-1.654 1.56-.642 0-1.284-.38-1.284-1.6 0-.99.627-1.692 1.64-1.692.717 0 1.3.443 1.3 1.567v.165zm36.23-.006c0 2.266 1.606 3.363 3.48 3.363.943 0 1.564-.21 2.2-.598l.002 2.277c0 .8-.624 1.172-1.68 1.172-.945 0-1.86-.236-2.387-.473l-.644 1.776c.635.365 1.866.698 3.16.698 2.372 0 4.384-.948 4.384-3.61V10.74h-2.688l-.136.732c-.577-.576-1.28-.897-2.315-.897-1.785 0-3.377 1.484-3.377 3.875v.4zm5.678.006c0 .797-.565 1.56-1.652 1.56-.644 0-1.285-.38-1.285-1.6 0-.99.627-1.692 1.64-1.692.718 0 1.3.443 1.3 1.567l-.003.165zM3.277 10.01l-.1 10.252L0 3.658h3.363L8.02 10.01c-.196-1.946-.73-5.467-1.284-6.352h3.1c.496 1.417.852 2.902.852 5.865v10.738h-3.1l-4.31-10.01-2.213-6.352h1.212z" fill="#635BFF"/>
+                </svg>
+              </div>
+              
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span className="font-medium text-sm">Secure Payments</span>
+              </div>
+              
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span className="font-medium text-sm">Bank-Grade Encryption</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <img src="https://cdn.sanity.io/images/ijr8p1fo/production/a4d1607ae68c4132ce95a8f96b754d113640ffb5-24x16.svg" alt="Visa" className="h-6 w-auto" />
+                <img src="https://cdn.sanity.io/images/ijr8p1fo/production/cd13a7cd3e72af87ff8faf51bf96e7ad9e8cfeeb-24x16.svg" alt="Mastercard" className="h-6 w-auto" />
+                <img src="https://cdn.sanity.io/images/ijr8p1fo/production/5bdfeec3324cce53175efb9fb91fdea3e63eff04-24x16.svg" alt="Amex" className="h-6 w-auto" />
+              </div>
+            </div>
+          </div>
+        </section>
+        
         {/* Live Competitions */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4">
@@ -232,55 +265,6 @@ export default function HomePage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-            </div>
-          </div>
-        </section>
-        
-        {/* Secure Payments Section */}
-        <section className="py-16 bg-white">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-10 bg-[#f8fafc] rounded-2xl shadow-lg p-8 md:p-12">
-              <div className="md:w-2/3">
-                <h2 className="text-3xl md:text-4xl font-bold text-[#002D5C] mb-4">
-                  Shop with Confidence
-                </h2>
-                <p className="text-lg text-gray-700 mb-6">
-                  Your security is our priority. All transactions on Moby Comps are protected with bank-grade encryption and processed securely through Stripe, a trusted global payment provider.
-                </p>
-                <div className="flex flex-wrap gap-4 items-center">
-                  <div className="bg-white px-4 py-2 rounded-md shadow-sm flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span className="font-medium">Secure SSL Encryption</span>
-                  </div>
-                  <div className="bg-white px-4 py-2 rounded-md shadow-sm flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    <span className="font-medium">Protected Payments</span>
-                  </div>
-                  <div className="bg-white px-4 py-2 rounded-md shadow-sm flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="font-medium">Verified Competitions</span>
-                  </div>
-                </div>
-              </div>
-              <div className="md:w-1/3 flex items-center justify-center">
-                <div className="flex flex-col items-center bg-white p-6 rounded-xl shadow-md">
-                  <svg viewBox="0 0 60 25" xmlns="http://www.w3.org/2000/svg" width="140" height="80" className="mb-2">
-                    <path d="M59.442 14.058h-7.124c0-1.364.732-1.835 1.544-1.835.732 0 1.232.236 1.464.473l.67-1.417c-.65-.473-1.572-.732-2.455-.732-2.153 0-3.598 1.126-3.598 3.57 0 2.13 1.307 3.346 3.504 3.346 1.84 0 3.995-1.157 3.995-3.405zm-7.124 0h-.082 1.7c0-1.364-.732-1.835-1.544-1.835-.732 0-1.232.236-1.464.473l-.67-1.417c.65-.473 1.572-.732 2.455-.732 2.153 0 3.598 1.126 3.598 3.57 0 2.13-1.307 3.346-3.504 3.346-1.84 0-3.995-1.157-3.995-3.405h3.507zm-9.415-3.482c-1.05 0-1.78.496-2.155 1.008l-.14-84h-3.1l.026 10.97h3.1l-.016-7.085c.31-.425.815-.797 1.547-.797.967 0 1.502.57 1.502 1.738v6.143h3.1v-6.555c0-2.373-1.14-3.602-3.294-3.602h-.57v4.257zm-10.765 0c-2.22 0-3.67.5-3.67.5l.002-1.5h-2.74l-.01 10.89h3.1l.013-6.89s.875-.416 2.096-.416c.608 0 .99.098 1.274.245l.944-2.276c-.565-.323-1.425-.554-1.425-.554h.415v.001zm-11.387.026c-1.232 0-2.04.588-2.463 1.04l-.165-.87h-2.714v10.527h3.1v-7.85c.472-.398 1.07-.673 1.73-.673.39 0 .664.05.975.166l.85-2.166c-.464-.147-.913-.174-1.314-.174zm-9.623-.026c-2.215 0-3.632 1.097-3.632 2.87 0 2.107 1.922 2.585 3.27 2.937.674.174 1.266.327 1.266.75 0 .446-.496.685-1.192.685-1.02 0-2.01-.413-2.58-.752l-.77 1.977c.652.392 1.875.752 3.194.752 2.194 0 3.857-1.082 3.857-2.973 0-2.044-1.844-2.537-3.144-2.874-.7-.18-1.328-.342-1.328-.75 0-.368.368-.608 1.05-.608.85 0 1.785.31 2.232.548l.73-1.902c-.625-.31-1.524-.56-2.822-.56h-.132zm0 0c-2.215 0-3.632 1.097-3.632 2.87 0 2.107 1.922 2.585 3.27 2.937.674.174 1.266.327 1.266.75 0 .446-.496.685-1.192.685-1.02 0-2.01-.413-2.58-.752l-.77 1.977c.652.392 1.875.752 3.194.752 2.194 0 3.857-1.082 3.857-2.973 0-2.044-1.844-2.537-3.144-2.874-.7-.18-1.328-.342-1.328-.75 0-.368.368-.608 1.05-.608.85 0 1.785.31 2.232.548l.73-1.902c-.625-.31-1.524-.56-2.822-.56h-.132zm-9.614 4.276c0 2.266 1.607 3.363 3.483 3.363.94 0 1.562-.21 2.2-.598l.002 2.277c0 .8-.625 1.172-1.68 1.172-.946 0-1.86-.236-2.388-.473l-.644 1.776c.634.365 1.865.698 3.16.698 2.37 0 4.382-.948 4.382-3.61V10.74h-2.687l-.136.732c-.577-.576-1.28-.897-2.315-.897-1.785 0-3.377 1.484-3.377 3.875v.4zm5.68.006c0 .797-.566 1.56-1.654 1.56-.642 0-1.284-.38-1.284-1.6 0-.99.627-1.692 1.64-1.692.717 0 1.3.443 1.3 1.567v.165zm36.23-.006c0 2.266 1.606 3.363 3.48 3.363.943 0 1.564-.21 2.2-.598l.002 2.277c0 .8-.624 1.172-1.68 1.172-.945 0-1.86-.236-2.387-.473l-.644 1.776c.635.365 1.866.698 3.16.698 2.372 0 4.384-.948 4.384-3.61V10.74h-2.688l-.136.732c-.577-.576-1.28-.897-2.315-.897-1.785 0-3.377 1.484-3.377 3.875v.4zm5.678.006c0 .797-.565 1.56-1.652 1.56-.644 0-1.285-.38-1.285-1.6 0-.99.627-1.692 1.64-1.692.718 0 1.3.443 1.3 1.567l-.003.165zM3.277 10.01l-.1 10.252L0 3.658h3.363L8.02 10.01c-.196-1.946-.73-5.467-1.284-6.352h3.1c.496 1.417.852 2.902.852 5.865v10.738h-3.1l-4.31-10.01-2.213-6.352h1.212z" fill="#635BFF"/>
-                  </svg>
-                  <span className="text-sm text-gray-500 mb-4">Secure payments by</span>
-                  <div className="flex gap-2">
-                    <img src="https://cdn.sanity.io/images/ijr8p1fo/production/a4d1607ae68c4132ce95a8f96b754d113640ffb5-24x16.svg" alt="Visa" className="h-8 w-auto" />
-                    <img src="https://cdn.sanity.io/images/ijr8p1fo/production/cd13a7cd3e72af87ff8faf51bf96e7ad9e8cfeeb-24x16.svg" alt="Mastercard" className="h-8 w-auto" />
-                    <img src="https://cdn.sanity.io/images/ijr8p1fo/production/5bdfeec3324cce53175efb9fb91fdea3e63eff04-24x16.svg" alt="Amex" className="h-8 w-auto" />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
