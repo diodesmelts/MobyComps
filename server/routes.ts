@@ -128,11 +128,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
-      console.log("💳 Creating payment intent...");
+      console.log("\n\n💳 =====================================");
+      console.log("💳 === CREATING PAYMENT INTENT ===");
+      console.log("💳 =====================================");
       
       // Get cart items to calculate the total amount
       const sessionId = req.sessionID;
       console.log(`💳 Session ID: ${sessionId}`);
+      
+      // Verify cookies for tracing issues
+      console.log(`💳 Request cookies:`, req.headers.cookie);
+      console.log(`💳 User authenticated:`, req.isAuthenticated());
+      if (req.isAuthenticated()) {
+        console.log(`💳 User info:`, req.user);
+      }
       
       const cartItems = await storage.getCartItems(sessionId);
       console.log(`💳 Retrieved ${cartItems.length} cart items:`, cartItems);
@@ -363,6 +372,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("❌ Error processing payment:", error);
       res.status(500).json({ 
         error: error.message || "Failed to process payment",
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
+  });
+  
+  // Debug endpoint for testing entry creation directly
+  app.post("/api/debug/create-test-entry", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = (req.user as any).id;
+      console.log(`🧪 DEBUG - Creating test entry for user ID: ${userId}`);
+      
+      // Create a test entry directly
+      const testEntry = await storage.createEntry({
+        userId: userId,
+        competitionId: 1, // Assumes competition ID 1 exists
+        ticketIds: "999", // Dummy ticket ID
+        status: 'active',
+        stripePaymentId: 'test_payment_123'
+      });
+      
+      console.log(`🧪 DEBUG - Test entry created:`, testEntry);
+      
+      // Verify the entry was created
+      const userEntries = await storage.getUserEntries(userId);
+      console.log(`🧪 DEBUG - User entries after test:`, userEntries);
+      
+      // Return success
+      res.json({ 
+        success: true, 
+        testEntry,
+        allEntries: userEntries
+      });
+    } catch (error: any) {
+      console.error("❌ DEBUG - Error creating test entry:", error);
+      res.status(500).json({ 
+        error: error.message,
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
