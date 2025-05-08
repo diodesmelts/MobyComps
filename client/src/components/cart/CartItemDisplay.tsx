@@ -29,11 +29,31 @@ export const CartItemDisplay: React.FC<CartItemDisplayProps> = ({
     <div className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
         {(competition.imageUrl || item.competitionImageUrl) ? (
-          <Image 
-            src={competition.imageUrl || item.competitionImageUrl} 
-            alt={competition.title}
-            className="w-full h-full object-cover"
-          />
+          <div className="w-full h-full">
+            <img 
+              src={(competition.imageUrl || item.competitionImageUrl).startsWith('/uploads') 
+                ? `http://localhost:5000${competition.imageUrl || item.competitionImageUrl}` 
+                : (competition.imageUrl || item.competitionImageUrl)}
+              alt={competition.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // If image fails to load, replace with our branded placeholder
+                e.currentTarget.style.display = 'none';
+                const parent = e.currentTarget.parentElement;
+                if (parent) {
+                  parent.classList.add('bg-[#002D5C]');
+                  parent.innerHTML = `
+                    <div class="flex items-center justify-center h-full">
+                      <div class="text-white text-center p-1">
+                        <div class="text-xs font-bold">MOBY</div>
+                        <div class="text-[8px]">COMPS</div>
+                      </div>
+                    </div>
+                  `;
+                }
+              }}
+            />
+          </div>
         ) : (
           // Fallback to branded placeholder if no image
           <div className="w-full h-full bg-[#002D5C] flex items-center justify-center">
