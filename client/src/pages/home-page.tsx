@@ -124,10 +124,14 @@ export default function HomePage() {
         {/* Live Competitions */}
         <section className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-[#002D5C]">Live Competitions</h2>
-              <p className="text-gray-600 mt-2">
-                Don't miss your chance to win these <span className="text-[#C3DC6F] font-medium">amazing prizes</span>! New competitions added regularly.
+            <div className="text-center mb-8">
+              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C] mb-3">
+                Live Competitions
+                <span className="text-[#C3DC6F] ml-2">🏆</span>
+              </h2>
+              <p className="text-xl text-gray-700 mt-3 max-w-2xl mx-auto font-medium">
+                Don't miss your chance to win these <span className="text-[#C3DC6F] font-bold">amazing prizes</span>!
+                <span className="block mt-1">New competitions added regularly. Good luck!</span>
               </p>
             </div>
             
@@ -195,8 +199,13 @@ export default function HomePage() {
         <section className="py-12 bg-white">
           <div className="container">
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-[#002D5C]">How It Works</h2>
-              <p className="text-gray-600 mt-2">Winning with Moby Comps is quick and easy</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-[#002D5C] mb-3">
+                How It Works
+                <span className="text-[#C3DC6F] ml-2">🎯</span>
+              </h2>
+              <p className="text-xl text-gray-700 mt-3 max-w-2xl mx-auto font-medium">
+                Winning with Moby Comps is quick and easy!
+              </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
