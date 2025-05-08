@@ -160,6 +160,10 @@ export default function CheckoutPage() {
       return;
     }
     
+    // Save cart to localStorage for payment success fallback
+    localStorage.setItem('mobycomps-cart', JSON.stringify({ items: cartItems }));
+    console.log("Saved cart to localStorage:", { items: cartItems });
+    
     async function createPaymentIntent() {
       try {
         const response = await fetch("/api/create-payment-intent", {

@@ -35,7 +35,10 @@ export default function PaymentSuccessPage() {
         // Get the cart from local storage to see if we came from a checkout flow
         // or just navigated here directly
         const cart = localStorage.getItem('mobycomps-cart');
+        console.log("Cart data from localStorage:", cart);
+        
         if (!cart || JSON.parse(cart).items?.length === 0) {
+          console.log("No items found in cart, showing error");
           // No cart items, this was likely a direct navigation
           toast({
             title: "No Payment Information",
@@ -43,6 +46,8 @@ export default function PaymentSuccessPage() {
             variant: "destructive",
           });
           return;
+        } else {
+          console.log("Found cart items in localStorage, will process last cart");
         }
         
         // We came from a checkout flow but Stripe didn't redirect properly

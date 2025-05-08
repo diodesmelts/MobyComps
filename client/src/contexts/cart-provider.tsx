@@ -3,6 +3,9 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Competition } from "@shared/schema";
 
+// Local storage key for cart
+const CART_STORAGE_KEY = 'mobycomps-cart';
+
 export interface CartItem {
   id: number;
   competitionId: number;
@@ -102,11 +105,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const response = await apiRequest("GET", "/api/cart");
       const data = await response.json();
       // Initialize with empty array if items is undefined
-      setCartItems(data?.items || []);
+      const items = data?.items || [];
+      setCartItems(items);
+      
+      // Save cart to localStorage
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ items }));
     } catch (error) {
       console.error("Failed to fetch cart:", error);
-      // Don't show toast for initial fetch, but ensure cartItems is an array
-      setCartItems([]);
+      
+      // Try to load from localStorage if API fails
+      try {
+        const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+        if (storedCart) {
+          const parsedCart = JSON.parse(storedCart);
+          setCartItems(parsedCart.items || []);
+        } else {
+          setCartItems([]);
+        }
+      } catch (localStorageError) {
+        console.error("Failed to load cart from localStorage:", localStorageError);
+        setCartItems([]);
+      }
     }
   };
 
@@ -178,6 +197,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       
       setCartItems([]);
+      
+      // Clear cart in localStorage too
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ items: [] }));
     } catch (error) {
       toast({
         title: "Error",
