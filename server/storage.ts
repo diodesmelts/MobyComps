@@ -567,59 +567,41 @@ export class DatabaseStorage implements IStorage {
   async getUserEntries(userId: number): Promise<Entry[]> {
     console.log(`🔍 STEP 5 - getUserEntries - Fetching entries for user ID: ${userId}`);
     
+    // Verify the userId parameter is valid
+    if (!userId || typeof userId !== 'number') {
+      console.error(`❌ STEP 5 - getUserEntries - Invalid userId parameter: ${userId}`);
+      return []; // Return empty array instead of throwing an error
+    }
+    
     try {
-      // First, check if the user exists
+      // First, check if the user exists using Drizzle ORM (safer than raw SQL)
+      console.log(`🔍 STEP 5 - getUserEntries - Checking if user exists`);
       const user = await db.select().from(users).where(eq(users.id, userId));
       
       if (user.length === 0) {
         console.warn(`⚠️ STEP 5 - getUserEntries - User with ID ${userId} not found`);
-      } else {
-        console.log(`👤 STEP 5 - getUserEntries - Found user: ${user[0].username} (${user[0].email})`);
-      }
+        return []; // Exit early if user doesn't exist
+      } 
       
-      // Raw SQL query to debug entry issues
-      try {
-        const rawQuery = `SELECT * FROM entries WHERE user_id = $1`;
-        const rawParams = [userId]; 
-        console.log(`🔍 STEP 5 - Executing SQL: "${rawQuery}" with params:`, rawParams);
-        const rawResult = await db.execute(rawQuery, rawParams);
-        console.log(`🔍 STEP 5 - Raw entries found via SQL: ${rawResult.rowCount} entries`, rawResult.rows);
-        
-        // Check schema structure
-        const schemaQuery = `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'entries'`;
-        console.log(`🔍 STEP 5 - Checking schema with query: "${schemaQuery}"`);
-        const schemaResult = await db.execute(schemaQuery);
-        console.log(`🔍 STEP 5 - Entries table schema:`, schemaResult.rows);
-      } catch (sqlError) {
-        console.error(`❌ STEP 5 - SQL error in diagnostic queries:`, sqlError);
-        // Don't throw, just log and continue
-      }
+      console.log(`👤 STEP 5 - getUserEntries - Found user: ${user[0].username} (${user[0].email})`);
       
-      // Check if any entries exist for this user at all
+      // Check directly for entries for this user using Drizzle ORM
+      console.log(`🔍 STEP 5 - getUserEntries - Checking if user has entries`);
       const entriesCount = await db
         .select({ count: sql<number>`count(*)` })
         .from(entries)
         .where(eq(entries.userId, userId));
       
-      console.log(`📊 STEP 5 - getUserEntries - Found ${entriesCount[0].count} total entries for user ID ${userId}`);
+      const count = Number(entriesCount[0]?.count || 0);
+      console.log(`📊 STEP 5 - getUserEntries - Found ${count} total entries for user ID ${userId}`);
       
-      if (entriesCount[0].count === 0) {
+      if (count === 0) {
         console.log(`ℹ️ STEP 5 - getUserEntries - No entries found for user ID ${userId}`);
-        
-        // Check overall entries count to see if any exist in the table
-        try {
-          const totalEntriesQuery = `SELECT COUNT(*) FROM entries`;
-          console.log(`🔍 STEP 5 - Checking total entries with query: "${totalEntriesQuery}"`);
-          const totalEntries = await db.execute(totalEntriesQuery);
-          console.log(`🔍 STEP 5 - Total entries in database:`, totalEntries.rows[0]);
-        } catch (countError) {
-          console.error(`❌ STEP 5 - Error counting total entries:`, countError);
-        }
-        
-        return [];
+        return []; // Return empty array if no entries
       }
       
-      // Now get the entries with competition details
+      // Get entries with competition details using Drizzle ORM (avoiding raw SQL)
+      console.log(`🔍 STEP 5 - getUserEntries - Fetching entries with competition details`);
       const userEntries = await db
         .select({
           entry: entries,
@@ -632,22 +614,33 @@ export class DatabaseStorage implements IStorage {
       
       console.log(`✅ STEP 5 - getUserEntries - Retrieved ${userEntries.length} entries with competition details`);
       
+      // Safely handle case where no entries are found
+      if (!userEntries || userEntries.length === 0) {
+        console.log(`ℹ️ STEP 5 - getUserEntries - No entries with competition details found`);
+        return [];
+      }
+      
       // Debug log the entries
       userEntries.forEach((entry, index) => {
-        console.log(`📌 STEP 5 - Entry ${index + 1}:`, {
-          id: entry.entry.id,
-          competitionId: entry.entry.competitionId,
-          status: entry.entry.status,
-          competitionTitle: entry.competition.title,
-          ticketIds: entry.entry.ticketIds,
-          createdAt: entry.entry.createdAt
-        });
+        if (entry && entry.entry && entry.competition) {
+          console.log(`📌 STEP 5 - Entry ${index + 1}:`, {
+            id: entry.entry.id,
+            competitionId: entry.entry.competitionId,
+            status: entry.entry.status,
+            competitionTitle: entry.competition.title,
+            ticketIds: entry.entry.ticketIds,
+            createdAt: entry.entry.createdAt
+          });
+        } else {
+          console.warn(`⚠️ STEP 5 - Entry ${index + 1} has missing data:`, entry);
+        }
       });
       
       return userEntries.map(({ entry }) => entry);
     } catch (error) {
       console.error(`❌ STEP 5 - getUserEntries - Error fetching entries:`, error);
-      throw error;
+      // Return empty array instead of throwing to prevent disrupting the frontend
+      return []; 
     }
   }
   

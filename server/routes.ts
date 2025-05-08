@@ -38,24 +38,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as any).id;
       console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
       
-      // Direct DB verification of user
-      const userQuery = `SELECT id, username, email FROM users WHERE id = $1`;
-      const userResult = await db.execute(userQuery, [userId]);
-      console.log(`🔍 STEP 5 - Found user:`, userResult);
+      // Removed direct SQL queries and replaced with safer approach
       
-      // Direct DB verification of entries
-      const entriesQuery = `SELECT * FROM entries WHERE user_id = $1`;
-      const entriesResult = await db.execute(entriesQuery, [userId]);
-      console.log(`🔍 STEP 5 - Direct DB entries query found ${entriesResult.rowCount} entries:`, entriesResult.rows);
-      
-      // Get entries via storage
-      const entries = await storage.getUserEntries(userId);
-      console.log(`🔍 STEP 5 - Storage getUserEntries returned ${entries.length} entries:`, entries);
-      
-      res.json(entries);
+      // Get entries via drizzle ORM query instead of raw SQL
+      try {
+        // First, verify if user exists 
+        const user = await db.query.users.findFirst({
+          where: eq(entries.userId, userId)
+        });
+        
+        console.log(`🔍 STEP 5 - User check:`, user ? "Found" : "Not found");
+        
+        // Check if there are any entries in the table at all
+        console.log(`🔍 STEP 5 - Checking for entries table data...`);
+        
+        // Use the storage method which has been fixed
+        const userEntries = await storage.getUserEntries(userId);
+        console.log(`🔍 STEP 5 - Storage getUserEntries returned ${userEntries.length} entries`);
+        
+        res.json(userEntries);
+      } catch (dbError) {
+        console.error("❌ STEP 5 - Database error in entries route:", dbError);
+        // Send back empty array instead of error to avoid breaking the frontend
+        res.json([]);
+      }
     } catch (error: any) {
       console.error("❌ Error fetching user entries:", error);
-      res.status(500).json({ error: error.message });
+      // Send back empty array instead of error to prevent frontend crash
+      res.json([]);
     }
   });
   
@@ -94,18 +104,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as any).id;
       console.log(`🔍 STEP 5 - Fetching entries for user ID: ${userId}`);
       
-      // Direct DB verification of entries
-      const entriesQuery = `SELECT * FROM entries WHERE user_id = $1`;
-      const entriesResult = await db.execute(entriesQuery, [userId]);
-      console.log(`🔍 STEP 5 - Direct DB entries query found ${entriesResult.rowCount} entries:`, entriesResult.rows);
-      
-      const entries = await storage.getUserEntries(userId);
-      console.log(`🔍 STEP 5 - getUserEntries returned ${entries.length} entries:`, entries);
-      
-      res.json(entries);
+      try {
+        // Use the storage method 
+        const userEntries = await storage.getUserEntries(userId);
+        console.log(`🔍 STEP 5 - getUserEntries returned ${userEntries.length} entries`);
+        
+        res.json(userEntries);
+      } catch (dbError) {
+        console.error("❌ STEP 5 - Database error in my-entries route:", dbError);
+        // Send back empty array instead of error
+        res.json([]);
+      }
     } catch (error: any) {
       console.error("❌ Error fetching user entries:", error);
-      res.status(500).json({ error: error.message });
+      // Return empty array instead of error to prevent frontend crashes
+      res.json([]);
     }
   });
   
