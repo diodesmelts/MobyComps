@@ -243,8 +243,8 @@ export function Header() {
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "px-1 py-1 hover:text-[#C3DC6F]", 
-                  location === item.href && "border-b-2 border-[#C3DC6F]"
+                  "px-1 py-1 text-white/80 hover:text-[#C3DC6F] font-['Open_Sans'] font-semibold", 
+                  location === item.href && "border-b-2 border-[#C3DC6F] text-white"
                 )}
               >
                 {item.label}
@@ -256,8 +256,8 @@ export function Header() {
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "px-1 py-1 hover:text-[#C3DC6F]", 
-                  location === item.href && "border-b-2 border-[#C3DC6F]"
+                  "px-1 py-1 text-white/80 hover:text-[#C3DC6F] font-['Open_Sans'] font-semibold", 
+                  location === item.href && "border-b-2 border-[#C3DC6F] text-white"
                 )}
               >
                 {item.label}
@@ -392,8 +392,8 @@ export function Header() {
                           <Button 
                             variant="ghost" 
                             className={cn(
-                              "w-full justify-start text-lg", 
-                              location === item.href && "bg-white/10 border-l-4 border-[#C3DC6F] pl-3"
+                              "w-full justify-start text-lg font-['Open_Sans'] font-semibold text-white/80", 
+                              location === item.href && "bg-white/10 border-l-4 border-[#C3DC6F] pl-3 text-white"
                             )}
                           >
                             {item.label}
@@ -411,8 +411,8 @@ export function Header() {
                               <Button 
                                 variant="ghost" 
                                 className={cn(
-                                  "w-full justify-start text-lg", 
-                                  location === item.href && "bg-white/10 border-l-4 border-[#C3DC6F] pl-3"
+                                  "w-full justify-start text-lg font-['Open_Sans'] font-semibold text-white/80", 
+                                  location === item.href && "bg-white/10 border-l-4 border-[#C3DC6F] pl-3 text-white"
                                 )}
                               >
                                 {item.label}
@@ -428,7 +428,7 @@ export function Header() {
                         <div className="border-t border-white/20 pt-3 mt-2" />
                         <SheetClose asChild>
                           <Link href="/admin">
-                            <Button variant="ghost" className="w-full justify-start text-lg">
+                            <Button variant="ghost" className="w-full justify-start text-lg font-['Open_Sans'] font-semibold text-white/80">
                               Admin Dashboard
                             </Button>
                           </Link>
