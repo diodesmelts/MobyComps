@@ -492,21 +492,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Debug endpoint for testing creation of entry
   app.get("/api/debug/create-test-entry", async (req, res) => {
     try {
-      // Find the admin user (user ID 1)
-      const userResult = await db.select().from(users).where(eq(users.id, 1)).limit(1);
-      const userId = userResult.length > 0 ? userResult[0].id : null;
+      // Get the user ID from the session if available, or default to admin user
+      let userId = req.isAuthenticated() ? (req.user as any).id : null;
       
+      // If no user in session, fallback to admin user (ID 1)
       if (!userId) {
-        return res.status(400).json({ error: "Admin user not found" });
+        const userResult = await db.select().from(users).where(eq(users.id, 1)).limit(1);
+        userId = userResult.length > 0 ? userResult[0].id : null;
+        
+        if (!userId) {
+          return res.status(400).json({ error: "Could not find a user to create test entry" });
+        }
       }
       
-      console.log(`🧪 DEBUG - Creating test entry for admin user ID: ${userId}`);
+      console.log(`🧪 DEBUG - Creating test entry for user ID: ${userId}`);
+      
+      // Find an active competition
+      const { competitions } = await storage.listCompetitions({ status: 'live', limit: 1 });
+      const competitionId = competitions && competitions.length > 0 ? competitions[0].id : 2; // Default to ID 2 if no live competitions
+      
+      console.log(`🧪 DEBUG - Using competition ID: ${competitionId} for test entry`);
       
       // Create a test entry directly 
       const testEntry = await storage.createEntry({
         userId: userId,
-        competitionId: 2, // Use LEGO competition
-        ticketIds: "999", // Dummy ticket ID
+        competitionId: competitionId,
+        ticketIds: "999", // Dummy ticket ID 
         status: 'active',
         stripePaymentId: 'test_payment_' + Date.now(),
       });
@@ -517,11 +528,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userEntries = await storage.getUserEntries(userId);
       console.log(`🧪 DEBUG - User entries after test:`, userEntries);
       
-      // Return success with entry data
+      // Return response matching the format of the real payment processing endpoint
       return res.json({ 
-        success: true, 
-        entry: testEntry,
-        allEntries: userEntries
+        success: true,
+        ticketsProcessed: 1,
+        entriesCreated: 1,
+        entry: testEntry
       });
     } catch (error: any) {
       console.error(`❌ DEBUG - Error creating test entry:`, error);
