@@ -104,8 +104,8 @@ export function CartDisplay({
               // or use the title and image directly from cart item
               let competition = competitions?.find(c => c.id === item.competitionId);
               
-              // Get ticket price from competition or fallback to a default if needed
-              const ticketPrice = competition?.ticketPrice || 1.99;
+              // Get ticket price from competition, don't use fallback value to avoid incorrect pricing
+              const ticketPrice = competition?.ticketPrice || 0;
               const ticketNumbers = item.ticketNumbers.split(',').map(Number);
               const totalCost = ticketNumbers.length * ticketPrice;
               
