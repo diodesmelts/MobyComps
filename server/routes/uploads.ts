@@ -37,9 +37,15 @@ export function registerUploadRoutes(app: Express) {
       
       console.log("File upload received:", req.file.originalname, req.file.mimetype, req.file.size);
 
-      // For simplicity, just generate a unique filename
+      // Generate a safe filename - timestamps plus sanitized original name
       const timestamp = Date.now();
-      const filename = `${timestamp}-${req.file.originalname.replace(/\s+/g, "-")}`;
+      // Remove any special characters, spaces, non-ASCII chars that could cause issues
+      const sanitizedName = req.file.originalname
+        .replace(/[^a-zA-Z0-9.-]/g, "-") // Replace any non-alphanumeric chars with hyphens
+        .replace(/--+/g, "-"); // Collapse multiple hyphens
+      
+      const filename = `${timestamp}-${sanitizedName}`;
+      console.log("Sanitized filename:", filename);
       
       // Write the file to disk
       const filePath = path.join(uploadsDir, filename);
@@ -90,27 +96,50 @@ export function registerUploadRoutes(app: Express) {
 
   // Serve uploaded files
   app.use("/uploads", (req, res, next) => {
-    const filepath = path.join(uploadsDir, req.path);
-    
-    // Check if file exists
-    if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
-      // Set the proper content type based on file extension
-      const ext = path.extname(filepath).toLowerCase();
-      let contentType = 'application/octet-stream'; // Default content type
+    try {
+      console.log("Received request for file:", req.path);
       
-      if (ext === '.png') {
-        contentType = 'image/png';
-      } else if (ext === '.jpg' || ext === '.jpeg') {
-        contentType = 'image/jpeg';
-      } else if (ext === '.gif') {
-        contentType = 'image/gif';
-      } else if (ext === '.webp') {
-        contentType = 'image/webp';
+      // Only allow alphanumeric, dash, underscore and dot in filenames 
+      // This is a security check to prevent path traversal attacks
+      const sanitizedPath = req.path.replace(/[^a-zA-Z0-9\-._]/g, "");
+      const filepath = path.join(uploadsDir, sanitizedPath);
+      
+      console.log("Serving file:", filepath);
+      
+      // Check if file exists
+      if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
+        // Set the proper content type based on file extension
+        const ext = path.extname(filepath).toLowerCase();
+        let contentType = 'application/octet-stream'; // Default content type
+        
+        if (ext === '.png') {
+          contentType = 'image/png';
+        } else if (ext === '.jpg' || ext === '.jpeg') {
+          contentType = 'image/jpeg';
+        } else if (ext === '.gif') {
+          contentType = 'image/gif';
+        } else if (ext === '.webp') {
+          contentType = 'image/webp';
+        }
+        
+        console.log("Serving file with content type:", contentType);
+        
+        // Ensure no caching issues
+        res.set({
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=31536000',
+          'Content-Disposition': 'inline'
+        });
+        
+        // Read file manually and send as buffer instead of using sendFile
+        const fileBuffer = fs.readFileSync(filepath);
+        return res.send(fileBuffer);
+      } else {
+        console.log("File not found:", filepath);
+        next();
       }
-      
-      res.setHeader('Content-Type', contentType);
-      res.sendFile(filepath);
-    } else {
+    } catch (error) {
+      console.error("Error serving uploaded file:", error);
       next();
     }
   });
