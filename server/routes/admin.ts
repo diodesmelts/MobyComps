@@ -63,6 +63,29 @@ export function registerAdminRoutes(app: Express) {
   app.get("/api/admin/stats", isAdmin, dashboardStatsHandler);
 
   // CRUD for competitions (admin only)
+  // Get all competitions (admin only)
+  app.get("/api/admin/competitions", isAdmin, async (req, res) => {
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const status = req.query.status as string | undefined;
+      
+      const result = await storage.listCompetitions({
+        status,
+        page,
+        limit
+      });
+      
+      res.json({
+        competitions: result.competitions,
+        total: result.total
+      });
+    } catch (error: any) {
+      console.error("Error fetching admin competitions:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post("/api/admin/competitions", isAdmin, async (req, res) => {
     try {
       console.log("Creating competition with data:", req.body);
