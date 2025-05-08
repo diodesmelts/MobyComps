@@ -25,11 +25,19 @@ export default function PaymentSuccessPage() {
     // Process the payment on the server
     async function processPayment() {
       if (!paymentIntentId) {
+        console.error("No payment intent ID found in URL");
         setIsProcessing(false);
+        toast({
+          title: "Error Processing Payment",
+          description: "No payment information found. Please try again or contact support.",
+          variant: "destructive",
+        });
         return;
       }
       
       try {
+        console.log(`Processing payment with intent ID: ${paymentIntentId}`);
+        
         // First process the payment on the server
         const response = await apiRequest("POST", "/api/process-payment", {
           paymentIntentId
@@ -37,23 +45,26 @@ export default function PaymentSuccessPage() {
         
         if (!response.ok) {
           const error = await response.json();
+          console.error("Payment processing API error:", error);
           throw new Error(error.error || "Failed to process payment");
         }
         
         const data = await response.json();
+        console.log("Payment processing successful:", data);
         setOrderDetails(data);
         
         // Explicitly clear the cart on the client side
         await cartApi.clearCart();
         
         // Invalidate cart and entries queries to refresh UI
+        console.log("Invalidating queries to refresh data...");
         queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
         queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
         queryClient.invalidateQueries({ queryKey: ["/api/my-entries"] }); // Also refresh backup endpoint
         
         toast({
           title: "Payment Successful",
-          description: "Your order has been processed successfully!",
+          description: `Your order has been processed successfully! ${data.entriesCreated} entries created.`,
         });
       } catch (error: any) {
         console.error("Payment processing error:", error);
@@ -111,16 +122,27 @@ export default function PaymentSuccessPage() {
                     <span className="text-green-600">Successful</span>
                   </p>
                   <p>
-                    <span className="font-medium">Tickets Purchased:</span>{" "}
-                    {orderDetails.purchasedTickets?.length || 0}
+                    <span className="font-medium">Tickets Processed:</span>{" "}
+                    {orderDetails.ticketsProcessed || 0}
                   </p>
-                  <p className="text-gray-600 mt-4">
-                    You can view your tickets and competitions in your account dashboard.
+                  <p>
+                    <span className="font-medium">Entries Created:</span>{" "}
+                    {orderDetails.entriesCreated || 0}
                   </p>
+                  {orderDetails.entriesCreated > 0 && (
+                    <div className="rounded bg-[#C3DC6F]/10 p-3 mt-2">
+                      <p className="font-medium text-[#002147]">
+                        Your entries have been saved to your account.
+                      </p>
+                      <p className="text-xs mt-1 text-gray-600">
+                        Click "View My Tickets" below to see your competition entries.
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="text-gray-600">
-                  Your order has been completed. Check your email for confirmation details.
+                  Your order has been completed. Check your entries in your account dashboard.
                 </p>
               )}
             </div>

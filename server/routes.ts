@@ -294,6 +294,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`🚨 STEP 1 - User authentication status: ${req.isAuthenticated()}`);
       console.log(`🚨 STEP 1 - User info:`, req.user);
       
+      if (!req.isAuthenticated()) {
+        console.error("❌ STEP 1 - User not authenticated for payment processing");
+        return res.status(401).json({ error: "You must be logged in to process payment" });
+      }
+      
       // Retrieve the payment intent from Stripe to verify it's successful
       console.log(`🚨 STEP 1 - Retrieving payment intent from Stripe...`);
       const paymentIntent = await stripeService.getPaymentIntent(paymentIntentId);
