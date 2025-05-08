@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
 import { Loader2, ShoppingBag, ArrowLeft, RefreshCw, ShoppingCart } from "lucide-react";
@@ -9,20 +8,71 @@ import { formatPrice, formatCountdown } from "@/lib/utils";
 import { CartItemDisplay } from "@/components/cart/CartItemDisplay";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function CartPage() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
-  const { 
-    cartItems, 
-    removeFromCart, 
-    clearCart, 
-    isRemoving,
-    cartTimeRemaining,
-  } = useCart();
-  const [isLoadingCart, setIsLoadingCart] = useState(true);
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingCart, setIsLoadingCart] = useState(true);
+  const queryClient = useQueryClient();
+  
+  // Get cart data directly from API using React Query for consistency with header
+  const { data: cartData, isLoading } = useQuery({
+    queryKey: ["/api/cart"],
+    select: (data: any) => data?.items || [],
+  });
+  
+  const cartItems = cartData || [];
+  const cartTimeRemaining = 600; // 10 minutes in seconds (placeholder)
+  
+  // Remove from cart mutation
+  const { mutate: removeFromCart, isPending: isRemoving } = useMutation({
+    mutationFn: async (cartItemId: number) => {
+      const response = await apiRequest("DELETE", `/api/cart/remove/${cartItemId}`);
+      if (!response.ok) {
+        throw new Error("Failed to remove item from cart");
+      }
+      return cartItemId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+      toast({
+        title: "Item removed",
+        description: "The item has been removed from your cart",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to remove item from cart",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Clear cart mutation
+  const { mutate: clearCart, isPending: isClearing } = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("DELETE", "/api/cart/clear");
+      if (!response.ok) {
+        throw new Error("Failed to clear cart");
+      }
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to clear cart",
+        variant: "destructive",
+      });
+    }
+  });
   
   // Use effect to check cart loading status
   useEffect(() => {
@@ -35,24 +85,11 @@ export default function CartPage() {
     return () => clearTimeout(timer);
   }, [cartItems]);
   
-  // Fetch competitions to display competition details for cart items
-  useEffect(() => {
-    const fetchCompetitions = async () => {
-      try {
-        console.log("Fetching competition details for cart items");
-        const response = await fetch("/api/competitions");
-        if (!response.ok) throw new Error("Failed to fetch competitions");
-        const data = await response.json();
-        console.log("Competition data:", data);
-      } catch (error) {
-        console.error("Error fetching competitions:", error);
-      }
-    };
-    
-    if (cartItems && cartItems.length > 0) {
-      fetchCompetitions();
-    }
-  }, [cartItems]);
+  // Get competitions data using React Query
+  const { data: competitionsData } = useQuery({
+    queryKey: ["/api/competitions"],
+    select: (data: any) => data?.competitions || [],
+  });
   
   const handleCheckout = () => {
     if (!user) {
@@ -64,11 +101,15 @@ export default function CartPage() {
   };
   
   const calculateTotal = () => {
-    if (!cartItems || cartItems.length === 0) return 0;
+    if (!cartItems || cartItems.length === 0 || !competitionsData) return 0;
     
     return cartItems.reduce((sum: number, item: any) => {
       const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
-      const ticketPrice = item.competition?.ticketPrice || 0;
+      
+      // Get competition price from our competitions data
+      const competition = competitionsData.find((c: any) => c.id === item.competitionId);
+      const ticketPrice = competition?.ticketPrice || 0;
+      
       return sum + (ticketPrice * ticketCount);
     }, 0);
   };
@@ -156,8 +197,11 @@ export default function CartPage() {
             
             <div className="space-y-4">
               {cartItems.map((item: any) => {
-                // Display a loading placeholder if competition not available
-                if (!item.competition && !item.competitionId) {
+                // Find competition details from our competitions data
+                const competition = competitionsData?.find((comp: any) => comp.id === item.competitionId);
+                
+                // Show loading placeholder if we don't have competition data yet
+                if (!competition) {
                   return (
                     <div key={item.id} className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm">
                       <div className="w-20 h-20 flex-shrink-0 bg-gray-200 rounded-md animate-pulse"></div>
@@ -169,9 +213,6 @@ export default function CartPage() {
                     </div>
                   );
                 }
-                
-                // Get competition details
-                const competition = item.competition;
                 
                 return (
                   <CartItemDisplay 
