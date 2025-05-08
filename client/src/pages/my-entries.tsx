@@ -21,7 +21,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Entry, Competition } from "@shared/schema";
 import { formatDate, formatPrice } from "@/lib/utils";
-import { Calendar, Clock, AlertCircle, Ticket, ShoppingCart, Loader2 } from "lucide-react";
+import { Calendar, Clock, AlertCircle, Ticket, ShoppingCart, Loader2, Trophy, Home } from "lucide-react";
 import { Link } from "wouter";
 
 export default function MyEntriesPage() {
@@ -86,7 +86,7 @@ export default function MyEntriesPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#002D5C] mb-2">My Entries</h1>
+            <h1 className="text-3xl font-bold text-[#002147] mb-2">My Entries</h1>
             <p className="text-gray-600">
               Track all your competition entries and check their status.
             </p>
@@ -105,7 +105,7 @@ export default function MyEntriesPage() {
                 <TabsTrigger value="completed">Completed Entries</TabsTrigger>
               </TabsList>
               
-              <Button asChild variant="outline" className="border-[#002D5C] text-[#002D5C]">
+              <Button asChild variant="outline" className="border-[#002147] text-[#002147]">
                 <Link href="/competitions">Browse Competitions</Link>
               </Button>
             </div>
@@ -123,7 +123,7 @@ export default function MyEntriesPage() {
             {/* Loading State */}
             {isLoading && (
               <div className="flex justify-center items-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-[#002D5C]" />
+                <Loader2 className="h-8 w-8 animate-spin text-[#002147]" />
               </div>
             )}
             
@@ -139,7 +139,7 @@ export default function MyEntriesPage() {
                     <p className="text-gray-600 mb-6">
                       You don't have any active competition entries yet.
                     </p>
-                    <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
+                    <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147]">
                       <Link href="/competitions">Browse Competitions</Link>
                     </Button>
                   </CardContent>
@@ -165,10 +165,10 @@ export default function MyEntriesPage() {
                           {/* Entry Details */}
                           <div className="flex-grow p-6">
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-xl font-semibold text-[#002D5C]">
+                              <h3 className="text-xl font-semibold text-[#002147]">
                                 {competition?.title || "Competition"}
                               </h3>
-                              <div className="bg-[#C3DC6F]/20 text-[#002D5C] text-xs font-medium rounded-full px-3 py-1">
+                              <div className="bg-[#C3DC6F]/20 text-[#002147] text-xs font-medium rounded-full px-3 py-1">
                                 Active
                               </div>
                             </div>
@@ -180,7 +180,7 @@ export default function MyEntriesPage() {
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
                                 <Ticket className="h-4 w-4 mr-2 text-[#C3DC6F]" />
-                                <span>Tickets: {getTicketCount(entry)}</span>
+                                <span>Tickets: {getTicketCount(entry)} <span className="text-[#002147] font-medium">(#{entry.ticketIds})</span></span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
                                 <Clock className="h-4 w-4 mr-2 text-[#C3DC6F]" />
@@ -195,7 +195,7 @@ export default function MyEntriesPage() {
                             <div className="flex justify-end mt-4">
                               <Button 
                                 asChild
-                                className="bg-[#002D5C] hover:bg-[#002D5C]/90"
+                                className="bg-[#002147] hover:bg-[#002147]/90"
                               >
                                 <Link href={`/competition/${competition?.id}`}>
                                   View Competition
@@ -223,7 +223,7 @@ export default function MyEntriesPage() {
                     <p className="text-gray-600 mb-6">
                       You don't have any completed competition entries yet.
                     </p>
-                    <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
+                    <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147]">
                       <Link href="/competitions">Browse Competitions</Link>
                     </Button>
                   </CardContent>
@@ -249,7 +249,7 @@ export default function MyEntriesPage() {
                           {/* Entry Details */}
                           <div className="flex-grow p-6">
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-xl font-semibold text-[#002D5C]">
+                              <h3 className="text-xl font-semibold text-[#002147]">
                                 {competition?.title || "Competition"}
                               </h3>
                               <div className={`
@@ -267,7 +267,7 @@ export default function MyEntriesPage() {
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
                                 <Ticket className="h-4 w-4 mr-2 text-[#C3DC6F]" />
-                                <span>Tickets: {getTicketCount(entry)}</span>
+                                <span>Tickets: {getTicketCount(entry)} <span className="text-[#002147] font-medium">(#{entry.ticketIds})</span></span>
                               </div>
                               <div className="flex items-center text-sm text-gray-600">
                                 <Clock className="h-4 w-4 mr-2 text-[#C3DC6F]" />
@@ -281,14 +281,14 @@ export default function MyEntriesPage() {
                             
                             <div className="flex justify-end mt-4">
                               {entry.status === 'won' ? (
-                                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C]">
+                                <Button asChild className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002147]">
                                   <Link href="/my-wins">View Win Details</Link>
                                 </Button>
                               ) : (
                                 <Button 
                                   asChild
                                   variant="outline" 
-                                  className="border-[#002D5C] text-[#002D5C]"
+                                  className="border-[#002147] text-[#002147]"
                                 >
                                   <Link href={`/competition/${competition?.id}`}>
                                     View Competition

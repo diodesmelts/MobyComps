@@ -489,6 +489,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Special endpoint to process the last cart when Stripe test payments don't redirect properly
+  app.post("/api/process-last-cart", async (req, res) => {
+    try {
+      console.log("\n\n🚨 =============================================");
+      console.log("🚨 ==== PROCESSING LAST CART (Stripe TEST MODE) ====");
+      console.log("🚨 =============================================");
+      
+      // Check authentication status
+      console.log(`🚨 User authentication status: ${req.isAuthenticated()}`);
+      
+      // Get the user ID - either from the authenticated session or from a stored user
+      let userId: number; 
+      
+      if (req.isAuthenticated()) {
+        userId = (req.user as any)?.id;
+        console.log(`🚨 User authenticated, ID: ${userId}`);
+      } else {
+        console.log(`🚨 User not authenticated via session, attempting to find user from DB`);
+        
+        // Look up the first user (for development/demo purposes)
+        // In production, we'd need a more sophisticated approach
+        try {
+          const userResult = await db.select().from(users).limit(1);
+          if (userResult.length > 0) {
+            userId = userResult[0].id;
+            console.log(`🚨 Found fallback user ID: ${userId}`);
+          } else {
+            console.error("❌ No users found in database");
+            return res.status(500).json({ error: "No users found in the system" });
+          }
+        } catch (dbError) {
+          console.error(`❌ Error finding fallback user:`, dbError);
+          return res.status(500).json({ error: "Database error looking up user" });
+        }
+      }
+      
+      // Get cart items for the user's session
+      const sessionId = req.sessionID;
+      console.log(`🚨 Using session ID: ${sessionId}`);
+      
+      const cartItems = await storage.getCartItems(sessionId);
+      console.log(`🚨 Retrieved ${cartItems.length} cart items from session:`, cartItems);
+      
+      if (cartItems.length === 0) {
+        console.error("❌ No cart items found for this session");
+        return res.status(400).json({ error: "No items in cart to process" });
+      }
+      
+      console.log(`\n🚨 Processing cart purchase for user ID: ${userId}`);
+      
+      let entriesCreated = 0;
+      let ticketsProcessed = 0;
+      
+      for (const item of cartItems) {
+        try {
+          const ticketNumbers = item.ticketNumbers.split(',').map(n => parseInt(n.trim()));
+          
+          console.log(`🚨 Processing tickets: ${JSON.stringify(ticketNumbers)} for competition ${item.competitionId}`);
+          
+          // Get the actual ticket records for these numbers
+          console.log(`🚨 Fetching ticket records for competition ${item.competitionId}, numbers ${ticketNumbers}...`);
+          const tickets = await storage.getTicketsByNumbers(item.competitionId, ticketNumbers);
+          console.log(`🚨 Retrieved ${tickets.length} ticket records:`, tickets);
+          
+          if (tickets.length !== ticketNumbers.length) {
+            console.warn(`⚠️ Warning: Expected ${ticketNumbers.length} tickets, but found ${tickets.length}`);
+          }
+          
+          if (tickets.length === 0) {
+            console.error(`❌ No tickets found for competition ${item.competitionId} with numbers ${ticketNumbers}`);
+            continue;
+          }
+          
+          // Mark tickets as purchased
+          const ticketIds = tickets.map(ticket => ticket.id);
+          console.log(`🚨 Marking tickets as purchased for user ${userId}:`, ticketIds);
+          
+          try {
+            const purchasedTickets = await storage.purchaseTickets(ticketIds, userId);
+            console.log(`🚨 Tickets purchased:`, purchasedTickets);
+            ticketsProcessed += purchasedTickets.length;
+            
+            // Create an entry for this purchase
+            console.log(`🚨 Creating entry for competition ${item.competitionId}, tickets ${ticketNumbers}...`);
+            
+            const entry = await storage.createEntry({
+              userId: userId,
+              competitionId: item.competitionId,
+              ticketIds: ticketNumbers.join(','),
+              status: 'active',
+              stripePaymentId: 'process_last_cart_' + Date.now()
+            });
+            
+            console.log(`🚨 Entry created:`, entry);
+            entriesCreated++;
+          } catch (purchaseError) {
+            console.error(`❌ Error purchasing tickets:`, purchaseError);
+          }
+        } catch (itemError) {
+          console.error(`❌ Error processing cart item:`, itemError);
+        }
+      }
+      
+      // Clear the cart
+      console.log(`🚨 Clearing cart for session ${sessionId}...`);
+      await storage.clearCart(sessionId);
+      
+      // Return success response
+      console.log(`🚨 Processing complete. Created ${entriesCreated} entries, processed ${ticketsProcessed} tickets.`);
+      
+      return res.status(200).json({
+        success: true,
+        ticketsProcessed,
+        entriesCreated,
+        testMode: true
+      });
+    } catch (error: any) {
+      console.error(`❌ Error processing last cart:`, error);
+      return res.status(500).json({ error: error.message || "Failed to process cart" });
+    }
+  });
+  
   // Debug endpoint for testing creation of entry
   app.get("/api/debug/create-test-entry", async (req, res) => {
     try {

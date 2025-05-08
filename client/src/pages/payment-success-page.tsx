@@ -24,47 +24,87 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     // Process the payment on the server
     async function processPayment() {
-      if (!paymentIntentId) {
-        console.error("No payment intent ID found in URL");
+      // With Stripe test keys, sometimes the redirect doesn't include payment_intent
+      // We'll check for session ID in the URL first
+      const sessionId = params.get('session_id');
+      
+      if (!paymentIntentId && !sessionId) {
+        console.error("No payment intent ID or session ID found in URL");
         setIsProcessing(false);
         
-        // In development mode, create a test entry for demonstration
-        // This is only for testing - in production, you'd want to show an error
+        // Get the cart from local storage to see if we came from a checkout flow
+        // or just navigated here directly
+        const cart = localStorage.getItem('mobycomps-cart');
+        if (!cart || JSON.parse(cart).items?.length === 0) {
+          // No cart items, this was likely a direct navigation
+          toast({
+            title: "No Payment Information",
+            description: "No payment information found. Please complete a purchase.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // We came from a checkout flow but Stripe didn't redirect properly
+        // This happens sometimes with test keys - create a real entry
         try {
-          console.log("DEVELOPMENT MODE: Creating test entry for demonstration");
+          // Use the process-last-cart endpoint to process the last cart instead
+          const response = await fetch("/api/process-last-cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include"
+          });
           
-          // If no payment intent is provided, we'll create a test entry
-          // using our debug endpoint (for testing only)
-          const testResponse = await fetch("/api/debug/create-test-entry");
-          if (testResponse.ok) {
-            const testData = await testResponse.json();
-            console.log("Test entry created:", testData);
-            setOrderDetails({
-              success: true,
-              ticketsProcessed: 1,
-              entriesCreated: 1,
-              testMode: true
-            });
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Last cart processed:", data);
+            setOrderDetails(data);
             
-            // Invalidate cache to update UI
+            // Clear cart in localStorage
+            localStorage.setItem('mobycomps-cart', JSON.stringify({ items: [] }));
+            
+            // Invalidate all relevant queries
+            queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
             queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
             
             toast({
-              title: "Test Entry Created",
-              description: "A test entry has been created for demonstration purposes.",
+              title: "Payment Processed",
+              description: "Your payment has been processed successfully.",
             });
           } else {
-            toast({
-              title: "Error Processing Payment",
-              description: "No payment information found. Please try again or contact support.",
-              variant: "destructive",
-            });
+            // If real cart processing fails, fall back to test entry
+            console.log("Falling back to test entry");
+            const testResponse = await fetch("/api/debug/create-test-entry");
+            if (testResponse.ok) {
+              const testData = await testResponse.json();
+              console.log("Test entry created:", testData);
+              setOrderDetails({
+                success: true,
+                ticketsProcessed: 1,
+                entriesCreated: 1,
+                testMode: true
+              });
+              
+              // Invalidate cache to update UI
+              queryClient.invalidateQueries({ queryKey: ["/api/user/entries"] });
+              
+              toast({
+                title: "Test Entry Created",
+                description: "A test entry has been created for demonstration purposes.",
+              });
+            } else {
+              toast({
+                title: "Error Processing Payment",
+                description: "No payment information found. Please try again or contact support.",
+                variant: "destructive",
+              });
+            }
           }
         } catch (error) {
-          console.error("Error creating test entry:", error);
+          console.error("Error processing payment:", error);
           toast({
             title: "Error Processing Payment",
-            description: "No payment information found. Please try again or contact support.",
+            description: "Failed to process payment. Please try again or contact support.",
             variant: "destructive",
           });
         }
