@@ -19,6 +19,28 @@ export default function HomePage() {
     queryKey: ["/api/site-config/hero-banner"],
   });
   
+  // Default hero banner background - no need to display if image is missing
+  const defaultHeroBgColor = "#002D5C";
+  
+  // Helper function to get the full image URL from relative path
+  const getFullImageUrl = (relativePath: string) => {
+    // Return empty string for null/undefined/empty values
+    if (!relativePath) return '';
+    
+    // Keep absolute URLs as is
+    if (relativePath.startsWith('http')) {
+      return relativePath;
+    }
+    
+    // Convert relative paths to absolute
+    return `${window.location.origin}${relativePath}`;
+  };
+  
+  // Helper function to check if the hero banner exists and has a valid value
+  const hasValidHeroBanner = () => {
+    return heroBanner && heroBanner.value && heroBanner.value.trim() !== '';
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -27,11 +49,11 @@ export default function HomePage() {
         {/* Hero Banner */}
         <section 
           className="relative w-full h-[500px] bg-[#002D5C] flex items-center" 
-          style={{
-            backgroundImage: heroBanner?.value ? `url(${heroBanner.value})` : undefined,
+          style={hasValidHeroBanner() ? {
+            backgroundImage: `url(${getFullImageUrl(heroBanner!.value)})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-          }}
+          } : undefined}
         >
           {/* Overlay to ensure text readability on any image */}
           <div className="absolute inset-0 bg-[#002D5C]/70"></div>
