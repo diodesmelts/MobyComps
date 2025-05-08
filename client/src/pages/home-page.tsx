@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { CompetitionCard } from "@/components/ui/competition-card";
 import { useCompetitions } from "@/hooks/use-competitions";
-import { Loader2, ArrowRight, Filter } from "lucide-react";
+import { Loader2, ArrowRight, Filter, Ticket } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import paymentCardsImage from "../assets/payment-cards.png";
 
@@ -110,12 +110,10 @@ export default function HomePage() {
                 NINJA AIR FRYER
               </h1>
               <p className="text-xl md:text-3xl font-bold mb-8 text-[#C3DC6F] drop-shadow-lg tracking-wider">DRAW 10TH MAY 9PM</p>
-              <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-semibold">
-                <Link href="/competitions">
+              <Button asChild size="lg" className="bg-[#C3DC6F] hover:bg-[#C3DC6F]/90 text-[#002D5C] font-bold rounded-full px-8 py-6">
+                <Link href="/competitions" className="flex items-center">
                   Enter now
-                  <svg className="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
+                  <Ticket className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
