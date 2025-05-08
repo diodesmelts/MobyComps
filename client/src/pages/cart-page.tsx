@@ -118,15 +118,40 @@ export default function CartPage() {
   const { data: competitionsData, isLoading: isLoadingCompetitions } = useQuery({
     queryKey: ["/api/competitions", "allStatuses"],
     queryFn: async () => {
-      // Explicitly request all competitions without status filtering
-      const response = await fetch('/api/competitions?status=');
+      // First try our standard API with empty status to get all competitions
+      let response = await fetch('/api/competitions?status=');
       if (!response.ok) {
         throw new Error('Failed to fetch competitions');
       }
-      const data = await response.json();
-      console.log("Fetched competitions with all statuses:", data);
-      return data.competitions;
-    }
+      
+      let data = await response.json();
+      let competitions = data.competitions || [];
+      
+      // Make individual calls for any competitions that are in our cart but not in the API response
+      if (cartItems && cartItems.length > 0) {
+        for (const item of cartItems) {
+          // Check if this competition is already in our list
+          const exists = competitions.some((comp: any) => comp.id === item.competitionId);
+          
+          if (!exists && item.competitionId) {
+            try {
+              // Try to fetch this specific competition
+              const compResponse = await fetch(`/api/competitions/${item.competitionId}`);
+              if (compResponse.ok) {
+                const compData = await compResponse.json();
+                competitions.push(compData);
+              }
+            } catch (err) {
+              console.error(`Failed to fetch competition ID ${item.competitionId}`, err);
+            }
+          }
+        }
+      }
+      
+      console.log("All competitions data loaded:", competitions);
+      return competitions;
+    },
+    enabled: !isLoading // Only run this query after cart items are loaded
   });
   
   // Use effect to check cart loading status and debug data
