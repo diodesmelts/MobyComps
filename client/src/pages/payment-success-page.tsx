@@ -30,6 +30,7 @@ export default function PaymentSuccessPage() {
       }
       
       try {
+        // First process the payment on the server
         const response = await apiRequest("POST", "/api/process-payment", {
           paymentIntentId
         });
@@ -42,7 +43,10 @@ export default function PaymentSuccessPage() {
         const data = await response.json();
         setOrderDetails(data);
         
-        // Invalidate cart queries to refresh cart count
+        // Explicitly clear the cart on the client side
+        await cartApi.clearCart();
+        
+        // Invalidate cart queries to refresh cart count in UI
         queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
         
         toast({
@@ -50,6 +54,7 @@ export default function PaymentSuccessPage() {
           description: "Your order has been processed successfully!",
         });
       } catch (error: any) {
+        console.error("Payment processing error:", error);
         toast({
           title: "Error Processing Payment",
           description: error.message || "There was an issue finalizing your order",

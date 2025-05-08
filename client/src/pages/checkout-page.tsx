@@ -5,10 +5,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, CreditCard, CheckCircle2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import { useCart } from "@/hooks/use-cart";
+import { cartApi } from "@/lib/api";
 
 // Make sure to call loadStripe outside of a component's render to avoid
 // recreating the Stripe object on every render
@@ -23,6 +25,7 @@ const CheckoutForm = ({ clientSecret }: { clientSecret: string }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -53,11 +56,21 @@ const CheckoutForm = ({ clientSecret }: { clientSecret: string }) => {
           variant: "destructive",
         });
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // Clear cart on successful payment
+        try {
+          await cartApi.clearCart();
+          queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
+        } catch (clearCartError) {
+          console.error("Failed to clear cart:", clearCartError);
+        }
+        
         // Handle successful payment here if not redirected
         toast({
           title: "Payment Successful",
           description: "Thank you for your purchase!",
         });
+        
+        // Redirect to success page
         setLocation('/payment-success');
       }
     } catch (err: any) {
