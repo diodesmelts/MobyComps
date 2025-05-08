@@ -24,16 +24,35 @@ export default function CartPage() {
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // If cart is empty and not loading, redirect to competitions
+  // Use effect to check cart loading status
   useEffect(() => {
-    if (!isLoadingCart && cartItems.length === 0) {
-      toast({
-        title: "Your cart is empty",
-        description: "Please add items to your cart before checkout",
-      });
-      setLocation("/competitions");
+    // Set a short delay to ensure cart has loaded
+    const timer = setTimeout(() => {
+      setIsLoadingCart(false);
+      console.log("Cart items loaded:", cartItems);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [cartItems]);
+  
+  // Fetch competitions to display competition details for cart items
+  useEffect(() => {
+    const fetchCompetitions = async () => {
+      try {
+        console.log("Fetching competition details for cart items");
+        const response = await fetch("/api/competitions");
+        if (!response.ok) throw new Error("Failed to fetch competitions");
+        const data = await response.json();
+        console.log("Competition data:", data);
+      } catch (error) {
+        console.error("Error fetching competitions:", error);
+      }
+    };
+    
+    if (cartItems && cartItems.length > 0) {
+      fetchCompetitions();
     }
-  }, [isLoadingCart, cartItems, setLocation, toast]);
+  }, [cartItems]);
   
   const handleCheckout = () => {
     if (!user) {
@@ -136,15 +155,34 @@ export default function CartPage() {
             )}
             
             <div className="space-y-4">
-              {cartItems.map((item: any) => (
-                <CartItemDisplay 
-                  key={item.id}
-                  item={item}
-                  competition={item.competition}
-                  onRemove={() => removeFromCart(item.id)}
-                  isRemoving={isRemoving === item.id}
-                />
-              ))}
+              {cartItems.map((item: any) => {
+                // Display a loading placeholder if competition not available
+                if (!item.competition && !item.competitionId) {
+                  return (
+                    <div key={item.id} className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm">
+                      <div className="w-20 h-20 flex-shrink-0 bg-gray-200 rounded-md animate-pulse"></div>
+                      <div className="flex-grow space-y-2">
+                        <div className="h-6 bg-gray-200 w-3/4 rounded animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 w-1/4 rounded animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 w-1/2 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                // Get competition details
+                const competition = item.competition;
+                
+                return (
+                  <CartItemDisplay 
+                    key={item.id}
+                    item={item}
+                    competition={competition}
+                    onRemove={() => removeFromCart(item.id)}
+                    isRemoving={isRemoving === item.id}
+                  />
+                );
+              })}
             </div>
           </div>
           
