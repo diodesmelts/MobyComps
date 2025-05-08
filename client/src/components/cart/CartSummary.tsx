@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, CreditCard, CheckCircle, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/hooks/use-cart";
-import { formatCurrency } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 import { paymentApi } from "@/lib/api";
 
 // Make sure to call loadStripe outside of a component's render to avoid
@@ -163,7 +163,7 @@ export default function CartSummary() {
               <span>
                 {item.competitionTitle} - {item.ticketCount} ticket{item.ticketCount !== 1 ? 's' : ''}
               </span>
-              <span className="font-medium">{formatCurrency(item.totalPrice)}</span>
+              <span className="font-medium">{formatPrice(item.totalPrice)}</span>
             </div>
           ))}
           
@@ -171,7 +171,7 @@ export default function CartSummary() {
           
           <div className="flex justify-between font-bold">
             <span>Total</span>
-            <span>{formatCurrency(totalAmount)}</span>
+            <span>{formatPrice(totalAmount)}</span>
           </div>
         </div>
       </CardContent>

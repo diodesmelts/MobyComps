@@ -146,7 +146,7 @@ export function Header() {
   const checkoutMutation = useMutation({
     mutationFn: async () => {
       setIsProcessing(true);
-      const res = await apiRequest("POST", "/api/checkout", {});
+      const res = await apiRequest("POST", "/api/create-payment-intent", {});
       return res.json();
     },
     onSuccess: (data) => {
