@@ -62,7 +62,7 @@ export default function HomePage() {
         
         {/* Featured Competitions */}
         <section className="py-12 bg-gray-50">
-          <div className="container mx-auto px-4">
+          <div className="container">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold text-[#002D5C]">Live Competitions</h2>
               <p className="text-gray-600 mt-2">Don't miss your chance to win these <span className="text-[#C3DC6F] font-medium">amazing prizes</span>! New competitions added regularly.</p>
@@ -93,7 +93,7 @@ export default function HomePage() {
         
         {/* How It Works */}
         <section className="py-12 bg-white">
-          <div className="container mx-auto px-4">
+          <div className="container">
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold text-[#002D5C]">How It Works</h2>
               <p className="text-gray-600 mt-2">Winning with Moby Comps is quick and easy</p>

@@ -105,7 +105,7 @@ export default function CompetitionsPage() {
       <Header />
       
       <main className="flex-grow bg-gray-50 py-8">
-        <div className="container mx-auto px-4">
+        <div className="container">
           {/* Page Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-[#002D5C]">
