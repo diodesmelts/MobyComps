@@ -47,6 +47,7 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
     setIsProcessing(true);
 
     try {
+      console.log("Confirming payment with Stripe...");
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -56,17 +57,34 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
       });
 
       if (error) {
+        console.error("Stripe confirmation error:", error);
         toast({
           title: "Payment failed",
           description: error.message,
           variant: "destructive",
         });
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        toast({
-          title: "Payment successful",
-          description: "Thank you for your purchase!",
-        });
-        onSuccess();
+        console.log("Payment succeeded, processing backend...", paymentIntent.id);
+        
+        try {
+          // Process the payment on the backend
+          const result = await paymentApi.processPayment(paymentIntent.id);
+          console.log("Backend processing result:", result);
+          
+          toast({
+            title: "Payment successful",
+            description: "Thank you for your purchase!",
+          });
+          
+          onSuccess();
+        } catch (processError) {
+          console.error("Backend processing error:", processError);
+          toast({
+            title: "Payment error",
+            description: "Your payment was successful, but we encountered an issue finalizing your purchase. Please contact support.",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "Payment processing",
