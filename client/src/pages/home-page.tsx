@@ -17,6 +17,18 @@ export default function HomePage() {
   // Get hero banner from site config
   const { data: heroBanner } = useQuery<{ key: string; value: string }>({
     queryKey: ["/api/site-config/hero-banner"],
+    onSuccess: (data) => {
+      console.log("Hero banner data received:", data);
+      if (data?.value) {
+        console.log("Hero banner URL path:", data.value);
+        console.log("Full URL would be:", window.location.origin + data.value);
+      } else {
+        console.log("No hero banner value found");
+      }
+    },
+    onError: (error) => {
+      console.error("Error fetching hero banner:", error);
+    }
   });
   
   // Default hero banner background - no need to display if image is missing
@@ -55,6 +67,16 @@ export default function HomePage() {
             backgroundPosition: 'center',
           } : undefined}
         >
+          {/* Fallback image if background style doesn't work */}
+          {hasValidHeroBanner() && (
+            <img 
+              src={getFullImageUrl(heroBanner!.value)} 
+              alt="Hero banner" 
+              className="absolute inset-0 w-full h-full object-cover"
+              onLoad={() => console.log("Hero image loaded successfully")}
+              onError={(e) => console.error("Hero image failed to load:", e)}
+            />
+          )}
           {/* Overlay to ensure text readability on any image */}
           <div className="absolute inset-0 bg-[#002D5C]/70"></div>
           
