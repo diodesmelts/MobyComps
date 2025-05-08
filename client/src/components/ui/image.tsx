@@ -30,10 +30,19 @@ const Image: React.FC<ImageProps> = ({
     propOnError?.();
   };
 
-  // For relative URLs, make sure they start with '/'
-  const imageUrl = src.startsWith('http') || src.startsWith('/') 
-    ? src 
-    : `/${src}`;
+  // Handle various URL formats
+  let imageUrl = src;
+  
+  // If it's a relative path but doesn't start with a slash, add one
+  if (!src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:')) {
+    imageUrl = `/${src}`;
+  }
+  
+  // If it's an upload URL but missing the base URL
+  if (src.startsWith('/uploads/') && !window.location.href.includes('localhost:5000')) {
+    // Fix for uploads URLs when running from Vite dev server
+    imageUrl = `http://localhost:5000${src}`;
+  }
 
   const imageStyle = fill 
     ? { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' } 

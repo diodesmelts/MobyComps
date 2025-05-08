@@ -113,22 +113,35 @@ export default function CartPage() {
     }
   });
   
-  // Use effect to check cart loading status
+  // Get competitions data using React Query
+  const { data: competitionsData, isLoading: isLoadingCompetitions } = useQuery({
+    queryKey: ["/api/competitions"],
+    select: (data: any) => {
+      console.log("Raw competitions data:", data);
+      return data?.competitions || [];
+    },
+  });
+  
+  // Use effect to check cart loading status and debug data
   useEffect(() => {
     // Set a short delay to ensure cart has loaded
     const timer = setTimeout(() => {
       setIsLoadingCart(false);
       console.log("Cart items loaded:", cartItems);
+      console.log("Competition data loaded:", competitionsData);
+      
+      // Check if we can match competition data with cart items
+      if (cartItems.length > 0 && competitionsData && competitionsData.length > 0) {
+        cartItems.forEach((item: any) => {
+          const comp = competitionsData.find((c: any) => c.id === item.competitionId);
+          console.log(`Cart item ${item.id} competition match:`, comp ? 'Found' : 'Not found', 
+                     `(looking for ID ${item.competitionId})`);
+        });
+      }
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, [cartItems]);
-  
-  // Get competitions data using React Query
-  const { data: competitionsData } = useQuery({
-    queryKey: ["/api/competitions"],
-    select: (data: any) => data?.competitions || [],
-  });
+  }, [cartItems, competitionsData]);
   
   const handleCheckout = () => {
     if (!user) {
@@ -140,14 +153,22 @@ export default function CartPage() {
   };
   
   const calculateTotal = () => {
-    if (!cartItems || cartItems.length === 0 || !competitionsData) return 0;
+    if (!cartItems || cartItems.length === 0) return 0;
     
     return cartItems.reduce((sum: number, item: any) => {
       const ticketCount = item.ticketNumbers ? item.ticketNumbers.split(',').length : 0;
       
-      // Get competition price from our competitions data
-      const competition = competitionsData.find((c: any) => c.id === item.competitionId);
-      const ticketPrice = competition?.ticketPrice || 0;
+      // First try to get competition price from our competitions data
+      let competition = competitionsData?.find((c: any) => c.id === item.competitionId);
+      let ticketPrice = 0;
+      
+      if (competition) {
+        // Use price from competition data if available
+        ticketPrice = competition.ticketPrice || 0;
+      } else {
+        // Default price if competition not found in API but we have the item
+        ticketPrice = 4.99;
+      }
       
       return sum + (ticketPrice * ticketCount);
     }, 0);
@@ -236,10 +257,27 @@ export default function CartPage() {
             
             <div className="space-y-4">
               {cartItems.map((item: any) => {
-                // Find competition details from our competitions data
-                const competition = competitionsData?.find((comp: any) => comp.id === item.competitionId);
+                // Try to find competition details from competitions data
+                let competition = competitionsData?.find((comp: any) => comp.id === item.competitionId);
                 
-                // Show loading placeholder if we don't have competition data yet
+                // If we can't find the competition in the API results, create a competition object
+                // using the embedded data from the cart item
+                if (!competition && item.competitionTitle) {
+                  competition = {
+                    id: item.competitionId,
+                    title: item.competitionTitle,
+                    imageUrl: item.competitionImageUrl,
+                    ticketPrice: 4.99, // Default price if not available
+                    // Add minimum required fields
+                    description: "",
+                    maxTickets: 0,
+                    ticketsSold: 0,
+                    status: "live",
+                  };
+                  console.log("Created competition from cart data:", competition);
+                }
+                
+                // Still show loading placeholder if we don't have competition data
                 if (!competition) {
                   return (
                     <div key={item.id} className="flex items-start gap-4 p-4 border rounded-lg bg-white shadow-sm">
