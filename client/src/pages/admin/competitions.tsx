@@ -98,8 +98,12 @@ export default function AdminCompetitionsPage() {
     competitions, 
     totalCompetitions, 
     totalPages, 
-    isLoading 
+    isLoading,
+    error 
   } = useAdminCompetitions(page, 10, activeTab !== "all" ? activeTab : undefined);
+  
+  // Debug output
+  console.log("Admin competitions:", { competitions, totalCompetitions, error });
   
   // Get mutation hooks
   const {

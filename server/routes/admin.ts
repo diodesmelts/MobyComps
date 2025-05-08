@@ -70,11 +70,13 @@ export function registerAdminRoutes(app: Express) {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const status = req.query.status as string | undefined;
       
-      const result = await storage.listCompetitions({
-        status,
-        page,
-        limit
-      });
+      // Debug
+      console.log("Admin competitions request:", { page, limit, status });
+      
+      // For debugging, directly fetch all competitions without filters
+      const result = await storage.listCompetitions();
+      
+      console.log("Found competitions:", result.competitions.length, result.competitions.map(c => ({ id: c.id, title: c.title })));
       
       res.json({
         competitions: result.competitions,
