@@ -1,0 +1,50 @@
+2025-05-09T22:48:17.828852393Z     syscall: 'connect',
+2025-05-09T22:48:17.828854223Z     address: '10.202.140.82',
+2025-05-09T22:48:17.828856174Z     port: 443
+2025-05-09T22:48:17.828858074Z   },
+2025-05-09T22:48:17.828860264Z   [Symbol(kMessage)]: 'connect ECONNREFUSED 10.202.140.82:443'
+2025-05-09T22:48:17.828862174Z }
+2025-05-09T22:53:17.830405273Z Error releasing expired tickets: ErrorEvent {
+2025-05-09T22:53:17.830434615Z   [Symbol(kTarget)]: WebSocket {
+2025-05-09T22:53:17.830458277Z     _events: [Object: null prototype] {
+2025-05-09T22:53:17.830466398Z       error: [Function],
+2025-05-09T22:53:17.830469808Z       message: [Function],
+2025-05-09T22:53:17.830473238Z       close: [Function],
+2025-05-09T22:53:17.830476519Z       open: [Function]
+2025-05-09T22:53:17.830479869Z     },
+2025-05-09T22:53:17.830483159Z     _eventsCount: 4,
+2025-05-09T22:53:17.83048657Z     _maxListeners: undefined,
+2025-05-09T22:53:17.83048989Z     _binaryType: 'arraybuffer',
+2025-05-09T22:53:17.83049317Z     _closeCode: 1006,
+2025-05-09T22:53:17.83049644Z     _closeFrameReceived: false,
+2025-05-09T22:53:17.830499761Z     _closeFrameSent: false,
+2025-05-09T22:53:17.830503051Z     _closeMessage: <Buffer >,
+2025-05-09T22:53:17.830506291Z     _closeTimer: null,
+2025-05-09T22:53:17.830510041Z     _errorEmitted: true,
+2025-05-09T22:53:17.830513262Z     _extensions: {},
+2025-05-09T22:53:17.830516462Z     _paused: false,
+2025-05-09T22:53:17.830519742Z     _protocol: '',
+2025-05-09T22:53:17.830522933Z     _readyState: 3,
+2025-05-09T22:53:17.830526243Z     _receiver: null,
+2025-05-09T22:53:17.830529473Z     _sender: null,
+2025-05-09T22:53:17.830532703Z     _socket: null,
+2025-05-09T22:53:17.830535903Z     _bufferedAmount: 0,
+2025-05-09T22:53:17.830539124Z     _isServer: false,
+2025-05-09T22:53:17.830542344Z     _redirects: 0,
+2025-05-09T22:53:17.830545544Z     _autoPong: true,
+2025-05-09T22:53:17.830548815Z     _url: 'wss://dpg-d0f7mg3e5dus738fruig-a/v2',
+2025-05-09T22:53:17.830552165Z     _req: null,
+2025-05-09T22:53:17.830555415Z     [Symbol(shapeMode)]: false,
+2025-05-09T22:53:17.830558705Z     [Symbol(kCapture)]: false
+2025-05-09T22:53:17.830561945Z   },
+2025-05-09T22:53:17.830565246Z   [Symbol(kType)]: 'error',
+2025-05-09T22:53:17.830569106Z   [Symbol(kError)]: Error: connect ECONNREFUSED 10.202.140.82:443
+2025-05-09T22:53:17.830572526Z       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+2025-05-09T22:53:17.830575786Z     errno: -111,
+2025-05-09T22:53:17.830579107Z     code: 'ECONNREFUSED',
+2025-05-09T22:53:17.830582347Z     syscall: 'connect',
+2025-05-09T22:53:17.830585567Z     address: '10.202.140.82',
+2025-05-09T22:53:17.830588847Z     port: 443
+2025-05-09T22:53:17.830592108Z   },
+2025-05-09T22:53:17.830595848Z   [Symbol(kMessage)]: 'connect ECONNREFUSED 10.202.140.82:443'
+2025-05-09T22:53:17.830599128Z }
