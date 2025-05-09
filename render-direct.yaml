@@ -3,7 +3,12 @@ services:
     name: prize-competition-platform
     env: node
     plan: standard
-    buildCommand: npm install --no-package-lock --include=dev && npm run build && npm run db:push
+    buildCommand: >-
+      npm install --no-save @vitejs/plugin-react vite esbuild @tailwindcss/vite tailwindcss postcss autoprefixer &&
+      npm install --no-save typescript @types/react @types/react-dom @types/node &&
+      npm install --no-package-lock --include=dev &&
+      npm run build &&
+      npm run db:push
     startCommand: npm run start
     autoDeploy: true
     healthCheckPath: /health

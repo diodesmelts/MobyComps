@@ -5,14 +5,14 @@ set -e
 
 echo "🔄 Starting Render build process..."
 
-# First check if some key dev dependencies are installed
-echo "🔄 Checking for required dev dependencies..."
-if ! npm list @vitejs/plugin-react > /dev/null 2>&1; then
-  echo "🔄 Installing @vitejs/plugin-react..."
-  npm install --no-save @vitejs/plugin-react
-fi
+# Explicitly install critical build dependencies first
+echo "🔄 Installing critical build dependencies..."
+npm install --no-save @vitejs/plugin-react vite esbuild @tailwindcss/vite tailwindcss postcss autoprefixer
 
-# Explicitly install all dependencies, including dev dependencies
+# Install additional dev dependencies that might be needed
+npm install --no-save typescript @types/react @types/react-dom @types/node
+
+# Now install all dependencies, including dev dependencies
 echo "🔄 Installing all dependencies..."
 npm install --no-package-lock --include=dev
 
