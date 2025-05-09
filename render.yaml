@@ -3,7 +3,7 @@ services:
     name: prize-competition-platform
     env: node
     plan: standard
-    buildCommand: chmod +x scripts/render-build.sh && ./scripts/render-build.sh
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
     startCommand: npm run start
     autoDeploy: true
     healthCheckPath: /health
