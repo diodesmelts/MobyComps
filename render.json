@@ -1,4 +1,29 @@
 {
-  "buildCommand": "npm install && npx vite build && npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-  "startCommand": "NODE_ENV=production node dist/index.js"
+  "buildCommand": "cd client && npm ci && npx vite build && cd ../server && npm ci",
+  "startCommand": "cd server && npm start",
+  "healthCheckPath": "/",
+  "envVarGroups": [
+    {
+      "name": "database",
+      "envVars": [
+        {
+          "key": "DATABASE_URL",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "stripe",
+      "envVars": [
+        {
+          "key": "STRIPE_SECRET_KEY",
+          "value": ""
+        },
+        {
+          "key": "VITE_STRIPE_PUBLIC_KEY",
+          "value": ""
+        }
+      ]
+    }
+  ]
 }
