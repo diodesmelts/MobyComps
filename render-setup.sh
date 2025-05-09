@@ -1,25 +1,27 @@
 #!/bin/bash
-set -e  # Exit immediately if a command fails
+set -e
 
-echo "Setting up project for Render deployment..."
+echo "Render setup starting..."
 
-# Create an .npmrc file to use legacy peer deps (helps with some compatibility issues)
-echo "legacy-peer-deps=true" > .npmrc
+# Enable debugging information
+export NODE_ENV=production
+export DEBUG=express:*
 
-# Create Procfile for Render (alternative to start script)
-echo "web: cd server && npm start" > Procfile
+# Make all scripts executable
+chmod +x *.sh
 
-# Make sure the client's vite.config.ts is ready for production build
-# (already set up in your existing config)
+# Create directories if they don't exist
+mkdir -p client/dist
+mkdir -p server/dist
 
-echo "Setup completed! Your project is now ready for deployment on Render."
-echo ""
-echo "To deploy on Render:"
-echo "1. Use build command: cd client && npm install && npm run build && cd ../server && npm install"
-echo "2. Use start command: cd server && npm start"
-echo ""
-echo "Make sure to set these environment variables in the Render dashboard:"
-echo "- NODE_ENV: production"
-echo "- DATABASE_URL: Your Neon database URL"
-echo "- STRIPE_SECRET_KEY: Your Stripe secret key"
-echo "- VITE_STRIPE_PUBLIC_KEY: Your Stripe public key"
+# Show environment information
+echo "Node version: $(node -v)"
+echo "NPM version: $(npm -v)"
+echo "Current directory: $(pwd)"
+echo "Directory listing:"
+ls -la
+
+# Install global dependencies that might be needed
+npm install -g vite tsx typescript
+
+echo "Render setup completed successfully!"

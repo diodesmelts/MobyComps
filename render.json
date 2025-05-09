@@ -1,6 +1,6 @@
 {
-  "buildCommand": "cd client && npm ci && npx vite build && cd ../server && npm ci",
-  "startCommand": "cd server && npm start",
+  "buildCommand": "chmod +x ./render-setup.sh && ./render-setup.sh && chmod +x ./build.sh && ./build.sh",
+  "startCommand": "chmod +x ./start.sh && ./start.sh",
   "healthCheckPath": "/",
   "envVarGroups": [
     {
