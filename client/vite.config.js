@@ -1,22 +1,16 @@
 // ESM syntax for vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default defineConfig({
-  plugins: [react()],
+// Simple configuration without imports that might cause ESM issues
+export default {
+  plugins: [],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-      '@shared': path.resolve(__dirname, '../shared'),
-      '@assets': path.resolve(__dirname, '../attached_assets'),
+      '@': './src',
+      '@shared': '../shared',
+      '@assets': '../attached_assets',
     },
   },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
   },
-});
+};
