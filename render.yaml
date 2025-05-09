@@ -1,11 +1,10 @@
 services:
   - type: web
     name: mobycomps
-    env: docker
+    env: node
     region: oregon
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    plan: starter
+    buildCommand: chmod +x ./build.sh && ./build.sh
+    startCommand: cd server && NODE_ENV=production node server.js
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
