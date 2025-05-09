@@ -1,0 +1,50 @@
+2025-05-09T22:48:03.94886956Z ==> Requesting Node.js version 20.x
+2025-05-09T22:48:04.178191139Z ==> Using Node.js version 20.19.1 via /opt/render/project/src/.node-version
+2025-05-09T22:48:04.204421164Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-09T22:48:07.491017759Z ==> Using Bun version 1.1.0 (default)
+2025-05-09T22:48:07.4910471Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-09T22:48:07.540357711Z ==> Running build command 'chmod +x scripts/render-build.sh && ./scripts/render-build.sh'...
+2025-05-09T22:48:07.549944582Z Current working directory: /opt/render/project/src
+2025-05-09T22:48:07.549961472Z Installing dependencies with dev dependencies included...
+2025-05-09T22:48:16.278943932Z 
+2025-05-09T22:48:16.278972452Z added 505 packages, and audited 506 packages in 9s
+2025-05-09T22:48:16.278981903Z 
+2025-05-09T22:48:16.279014844Z 65 packages are looking for funding
+2025-05-09T22:48:16.279021533Z   run `npm fund` for details
+2025-05-09T22:48:16.310673318Z 
+2025-05-09T22:48:16.310699968Z 7 moderate severity vulnerabilities
+2025-05-09T22:48:16.310703208Z 
+2025-05-09T22:48:16.310706798Z To address issues that do not require attention, run:
+2025-05-09T22:48:16.310709648Z   npm audit fix
+2025-05-09T22:48:16.310712388Z 
+2025-05-09T22:48:16.310714348Z To address all issues (including breaking changes), run:
+2025-05-09T22:48:16.310716679Z   npm audit fix --force
+2025-05-09T22:48:16.310718279Z 
+2025-05-09T22:48:16.310720619Z Run `npm audit` for details.
+2025-05-09T22:48:16.347638998Z Making sure vital build dependencies are available...
+2025-05-09T22:48:43.75223087Z 
+2025-05-09T22:48:43.7522626Z added 23 packages, removed 11 packages, changed 150 packages, and audited 442 packages in 27s
+2025-05-09T22:48:43.75227668Z 
+2025-05-09T22:48:43.75228136Z 58 packages are looking for funding
+2025-05-09T22:48:43.752299961Z   run `npm fund` for details
+2025-05-09T22:48:43.759411277Z 
+2025-05-09T22:48:43.759440688Z 2 moderate severity vulnerabilities
+2025-05-09T22:48:43.759446088Z 
+2025-05-09T22:48:43.759451138Z To address all issues (including breaking changes), run:
+2025-05-09T22:48:43.759456248Z   npm audit fix --force
+2025-05-09T22:48:43.759460428Z 
+2025-05-09T22:48:43.759465418Z Run `npm audit` for details.
+2025-05-09T22:48:43.803753789Z Building the client application...
+2025-05-09T22:48:44.328195389Z failed to load config from /opt/render/project/src/vite.config.ts
+2025-05-09T22:48:44.328538326Z error during build:
+2025-05-09T22:48:44.328549266Z Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /opt/render/project/src/vite.config.ts.timestamp-1746830924324-820f46a525473.mjs
+2025-05-09T22:48:44.328553347Z     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-05-09T22:48:44.328556147Z     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-05-09T22:48:44.328559547Z     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-05-09T22:48:44.328562437Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+2025-05-09T22:48:44.328565177Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+2025-05-09T22:48:44.328568077Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+2025-05-09T22:48:44.328583867Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+2025-05-09T22:48:44.328587057Z     at ModuleJob._link (node:internal/modules/esm/module_job:130:49)
+2025-05-09T22:48:44.348273049Z ==> Build failed 😞
+2025-05-09T22:48:44.348290669Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
