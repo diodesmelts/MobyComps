@@ -769,6 +769,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Add health check endpoint for Render
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   

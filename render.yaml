@@ -2,7 +2,7 @@ services:
   - type: web
     name: prize-competition-platform
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npm run build && node scripts/db-setup.js
     startCommand: npm run start
     envVars:
       - key: NODE_ENV
