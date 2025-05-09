@@ -1,0 +1,36 @@
+2025-05-09T18:13:04.17878331Z ==> Cloning from https://github.com/diodesmelts/MobyComps
+2025-05-09T18:13:05.749434383Z ==> Checking out commit c198f37b7213ed988a3c39d409d9f199009773c0 in branch main
+2025-05-09T18:13:08.386378771Z ==> Using Node.js version 22.14.0 (default)
+2025-05-09T18:13:08.414644936Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-09T18:13:10.394295558Z ==> Using Bun version 1.1.0 (default)
+2025-05-09T18:13:10.394314029Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-09T18:13:10.453374302Z ==> Running build command 'cd client && npm install && npm run build && cd ../server && npm install'...
+2025-05-09T18:13:40.203524962Z 
+2025-05-09T18:13:40.203554183Z added 262 packages, and audited 263 packages in 30s
+2025-05-09T18:13:40.203565433Z 
+2025-05-09T18:13:40.203592693Z 38 packages are looking for funding
+2025-05-09T18:13:40.203598984Z   run `npm fund` for details
+2025-05-09T18:13:40.204917427Z 
+2025-05-09T18:13:40.204932267Z found 0 vulnerabilities
+2025-05-09T18:13:40.400275136Z 
+2025-05-09T18:13:40.400307036Z > client@0.0.0 build
+2025-05-09T18:13:40.400311756Z > npx vite build
+2025-05-09T18:13:40.400315197Z 
+2025-05-09T18:13:42.788302614Z vite v6.3.5 building for production...
+2025-05-09T18:13:42.857924843Z transforming...
+2025-05-09T18:13:42.891947688Z ✓ 4 modules transformed.
+2025-05-09T18:13:42.895819396Z ✗ Build failed in 81ms
+2025-05-09T18:13:42.895846237Z error during build:
+2025-05-09T18:13:42.895861207Z [vite]: Rollup failed to resolve import "@/components/ui/toaster" from "/opt/render/project/src/client/src/App.tsx".
+2025-05-09T18:13:42.895866567Z This is most likely unintended because it can break your application at runtime.
+2025-05-09T18:13:42.895870917Z If you do want to externalize this module explicitly add it to
+2025-05-09T18:13:42.895874827Z `build.rollupOptions.external`
+2025-05-09T18:13:42.895878377Z     at viteLog (file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/vite/dist/node/chunks/dep-DBxKXgDP.js:46345:15)
+2025-05-09T18:13:42.895881877Z     at onRollupLog (file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/vite/dist/node/chunks/dep-DBxKXgDP.js:46395:5)
+2025-05-09T18:13:42.895885347Z     at onLog (file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/vite/dist/node/chunks/dep-DBxKXgDP.js:46043:7)
+2025-05-09T18:13:42.895889607Z     at file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/rollup/dist/es/shared/node-entry.js:20726:32
+2025-05-09T18:13:42.895894188Z     at Object.logger [as onLog] (file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/rollup/dist/es/shared/node-entry.js:22605:9)
+2025-05-09T18:13:42.895898337Z     at ModuleLoader.handleInvalidResolvedId (file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/rollup/dist/es/shared/node-entry.js:21352:26)
+2025-05-09T18:13:42.895901898Z     at file:///opt/render/.cache/_npx/9ed06546b0653f96/node_modules/rollup/dist/es/shared/node-entry.js:21310:26
+2025-05-09T18:13:42.940691732Z ==> Build failed 😞
+2025-05-09T18:13:42.940733612Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

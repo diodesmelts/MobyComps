@@ -21,7 +21,11 @@ const possiblePaths = [
   path.resolve(__dirname, "../client/dist"),
   path.resolve(__dirname, "../../client/dist"),
   path.resolve(process.cwd(), "client/dist"),
-  path.resolve(process.cwd(), "../client/dist")
+  path.resolve(process.cwd(), "../client/dist"),
+  // Additional paths for Render
+  "/opt/render/project/src/client/dist",
+  path.resolve(process.cwd(), "../dist/public"),
+  path.resolve(__dirname, "../dist/public")
 ];
 
 // Find the first path that exists
