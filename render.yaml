@@ -3,9 +3,11 @@ services:
     name: mobycomps
     env: node
     region: oregon  # or choose another region
-    buildCommand: "./render-build.sh"
-    startCommand: "./render-start.sh"
+    buildCommand: "chmod +x render-build.sh && ./render-build.sh"
+    startCommand: "chmod +x render-start.sh && ./render-start.sh"
     healthCheckPath: /health/check
+    autoDeploy: true
+    plan: free  # or starter/standard
     envVars:
       - key: NODE_ENV
         value: production
@@ -15,3 +17,17 @@ services:
         value: 20.x
       - key: DATABASE_URL
         sync: false  # This should be set manually via the Render dashboard
+      - key: SESSION_SECRET
+        generateValue: true
+    buildFilter:
+      paths:
+        - client/**
+        - server/**
+        - shared/**
+        - public/**
+        - production-build/**
+        - render-build.sh
+        - render-start.sh
+        - vite.config.ts
+        - package.json
+        - package-lock.json
