@@ -3,7 +3,7 @@ services:
     name: mobycomps
     env: node
     region: oregon
-    buildCommand: chmod +x ./prebuild-render.sh && ./prebuild-render.sh && cd client && npm install && npm run build && cd ../server && npm install
+    buildCommand: cd client && npm ci && npm run build && cd ../server && npm ci
     startCommand: cd server && NODE_ENV=production node server.js
     envVars:
       - key: NODE_ENV
