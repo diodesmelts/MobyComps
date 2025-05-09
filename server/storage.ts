@@ -232,13 +232,29 @@ export class DatabaseStorage implements IStorage {
   }
   
   async incrementTicketsSold(id: number, count: number): Promise<void> {
-    await db
-      .update(competitions)
-      .set({
-        ticketsSold: sql`${competitions.ticketsSold} + ${count}`,
-        updatedAt: new Date(),
-      })
-      .where(eq(competitions.id, id));
+    console.log(`🔄 incrementTicketsSold - Updating competition ${id} with count ${count}`);
+    
+    try {
+      const result = await db
+        .update(competitions)
+        .set({
+          ticketsSold: sql`${competitions.ticketsSold} + ${count}`,
+          updatedAt: new Date(),
+        })
+        .where(eq(competitions.id, id))
+        .returning();
+      
+      console.log(`✅ incrementTicketsSold - Updated competition:`, result);
+      
+      // Double-check the update was applied
+      const competition = await this.getCompetition(id);
+      console.log(`📊 incrementTicketsSold - Current ticketsSold value: ${competition?.ticketsSold}`);
+      
+      return;
+    } catch (error) {
+      console.error(`❌ incrementTicketsSold - Error updating tickets sold:`, error);
+      throw error;
+    }
   }
   
   // Ticket operations

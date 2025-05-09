@@ -254,6 +254,11 @@ export function registerCartRoutes(app: Express) {
         
         // Update competition tickets sold count
         console.log(`📌 Updating competition's tickets sold count (Competition ID: ${competitionId}, Count: ${purchased.length})`);
+        
+        // Double check the competition's current tickets sold count
+        const competition = await storage.getCompetition(competitionId);
+        console.log(`📊 Current competition tickets sold: ${competition?.ticketsSold}`);
+        
         await storage.incrementTicketsSold(competitionId, purchased.length);
         
         // Create entry
