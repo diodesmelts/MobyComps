@@ -218,14 +218,24 @@ export function TicketGrid({
         <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 ticket-grid max-h-[50vh] overflow-y-auto p-1">
           {ticketsRange.map(number => {
             const isSelected = selectedTickets.includes(number);
-            // Check if ticket is available based on availableTickets array from the hook
-            const isAvailableTicket = availableTickets.some((ticket: AvailableTicket) => ticket.number === number);
             
-            // Determine button state
-            let buttonState: 'available' | 'selected' | 'purchased' = 'available';
-            if (!isAvailableTicket) {
-              buttonState = 'purchased'; // simplification - any unavailable ticket is treated as purchased
+            // Find this ticket in the availableTickets array
+            const ticket = availableTickets.find((t: AvailableTicket) => t.number === number);
+            
+            // Determine button state based on ticket status
+            let buttonState: 'available' | 'selected' | 'purchased' | 'reserved' = 'available';
+            
+            if (!ticket) {
+              // If ticket isn't found, assume it's not created yet (default to available)
+              buttonState = 'available';
+            } else if (ticket.status === 'purchased') {
+              // If the ticket is purchased, it should be greyed out
+              buttonState = 'purchased';
+            } else if (ticket.status === 'reserved' && !isSelected) {
+              // If it's reserved by someone else, it's also unavailable
+              buttonState = 'reserved';
             } else if (isSelected) {
+              // If it's in our selection, mark it as selected
               buttonState = 'selected';
             }
             
@@ -238,6 +248,7 @@ export function TicketGrid({
                     'border-2 border-[#C3DC6F] bg-[#C3DC6F]/10 text-[#002D5C]': buttonState === 'selected',
                     'border border-gray-300 hover:bg-[#C3DC6F]/10 hover:border-[#C3DC6F] text-gray-700': buttonState === 'available',
                     'border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed': buttonState === 'purchased',
+                    'border border-gray-200 bg-yellow-50 text-yellow-500 cursor-not-allowed': buttonState === 'reserved',
                   }
                 )}
                 onClick={() => {
@@ -255,7 +266,7 @@ export function TicketGrid({
                     onDeselectTicket(number);
                   }
                 }}
-                disabled={buttonState === 'purchased'}
+                disabled={buttonState === 'purchased' || buttonState === 'reserved'}
               >
                 {number}
               </button>

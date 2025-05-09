@@ -29,21 +29,21 @@ export function registerTicketRoutes(app: Express) {
     }
   });
 
-  // Get available tickets by competition ID - This matches the API client's expected endpoint
+  // Get tickets by competition ID with their status - This matches the API client's expected endpoint
   app.get("/api/tickets/:competitionId/available", async (req, res) => {
     try {
       const competitionId = parseInt(req.params.competitionId);
       
-      // Get available tickets only
-      const tickets = await storage.listTickets(competitionId, "available");
+      // Get ALL tickets for this competition to show proper status
+      const allTickets = await storage.listTickets(competitionId);
       
-      // Map to the expected format for the client
-      const availableTickets = tickets.map(ticket => ({
+      // Map to the expected format for the client, including status
+      const ticketStatusList = allTickets.map(ticket => ({
         number: ticket.number,
         status: ticket.status
       }));
       
-      res.json(availableTickets);
+      res.json(ticketStatusList);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
