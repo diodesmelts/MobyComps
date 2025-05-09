@@ -2,8 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
-    "start": "tsx index.prod.ts"
+    "start": "node server.js"
   },
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.25",
