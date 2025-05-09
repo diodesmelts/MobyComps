@@ -7,6 +7,7 @@ import { registerAdminRoutes } from "./routes/admin";
 import { registerUploadRoutes } from "./routes/uploads";
 import { registerCartRoutes } from "./routes/cart";
 import { registerSiteConfigRoutes } from "./routes/site-config";
+import { registerHealthRoutes } from "./routes/health";
 import { stripeService } from "./services/StripeService";
 import { storage } from "./storage";
 import { db } from "./db";
@@ -24,6 +25,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerUploadRoutes(app);
   registerCartRoutes(app);
   registerSiteConfigRoutes(app);
+  registerHealthRoutes(app);
   
   // User entry endpoints
   app.get("/api/user/entries", async (req, res) => {
