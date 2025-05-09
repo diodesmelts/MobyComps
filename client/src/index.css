@@ -4,6 +4,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+  .ring-offset-background {
+    --tw-ring-offset-color: hsl(var(--background));
+  }
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+  .file\:text-foreground::file-selector-button {
+    color: hsl(var(--foreground));
+  }
+  .placeholder\:text-muted-foreground::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+}
+
 /* Custom classes */
 .competition-progress-indicator {
   background-color: #C3DC6F !important;
@@ -77,14 +95,7 @@
     letter-spacing: -0.01em;
   }
   
-  /* Define utility classes for shadcn components */
-  .bg-background {
-    @apply bg-[hsl(var(--background))];
-  }
-  
-  .ring-offset-background {
-    @apply ring-offset-[hsl(var(--background))];
-  }
+  /* No additional utility class definitions needed here */
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-extrabold;

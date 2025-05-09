@@ -16,6 +16,8 @@ RUN node patch-vite-config.cjs
 
 # Install client dependencies and build
 RUN npm install
+# Set a longer build timeout for Tailwind CSS processing
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 # Ensure index.html exists and is suitable for production
