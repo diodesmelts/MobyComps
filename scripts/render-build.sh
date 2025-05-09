@@ -16,10 +16,23 @@ npm install --no-save typescript @types/react @types/react-dom @types/node
 echo "🔄 Installing all dependencies..."
 npm install --no-package-lock --include=dev
 
-# Build the client and server and copy files to the right location
+# Build the client and server
 echo "🔄 Building the application..."
-chmod +x scripts/fixed-build.sh
-./scripts/fixed-build.sh
+npm run build
+
+# Copy built files to server/public directory
+echo "🔄 Copying build files to server/public..."
+mkdir -p server/public
+cp -r dist/public/* server/public/ || echo "Warning: Could not copy build files"
+
+# Create render-info.json manually
+echo "🔄 Generating render environment info..."
+RENDER_INFO="{
+  \"environment\": \"${NODE_ENV:-production}\",
+  \"baseURL\": \"${RENDER_EXTERNAL_URL:-''}\",
+  \"buildTime\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
+}"
+echo "$RENDER_INFO" > server/public/render-info.json
 
 # Run database migrations - only if we have a DATABASE_URL
 if [ -n "$DATABASE_URL" ]; then

@@ -1,0 +1,89 @@
+2025-05-09T22:23:34.681324327Z ==> Cloning from https://github.com/diodesmelts/MobyComps
+2025-05-09T22:23:35.812960976Z ==> Checking out commit 738bb52f12c4b47d0c06ea7c9a801c29e856be13 in branch main
+2025-05-09T22:23:37.548482603Z ==> Downloading cache...
+2025-05-09T22:23:52.942818981Z ==> Transferred 260MB in 8s. Extraction took 6s.
+2025-05-09T22:23:59.977449286Z ==> Requesting Node.js version 20.x
+2025-05-09T22:24:00.756794717Z ==> Using Node.js version 20.19.1 via /opt/render/project/src/.node-version
+2025-05-09T22:24:00.784691656Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-09T22:24:00.924201811Z ==> Using Bun version 1.1.0 (default)
+2025-05-09T22:24:00.924215702Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-09T22:24:00.977423466Z ==> Running build command 'chmod +x scripts/render-build.sh && ./scripts/render-build.sh'...
+2025-05-09T22:24:00.986103862Z 🔄 Starting Render build process...
+2025-05-09T22:24:00.986117443Z 🔄 Installing critical build dependencies...
+2025-05-09T22:24:10.344544177Z 
+2025-05-09T22:24:10.344566819Z up to date, audited 441 packages in 9s
+2025-05-09T22:24:10.344576909Z 
+2025-05-09T22:24:10.344627362Z 57 packages are looking for funding
+2025-05-09T22:24:10.344639473Z   run `npm fund` for details
+2025-05-09T22:24:10.351976879Z 
+2025-05-09T22:24:10.35199118Z 2 moderate severity vulnerabilities
+2025-05-09T22:24:10.35199443Z 
+2025-05-09T22:24:10.351998101Z To address all issues (including breaking changes), run:
+2025-05-09T22:24:10.352001681Z   npm audit fix --force
+2025-05-09T22:24:10.352004251Z 
+2025-05-09T22:24:10.352007511Z Run `npm audit` for details.
+2025-05-09T22:24:19.676553683Z 
+2025-05-09T22:24:19.676582014Z up to date, audited 441 packages in 9s
+2025-05-09T22:24:19.676598586Z 
+2025-05-09T22:24:19.676604466Z 57 packages are looking for funding
+2025-05-09T22:24:19.676620047Z   run `npm fund` for details
+2025-05-09T22:24:19.685876787Z 
+2025-05-09T22:24:19.685896678Z 2 moderate severity vulnerabilities
+2025-05-09T22:24:19.685902399Z 
+2025-05-09T22:24:19.685907859Z To address all issues (including breaking changes), run:
+2025-05-09T22:24:19.68591737Z   npm audit fix --force
+2025-05-09T22:24:19.68592081Z 
+2025-05-09T22:24:19.68592426Z Run `npm audit` for details.
+2025-05-09T22:24:19.722602191Z 🔄 Installing all dependencies...
+2025-05-09T22:24:29.663335474Z 
+2025-05-09T22:24:29.663364556Z added 79 packages, and audited 520 packages in 10s
+2025-05-09T22:24:29.663393568Z 
+2025-05-09T22:24:29.663565598Z 67 packages are looking for funding
+2025-05-09T22:24:29.663572688Z   run `npm fund` for details
+2025-05-09T22:24:29.690945586Z 
+2025-05-09T22:24:29.690973888Z 5 moderate severity vulnerabilities
+2025-05-09T22:24:29.690979038Z 
+2025-05-09T22:24:29.690984248Z To address all issues (including breaking changes), run:
+2025-05-09T22:24:29.690989228Z   npm audit fix --force
+2025-05-09T22:24:29.690993329Z 
+2025-05-09T22:24:29.690997759Z Run `npm audit` for details.
+2025-05-09T22:24:29.73136745Z 🔄 Building the application...
+2025-05-09T22:24:29.736632332Z 🔄 Running build...
+2025-05-09T22:24:29.848107571Z 
+2025-05-09T22:24:29.848133423Z > rest-express@1.0.0 build
+2025-05-09T22:24:29.848139633Z > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+2025-05-09T22:24:29.848145393Z 
+2025-05-09T22:24:30.229597596Z vite v5.4.19 building for production...
+2025-05-09T22:24:30.754509058Z transforming...
+2025-05-09T22:24:37.04331941Z ✓ 2882 modules transformed.
+2025-05-09T22:24:37.693536794Z rendering chunks...
+2025-05-09T22:24:37.714217634Z computing gzip size...
+2025-05-09T22:24:37.755801206Z ../dist/public/index.html                             0.63 kB │ gzip:   0.38 kB
+2025-05-09T22:24:37.755848879Z ../dist/public/assets/payment-cards-DIq1cwyQ.png     24.73 kB
+2025-05-09T22:24:37.755889021Z ../dist/public/assets/index-BiBIu6rO.css            100.97 kB │ gzip:  16.26 kB
+2025-05-09T22:24:37.75604175Z ../dist/public/assets/index-D6NFnQyI.js           1,128.18 kB │ gzip: 315.82 kB
+2025-05-09T22:24:37.756234822Z 
+2025-05-09T22:24:37.756250433Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-05-09T22:24:37.756254363Z - Using dynamic import() to code-split the application
+2025-05-09T22:24:37.756257963Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-05-09T22:24:37.756260493Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2025-05-09T22:24:37.756527859Z ✓ built in 7.04s
+2025-05-09T22:24:37.847716502Z 
+2025-05-09T22:24:37.847737483Z   dist/index.js  115.8kb
+2025-05-09T22:24:37.847740393Z 
+2025-05-09T22:24:37.847742923Z ⚡ Done in 11ms
+2025-05-09T22:24:37.856637152Z 🔄 Copying build files to ensure server can find them...
+2025-05-09T22:24:37.887554901Z file:///opt/render/project/src/scripts/copy-build-files.js:2
+2025-05-09T22:24:37.887579052Z const fs = require('fs');
+2025-05-09T22:24:37.887582842Z            ^
+2025-05-09T22:24:37.887585122Z 
+2025-05-09T22:24:37.887587783Z ReferenceError: require is not defined in ES module scope, you can use import instead
+2025-05-09T22:24:37.887592793Z This file is being treated as an ES module because it has a '.js' file extension and '/opt/render/project/src/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2025-05-09T22:24:37.887597603Z     at file:///opt/render/project/src/scripts/copy-build-files.js:2:12
+2025-05-09T22:24:37.887600313Z     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-05-09T22:24:37.887602633Z     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-05-09T22:24:37.887605113Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-05-09T22:24:37.887607354Z 
+2025-05-09T22:24:37.887609724Z Node.js v20.19.1
+2025-05-09T22:24:37.891485074Z ==> Build failed 😞
+2025-05-09T22:24:37.891503285Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
