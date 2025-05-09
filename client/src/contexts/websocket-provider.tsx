@@ -1,95 +1,107 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 
-// Define the WebSocket context types
-interface WebSocketContextType {
+// Define the WebSocket context structure
+type WebSocketContextType = {
   connected: boolean;
-  lastMessage: any | null;
-  sendMessage: (message: any) => void;
-}
+  sendMessage: (message: object) => void;
+  lastMessage: any;
+};
 
-// Create the context with default values
+// Create context with default values
 const WebSocketContext = createContext<WebSocketContextType>({
   connected: false,
+  sendMessage: () => {},
   lastMessage: null,
-  sendMessage: () => {}
 });
 
-// Hook for components to use the WebSocket context
+// Custom hook to use the WebSocket context
 export const useWebSocket = () => useContext(WebSocketContext);
 
-interface WebSocketProviderProps {
-  children: ReactNode;
-}
+// WebSocket Provider component
+export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [connected, setConnected] = useState(false);
+  const [lastMessage, setLastMessage] = useState<any>(null);
+  const socketRef = useRef<WebSocket | null>(null);
 
-export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [connected, setConnected] = useState<boolean>(false);
-  const [lastMessage, setLastMessage] = useState<any | null>(null);
+  // Create a function to establish WebSocket connection
+  const connectWebSocket = useCallback(() => {
+    // Close any existing connection
+    if (socketRef.current) {
+      socketRef.current.close();
+    }
 
-  useEffect(() => {
-    // Create WebSocket connection
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    // Create WebSocket URL dynamically based on current location
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws`;
     
     console.log(`Connecting to WebSocket at ${wsUrl}`);
-    const ws = new WebSocket(wsUrl);
+    
+    // Create new WebSocket connection
+    const socket = new WebSocket(wsUrl);
+    socketRef.current = socket;
 
-    // Connection opened
-    ws.addEventListener('open', () => {
+    // Set up event handlers
+    socket.onopen = () => {
       console.log('WebSocket connection established');
       setConnected(true);
-      
-      // Send initial ping
-      ws.send(JSON.stringify({ type: 'ping' }));
-    });
+    };
 
-    // Listen for messages
-    ws.addEventListener('message', (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        console.log('WebSocket message received:', message);
-        setLastMessage(message);
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
-    });
-
-    // Connection closed
-    ws.addEventListener('close', () => {
+    socket.onclose = () => {
       console.log('WebSocket connection closed');
       setConnected(false);
-    });
+      
+      // Attempt to reconnect after delay
+      setTimeout(() => {
+        connectWebSocket();
+      }, 5000);
+    };
 
-    // Connection error
-    ws.addEventListener('error', (error) => {
+    socket.onerror = (error) => {
       console.error('WebSocket error:', error);
       setConnected(false);
-    });
+    };
 
-    // Set the socket in state
-    setSocket(ws);
-
-    // Clean up on unmount
-    return () => {
-      console.log('Closing WebSocket connection');
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('Received WebSocket message:', data);
+        setLastMessage(data);
+      } catch (error) {
+        console.error('Failed to parse WebSocket message:', error);
       }
     };
   }, []);
 
+  // Connect to WebSocket on component mount
+  useEffect(() => {
+    connectWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, [connectWebSocket]);
+
   // Function to send messages to the server
-  const sendMessage = (message: any) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(message));
+  const sendMessage = useCallback((message: object) => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(message));
     } else {
-      console.error('WebSocket not connected, cannot send message');
+      console.error('Cannot send message, WebSocket is not connected');
     }
+  }, []);
+
+  // Create context value
+  const contextValue: WebSocketContextType = {
+    connected,
+    sendMessage,
+    lastMessage,
   };
 
-  // Provide the WebSocket context to child components
   return (
-    <WebSocketContext.Provider value={{ connected, lastMessage, sendMessage }}>
+    <WebSocketContext.Provider value={contextValue}>
       {children}
     </WebSocketContext.Provider>
   );
