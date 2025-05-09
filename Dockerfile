@@ -42,11 +42,42 @@ export default defineConfig({ \
   }, \
 });" > /app/vite.prod.config.js
 
-# Run our enhanced production build script instead of direct commands
-COPY scripts/production-build.js ./scripts/
+# Use direct commands instead of the production build script to avoid module system issues
+RUN echo "Building client and server directly..."
 
-# Run the enhanced build script
-RUN node scripts/production-build.js
+# Build the client with Vite
+RUN npx vite build
+
+# Build the server
+RUN npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/production.js
+
+# Copy necessary files
+RUN cp -r shared dist/ && \
+    mkdir -p dist/uploads && \
+    echo '{"name":"mobycomps","version":"1.0.0","type":"module","main":"production.js"}' > dist/package.json
+
+# Copy static files to public directory
+RUN if [ -d "public" ]; then \
+      mkdir -p dist/public && \
+      cp -r public/* dist/public/ 2>/dev/null || true; \
+    fi
+
+# Add error handling to index.html
+RUN if [ -f "dist/public/index.html" ]; then \
+      # Create a backup
+      cp dist/public/index.html dist/public/index.html.bak && \
+      # Add error handling for assets
+      echo "Adding error handler to index.html" && \
+      sed -i 's/<head>/<head><script>window.__ASSET_ERROR_HANDLER__ = true; window.addEventListener("error", function(event) { if (event.target && (event.target.tagName === "SCRIPT" || event.target.tagName === "LINK")) { console.error("Asset loading error:", event.target.src || event.target.href); } }, true);<\/script>/' dist/public/index.html && \
+      # Fix any development references
+      sed -i 's|src="[^"]*/@fs/[^"]*"|src="/assets/index.js"|g' dist/public/index.html && \
+      sed -i 's|href="[^"]*/@fs/[^"]*"|href="/assets/index.css"|g' dist/public/index.html && \
+      echo "Processed index.html successfully"; \
+    else \
+      echo "index.html not found, creating a fallback version" && \
+      mkdir -p dist/public && \
+      echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MobyComps Prize Competitions</title><script>window.location.href = "/fallback.html";</script></head><body><noscript><meta http-equiv="refresh" content="0;url=/fallback.html"><p>Redirecting to <a href="/fallback.html">fallback version</a></p></noscript></body></html>' > dist/public/index.html; \
+    fi
 
 # Add detailed debugging of the final output
 RUN echo "Final build output structure:" && find dist -type f | sort

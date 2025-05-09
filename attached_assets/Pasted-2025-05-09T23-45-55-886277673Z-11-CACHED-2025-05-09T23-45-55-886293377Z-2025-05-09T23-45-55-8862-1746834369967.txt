@@ -1,0 +1,50 @@
+2025-05-09T23:45:55.886277673Z #11 CACHED
+2025-05-09T23:45:55.886293377Z 
+2025-05-09T23:45:55.88629703Z #12 [builder  6/13] COPY . .
+2025-05-09T23:45:55.88629977Z #12 DONE 0.1s
+2025-05-09T23:45:55.88630196Z 
+2025-05-09T23:45:55.886304815Z #13 [builder  7/13] RUN chmod +x scripts/*.js 2>/dev/null || true
+2025-05-09T23:45:55.886307374Z #13 DONE 0.0s
+2025-05-09T23:45:56.000767472Z 
+2025-05-09T23:45:56.000789804Z #14 [builder  8/13] RUN echo "import { defineConfig } from 'vite'; import react from '@vitejs/plugin-react'; import path from 'path'; export default defineConfig({   plugins: [react()],   resolve: {     alias: {       '@': path.resolve('/app/client/src'),       '@shared': path.resolve('/app/shared'),       '@assets': path.resolve('/app/attached_assets'),     },   },   root: '/app/client',   build: {     outDir: '/app/dist/public',     emptyOutDir: true,   }, });" > /app/vite.prod.config.js
+2025-05-09T23:45:56.000794894Z #14 DONE 0.0s
+2025-05-09T23:45:56.000797269Z 
+2025-05-09T23:45:56.000800035Z #15 [builder  9/13] COPY scripts/production-build.js ./scripts/
+2025-05-09T23:45:56.000802513Z #15 DONE 0.0s
+2025-05-09T23:45:56.000804647Z 
+2025-05-09T23:45:56.000807049Z #16 [builder 10/13] RUN node scripts/production-build.js
+2025-05-09T23:45:56.000809399Z #16 0.067 file:///app/scripts/production-build.js:6
+2025-05-09T23:45:56.000811986Z #16 0.067 const fs = require('fs');
+2025-05-09T23:45:56.000814648Z #16 0.067            ^
+2025-05-09T23:45:56.000816977Z #16 0.067 
+2025-05-09T23:45:56.000819637Z #16 0.067 ReferenceError: require is not defined in ES module scope, you can use import instead
+2025-05-09T23:45:56.000831073Z #16 0.067 This file is being treated as an ES module because it has a '.js' file extension and '/app/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2025-05-09T23:45:56.000833619Z #16 0.067     at file:///app/scripts/production-build.js:6:12
+2025-05-09T23:45:56.000836326Z #16 0.067     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-05-09T23:45:56.000838704Z #16 0.067     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-05-09T23:45:56.000841198Z #16 0.067     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-05-09T23:45:56.00084373Z #16 0.067 
+2025-05-09T23:45:56.000846407Z #16 0.067 Node.js v20.19.1
+2025-05-09T23:45:56.0145473Z #16 ERROR: process "/bin/sh -c node scripts/production-build.js" did not complete successfully: exit code: 1
+2025-05-09T23:45:56.014561459Z ------
+2025-05-09T23:45:56.014564499Z  > [builder 10/13] RUN node scripts/production-build.js:
+2025-05-09T23:45:56.014567229Z 0.067            ^
+2025-05-09T23:45:56.014570425Z 0.067 
+2025-05-09T23:45:56.014573184Z 0.067 ReferenceError: require is not defined in ES module scope, you can use import instead
+2025-05-09T23:45:56.014575968Z 0.067 This file is being treated as an ES module because it has a '.js' file extension and '/app/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+2025-05-09T23:45:56.014578539Z 0.067     at file:///app/scripts/production-build.js:6:12
+2025-05-09T23:45:56.014581164Z 0.067     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-05-09T23:45:56.014583652Z 0.067     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-05-09T23:45:56.014586017Z 0.067     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-05-09T23:45:56.01458837Z 0.067 
+2025-05-09T23:45:56.01459081Z 0.067 Node.js v20.19.1
+2025-05-09T23:45:56.014618952Z ------
+2025-05-09T23:45:56.015776702Z Dockerfile:49
+2025-05-09T23:45:56.01578461Z --------------------
+2025-05-09T23:45:56.01578651Z   47 |     
+2025-05-09T23:45:56.015788669Z   48 |     # Run the enhanced build script
+2025-05-09T23:45:56.015790649Z   49 | >>> RUN node scripts/production-build.js
+2025-05-09T23:45:56.015792453Z   50 |     
+2025-05-09T23:45:56.015794269Z   51 |     # Add detailed debugging of the final output
+2025-05-09T23:45:56.015796134Z --------------------
+2025-05-09T23:45:56.015798787Z error: failed to solve: process "/bin/sh -c node scripts/production-build.js" did not complete successfully: exit code: 1
