@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MobyComps - Prize Competitions</title>
+    <meta name="description" content="Win amazing prizes with MobyComps! Enter our prize competitions for a chance to win your dream items.">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="MobyComps - Prize Competitions">
+    <meta property="og:description" content="Win amazing prizes with MobyComps! Enter our prize competitions for a chance to win your dream items.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mobycomps.onrender.com">
+    
+    <!-- Preload common assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Ensure proper asset paths are used in production -->
+    <script>
+      // This ensures assets use the correct base path
+      window.__BASE_PATH__ = '/';
+      
+      // Error handling for assets
+      window.addEventListener('error', function(event) {
+        if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
+          console.error('Asset loading error:', event);
+          
+          // If the error is from an asset with a path starting with '@'
+          if (event.target.src && event.target.src.includes('/@')) {
+            console.warn('Development path detected in production. This should not happen.');
+          }
+        }
+      }, true);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Placeholder for React to render into -->
+    <noscript>
+      <div style="text-align: center; padding: 2rem; font-family: system-ui, sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>This application requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+        <p>In the meantime, you can <a href="/fallback.html">view a basic version of the site</a>.</p>
+      </div>
+    </noscript>
+  </body>
+</html>

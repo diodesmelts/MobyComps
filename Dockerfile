@@ -42,26 +42,21 @@ export default defineConfig({ \
   }, \
 });" > /app/vite.prod.config.js
 
-# Build the client with the production config
-RUN npx vite build --config /app/vite.prod.config.js
+# Run our enhanced production build script instead of direct commands
+COPY scripts/production-build.js ./scripts/
 
-# Add a debug script to verify what files were built
-RUN echo "Client build output:" && ls -la dist/public
+# Run the enhanced build script
+RUN node scripts/production-build.js
 
-# Create a minimal index.html if it doesn't exist for some reason
-RUN if [ ! -f dist/public/index.html ]; then \
-    echo "WARNING: index.html not found, creating minimal version" && \
-    echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Prize Competitions</title></head><body><div id="root"></div><script type="module" src="/assets/index.js"></script></body></html>' > dist/public/index.html; \
-    fi
-
-# Build our production server file (not using the Vite-dependent one)
-RUN npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/production.js \
-    && cp -r shared dist/ \
-    && mkdir -p dist/uploads 2>/dev/null || true \
-    && echo '{"version":"1.0.0"}' > dist/package.json
-    
-# Debug file structure
+# Add detailed debugging of the final output
 RUN echo "Final build output structure:" && find dist -type f | sort
+
+# Make sure the index.html file is available with proper paths
+RUN echo "Checking index.html file:" && cat dist/public/index.html | grep -o 'src="[^"]*"' || echo "No script tags found in index.html"
+
+# Verify the contents of any JavaScript files to debug paths
+RUN echo "Checking for asset imports in JavaScript files:" && \
+    find dist/public -name "*.js" -exec grep -l "import" {} \; | head -n 3 || echo "No import statements found"
 
 # Production stage
 FROM node:20-slim
