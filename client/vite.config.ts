@@ -7,15 +7,14 @@ export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
-  ],
+    // Only include cartographer plugin in development mode
+    process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined ? 
+      // No dynamic import to avoid top-level await
+      {
+        name: 'empty-plugin',
+        // This empty plugin replaces the cartographer plugin in production
+      } : undefined,
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
