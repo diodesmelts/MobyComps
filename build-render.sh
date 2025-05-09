@@ -12,15 +12,28 @@ echo "Building client application..."
 cd client
 
 # Ensure we have the proper Vite config
-echo "// Simple vite.config.js for Render
-const reactPlugin = require('@vitejs/plugin-react');
+echo '// ESM syntax for vite.config.js
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { fileURLToPath } from "url";
 
-module.exports = {
-  plugins: [reactPlugin()],
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      "@shared": path.resolve(__dirname, "../shared"),
+      "@assets": path.resolve(__dirname, "../attached_assets"),
+    },
+  },
   build: {
-    outDir: 'dist'
-  }
-};" > vite.config.js
+    outDir: "dist",
+    emptyOutDir: true,
+  },
+});' > vite.config.js
 
 # Fix imports in App.tsx
 echo "Fixing imports in App.tsx..."

@@ -1,14 +1,18 @@
-// Simple vite.config.js without TypeScript
-module.exports = {
-  plugins: [require('@vitejs/plugin-react')()],
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: {
-      '@': '/src',
-      '@shared': '../shared',
-      '@assets': '../attached_assets'
-    }
+      '@': path.resolve(__dirname, 'src'),
+      '@shared': path.resolve(__dirname, '../shared'),
+      '@assets': path.resolve(__dirname, '../attached_assets'),
+    },
   },
   build: {
-    outDir: 'dist'
-  }
-};
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
+});
