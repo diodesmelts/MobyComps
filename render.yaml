@@ -2,6 +2,7 @@ services:
   - type: web
     name: mobycomps
     env: node
+    nodeVersion: 16
     plan: starter
     buildCommand: ./render-build.sh
     startCommand: node dist/index.js

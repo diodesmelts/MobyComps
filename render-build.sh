@@ -1,21 +1,17 @@
-#!/usr/bin/env bash
-# exit on error
-set -o errexit
+#!/bin/bash
 
 # Install dependencies
-echo "Installing dependencies..."
 npm install
 
-# Ensure autoprefixer is available globally
-echo "Installing autoprefixer globally..."
-npm install -g autoprefixer postcss tailwindcss
+# Install PostCSS and autoprefixer
+npm install autoprefixer postcss tailwindcss
 
-# Build client assets
-echo "Building client assets..."
+# Build the client
+echo "Building client..."
 npx vite build
 
-# Build server
+# Build the server with ESBuild
 echo "Building server..."
 npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
-echo "Build completed successfully!"
+echo "Build completed!"
