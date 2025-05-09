@@ -2,9 +2,16 @@ services:
   - type: web
     name: prize-competition-platform
     env: docker
+    dockerCommand: node dist/index.js
     plan: standard
     autoDeploy: true
     healthCheckPath: /health
+    buildFilter:
+      paths:
+        - server/**/*
+        - client/**/*
+        - shared/**/*
+        - Dockerfile
     numInstances: 1
     scaling:
       minInstances: 1
