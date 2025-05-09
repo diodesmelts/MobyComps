@@ -94,6 +94,14 @@ export default function AdminTicketSalesPage() {
       });
       return;
     }
+    
+    // The useAdminWinningTicketLookup hook will automatically fetch the data
+    // when both lookupCompetitionId and lookupTicketNumber are set
+    
+    toast({
+      title: "Looking up ticket",
+      description: `Checking ticket #${lookupTicketNumber} for competition ID: ${lookupCompetitionId}`
+    });
   };
   
   // Handle draw for a competition
@@ -108,7 +116,7 @@ export default function AdminTicketSalesPage() {
       <main className="flex-grow py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-[#002D5C]">Ticket Sales Dashboard</h1>
+            <h1 className="text-2xl font-bold text-[#002147]">Ticket Sales Dashboard</h1>
             <Button
               onClick={() => navigate("/admin")}
               variant="outline"
@@ -134,7 +142,7 @@ export default function AdminTicketSalesPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center space-x-2">
-                      <Tag className="h-4 w-4 text-[#002D5C]" />
+                      <Tag className="h-4 w-4 text-[#002147]" />
                       <span className="text-2xl font-bold">
                         {formatPrice(ticketSalesData?.reduce((total, sale) => total + sale.revenue, 0) || 0)}
                       </span>
@@ -151,7 +159,7 @@ export default function AdminTicketSalesPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center space-x-2">
-                      <Ticket className="h-4 w-4 text-[#002D5C]" />
+                      <Ticket className="h-4 w-4 text-[#002147]" />
                       <span className="text-2xl font-bold">
                         {ticketSalesData?.reduce((total, sale) => total + sale.ticketsSold, 0) || 0}
                       </span>
@@ -168,7 +176,7 @@ export default function AdminTicketSalesPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center space-x-2">
-                      <Trophy className="h-4 w-4 text-[#002D5C]" />
+                      <Trophy className="h-4 w-4 text-[#002147]" />
                       <span className="text-2xl font-bold">
                         {ticketSalesData?.filter(sale => sale.status === 'live').length || 0}
                       </span>
@@ -378,128 +386,198 @@ export default function AdminTicketSalesPage() {
               {ticketLookupData && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Ticket Details</CardTitle>
+                    <CardTitle>Ticket Lookup Results</CardTitle>
+                    <CardDescription>
+                      Details for ticket #{ticketLookupData.ticket.number} in competition "{ticketLookupData.competition.title}"
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Competition</h3>
-                          <p className="text-lg font-semibold">{ticketLookupData.competition.title}</p>
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                          <span 
-                            className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium
-                              ${ticketLookupData.competition.status === 'live' 
-                                ? 'bg-green-100 text-green-700' 
-                                : ticketLookupData.competition.status === 'completed'
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : ticketLookupData.competition.status === 'draft'
-                                    ? 'bg-amber-100 text-amber-700'
-                                    : 'bg-red-100 text-red-700'
-                              }
-                            `}
-                          >
-                            {ticketLookupData.competition.status}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Draw Date</h3>
-                          <p className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-gray-500" />
-                            {formatDate(new Date(ticketLookupData.competition.drawDate))}
-                          </p>
+                    {/* Competition Details */}
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2 text-[#002147] flex items-center">
+                        <Trophy className="h-5 w-5 mr-2" />
+                        Competition Details
+                      </h3>
+                      <div className="bg-gray-50 p-4 rounded-md">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-500">ID</p>
+                            <p className="font-medium">{ticketLookupData.competition.id}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Title</p>
+                            <p className="font-medium">{ticketLookupData.competition.title}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Status</p>
+                            <span 
+                              className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium
+                                ${ticketLookupData.competition.status === 'live' 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : ticketLookupData.competition.status === 'completed'
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : ticketLookupData.competition.status === 'draft'
+                                      ? 'bg-amber-100 text-amber-700'
+                                      : 'bg-red-100 text-red-700'
+                                }
+                              `}
+                            >
+                              {ticketLookupData.competition.status}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Draw Date</p>
+                            <p className="font-medium">{formatDate(new Date(ticketLookupData.competition.drawDate))}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Ticket Price</p>
+                            <p className="font-medium">{formatPrice(ticketLookupData.competition.ticketPrice)}</p>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Ticket Number</h3>
-                          <p className="text-lg font-semibold flex items-center gap-2">
-                            <Ticket className="h-4 w-4 text-blue-500" />
-                            {ticketLookupData.ticket.number}
-                          </p>
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Ticket Status</h3>
-                          <span 
-                            className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium
-                              ${ticketLookupData.ticket.status === 'available' 
-                                ? 'bg-gray-100 text-gray-700' 
-                                : ticketLookupData.ticket.status === 'reserved'
-                                  ? 'bg-amber-100 text-amber-700'
-                                  : 'bg-green-100 text-green-700'
-                              }
-                            `}
-                          >
-                            {ticketLookupData.ticket.status}
-                          </span>
-                        </div>
-                        <div>
+                    </div>
+
+                    {/* Ticket Details */}
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2 text-[#002147] flex items-center">
+                        <Ticket className="h-5 w-5 mr-2" />
+                        Ticket Details
+                      </h3>
+                      <div className="bg-gray-50 p-4 rounded-md">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-500">Number</p>
+                            <p className="text-2xl font-bold text-[#002147]">{ticketLookupData.ticket.number}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Status</p>
+                            <span 
+                              className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium
+                                ${ticketLookupData.ticket.status === 'purchased' 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : ticketLookupData.ticket.status === 'reserved'
+                                    ? 'bg-amber-100 text-amber-700'
+                                    : 'bg-blue-100 text-blue-700'
+                                }
+                              `}
+                            >
+                              {ticketLookupData.ticket.status}
+                            </span>
+                          </div>
                           {ticketLookupData.ticket.purchasedAt && (
-                            <>
-                              <h3 className="text-sm font-medium text-gray-500">Purchased</h3>
-                              <p className="flex items-center gap-2">
-                                <Clock className="h-4 w-4 text-gray-500" />
-                                {formatDate(new Date(ticketLookupData.ticket.purchasedAt))}
-                              </p>
-                            </>
+                            <div>
+                              <p className="text-sm text-gray-500">Purchased At</p>
+                              <p className="font-medium">{formatDate(new Date(ticketLookupData.ticket.purchasedAt))}</p>
+                            </div>
                           )}
                         </div>
                       </div>
                     </div>
-                    
-                    {/* Owner information */}
+
+                    {/* User Details */}
                     {ticketLookupData.user ? (
-                      <div className="mt-6 border-t pt-6">
-                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                          <User2 className="h-5 w-5 text-[#002D5C]" />
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2 text-[#002147] flex items-center">
+                          <User2 className="h-5 w-5 mr-2" />
                           Ticket Owner
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-500">Name</h4>
-                            <p>{ticketLookupData.user.firstName} {ticketLookupData.user.lastName}</p>
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-500">Email</h4>
-                            <p>{ticketLookupData.user.email}</p>
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-500">Username</h4>
-                            <p>{ticketLookupData.user.username}</p>
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-500">Phone</h4>
-                            <p>{ticketLookupData.user.phoneNumber || "Not provided"}</p>
-                          </div>
-                          <div className="md:col-span-2">
-                            <h4 className="text-sm font-medium text-gray-500">Address</h4>
-                            <p>
-                              {ticketLookupData.user.address ? (
-                                <>
-                                  {ticketLookupData.user.address}, 
-                                  {ticketLookupData.user.city && <>{ticketLookupData.user.city}, </>}
-                                  {ticketLookupData.user.postcode && <>{ticketLookupData.user.postcode}, </>}
-                                  {ticketLookupData.user.country && <>{ticketLookupData.user.country}</>}
-                                </>
-                              ) : (
-                                "Address not provided"
-                              )}
-                            </p>
+                        <div className="bg-gray-50 p-4 rounded-md">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm text-gray-500">User ID</p>
+                              <p className="font-medium">{ticketLookupData.user.id}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Username</p>
+                              <p className="font-medium">{ticketLookupData.user.username}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Email</p>
+                              <p className="font-medium">{ticketLookupData.user.email}</p>
+                            </div>
+                            {(ticketLookupData.user.firstName || ticketLookupData.user.lastName) && (
+                              <div>
+                                <p className="text-sm text-gray-500">Name</p>
+                                <p className="font-medium">
+                                  {[
+                                    ticketLookupData.user.firstName,
+                                    ticketLookupData.user.lastName
+                                  ].filter(Boolean).join(' ')}
+                                </p>
+                              </div>
+                            )}
+                            {ticketLookupData.user.phoneNumber && (
+                              <div>
+                                <p className="text-sm text-gray-500">Phone</p>
+                                <p className="font-medium">{ticketLookupData.user.phoneNumber}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
                     ) : (
-                      <div className="mt-6 border-t pt-6">
-                        <p className="flex items-center gap-2 text-gray-500">
-                          <User2 className="h-5 w-5" />
-                          This ticket has not been purchased by any user
-                        </p>
+                      <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-md flex items-start">
+                        <CheckCircle2 className="h-5 w-5 text-amber-500 mt-0.5 mr-2 flex-shrink-0" />
+                        <div>
+                          <h3 className="font-semibold">Ticket Owner Not Found</h3>
+                          <p className="mt-1">
+                            This ticket was found in the system with status "{ticketLookupData.ticket.status}", 
+                            but we couldn't find a user associated with it. 
+                            {ticketLookupData.ticket.status !== 'purchased' && 
+                              " This is expected since the ticket hasn't been purchased yet."}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Entry Details */}
+                    {ticketLookupData.entry && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-2 text-[#002147] flex items-center">
+                          <CheckCircle2 className="h-5 w-5 mr-2" />
+                          Entry Details
+                        </h3>
+                        <div className="bg-gray-50 p-4 rounded-md">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm text-gray-500">Entry ID</p>
+                              <p className="font-medium">{ticketLookupData.entry.id}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Created At</p>
+                              <p className="font-medium">{formatDate(new Date(ticketLookupData.entry.createdAt))}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Ticket IDs</p>
+                              <p className="font-medium">{ticketLookupData.entry.ticketIds}</p>
+                            </div>
+                            {ticketLookupData.entry.stripePaymentId && (
+                              <div>
+                                <p className="text-sm text-gray-500">Payment ID</p>
+                                <p className="font-medium">{ticketLookupData.entry.stripePaymentId}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setLookupCompetitionId(undefined);
+                        setLookupTicketNumber(undefined);
+                      }}
+                    >
+                      Clear
+                    </Button>
+                    {ticketLookupData.user && (
+                      <Button onClick={() => navigate(`/admin/users?id=${ticketLookupData.user.id}`)}>
+                        View User Profile
+                      </Button>
+                    )}
+                  </CardFooter>
                 </Card>
               )}
               
