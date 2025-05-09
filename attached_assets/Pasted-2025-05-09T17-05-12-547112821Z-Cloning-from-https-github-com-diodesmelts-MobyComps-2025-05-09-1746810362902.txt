@@ -1,0 +1,45 @@
+2025-05-09T17:05:12.547112821Z ==> Cloning from https://github.com/diodesmelts/MobyComps
+2025-05-09T17:05:13.640213171Z ==> Checking out commit 98f0777ad44a3187bcddb3e2cf8698f59f7cfd93 in branch main
+2025-05-09T17:05:16.628510315Z ==> Using Node.js version 22.14.0 (default)
+2025-05-09T17:05:16.6792611Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-09T17:05:19.527130057Z ==> Using Bun version 1.1.0 (default)
+2025-05-09T17:05:19.527162458Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-09T17:05:19.623288735Z ==> Running build command 'cd client && npm install && npx vite build && cd ../server && npm install'...
+2025-05-09T17:05:33.748708353Z 
+2025-05-09T17:05:33.748753853Z added 430 packages, and audited 431 packages in 14s
+2025-05-09T17:05:33.748771363Z 
+2025-05-09T17:05:33.748815834Z 56 packages are looking for funding
+2025-05-09T17:05:33.748831404Z   run `npm fund` for details
+2025-05-09T17:05:33.785421079Z 
+2025-05-09T17:05:33.785910694Z 8 vulnerabilities (3 low, 2 moderate, 3 high)
+2025-05-09T17:05:33.785922584Z 
+2025-05-09T17:05:33.785929904Z To address all issues, run:
+2025-05-09T17:05:33.785936004Z   npm audit fix
+2025-05-09T17:05:33.785941595Z 
+2025-05-09T17:05:33.785947675Z Run `npm audit` for details.
+2025-05-09T17:05:34.910185228Z vite v5.4.14 building for production...
+2025-05-09T17:05:35.015013684Z transforming...
+2025-05-09T17:05:35.2919996Z node:internal/process/promises:394
+2025-05-09T17:05:35.29203889Z     triggerUncaughtException(err, true /* fromPromise */);
+2025-05-09T17:05:35.292045581Z     ^
+2025-05-09T17:05:35.292051641Z 
+2025-05-09T17:05:35.292059911Z [Failed to load PostCSS config: Failed to load PostCSS config (searchPath: /opt/render/project/src/client): [Error] Loading PostCSS Plugin failed: Cannot find module 'autoprefixer'
+2025-05-09T17:05:35.292066121Z Require stack:
+2025-05-09T17:05:35.292072081Z - /opt/render/project/src/postcss.config.js
+2025-05-09T17:05:35.292077321Z 
+2025-05-09T17:05:35.292083181Z (@/opt/render/project/src/postcss.config.js)
+2025-05-09T17:05:35.292089901Z Error: Loading PostCSS Plugin failed: Cannot find module 'autoprefixer'
+2025-05-09T17:05:35.292094771Z Require stack:
+2025-05-09T17:05:35.292099701Z - /opt/render/project/src/postcss.config.js
+2025-05-09T17:05:35.292104371Z 
+2025-05-09T17:05:35.292109381Z (@/opt/render/project/src/postcss.config.js)
+2025-05-09T17:05:35.292117021Z     at load (file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:33632:11)
+2025-05-09T17:05:35.292122771Z     at file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:33657:16
+2025-05-09T17:05:35.292130081Z     at Array.map (<anonymous>)
+2025-05-09T17:05:35.292136471Z     at plugins (file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:33656:8)
+2025-05-09T17:05:35.292144392Z     at processResult (file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:33726:14)
+2025-05-09T17:05:35.292150292Z     at file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:33856:14]
+2025-05-09T17:05:35.292155632Z 
+2025-05-09T17:05:35.292161112Z Node.js v22.14.0
+2025-05-09T17:05:35.331709647Z ==> Build failed 😞
+2025-05-09T17:05:35.331730057Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

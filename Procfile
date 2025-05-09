@@ -1,0 +1,1 @@
+web: npm install && vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist && node dist/index.js
