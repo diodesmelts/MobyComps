@@ -424,6 +424,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             ticketsProcessed += updatedTickets.length;
             
+            // Update competition's ticket sold count
+            console.log(`🚨 STEP 3 - Incrementing competition's ticketsSold counter...`);
+            try {
+              const competitionBefore = await storage.getCompetition(item.competitionId);
+              console.log(`🚨 STEP 3 - Competition ${item.competitionId} (${competitionBefore?.title}) - Current ticketsSold: ${competitionBefore?.ticketsSold}`);
+              
+              await storage.incrementTicketsSold(item.competitionId, updatedTickets.length);
+              
+              const competitionAfter = await storage.getCompetition(item.competitionId);
+              console.log(`🚨 STEP 3 - Competition ${item.competitionId} (${competitionAfter?.title}) - Updated ticketsSold: ${competitionAfter?.ticketsSold}`);
+            } catch (error) {
+              console.error(`❌ STEP 3 - Error incrementing ticketsSold for competition ${item.competitionId}:`, error);
+            }
+            
             // Create entry record in the database
             console.log(`🚨 STEP 4 - Creating entry record for user ${userId}, competition ${item.competitionId}...`);
             const entry = await storage.createEntry({
@@ -570,6 +584,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const purchasedTickets = await storage.purchaseTickets(ticketIds, userId);
             console.log(`🚨 Tickets purchased:`, purchasedTickets);
             ticketsProcessed += purchasedTickets.length;
+            
+            // Update competition's tickets sold count
+            console.log(`🚨 Updating competition's ticket sold count (ID: ${item.competitionId}, Count: ${purchasedTickets.length})...`);
+            try {
+              const compBefore = await storage.getCompetition(item.competitionId);
+              console.log(`🚨 Before update - Competition ${item.competitionId} - Current ticketsSold: ${compBefore?.ticketsSold}`);
+              
+              await storage.incrementTicketsSold(item.competitionId, purchasedTickets.length);
+              
+              const compAfter = await storage.getCompetition(item.competitionId);
+              console.log(`🚨 After update - Competition ${item.competitionId} - Updated ticketsSold: ${compAfter?.ticketsSold}`);
+            } catch (ticketCountError) {
+              console.error(`❌ Error updating competition tickets sold count:`, ticketCountError);
+            }
             
             // Create an entry for this purchase
             console.log(`🚨 Creating entry for competition ${item.competitionId}, tickets ${ticketNumbers}...`);
