@@ -3,7 +3,7 @@ services:
     name: mobycomps
     env: node
     plan: starter
-    buildCommand: npm install && vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+    buildCommand: ./render-build.sh
     startCommand: node dist/index.js
     envVars:
       - key: NODE_ENV
@@ -15,6 +15,8 @@ services:
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: VITE_STRIPE_PUBLIC_KEY
+        sync: false
+      - key: RENDER_EXTERNAL_URL
         sync: false
 
 databases:
