@@ -1,0 +1,50 @@
+2025-05-09T23:10:39.074795628Z 
+2025-05-09T23:10:39.074798748Z Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /app/dist/index.js
+2025-05-09T23:10:39.074805798Z     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-05-09T23:10:39.074807789Z     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-05-09T23:10:39.074809438Z     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-05-09T23:10:39.074811398Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+2025-05-09T23:10:39.074813059Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+2025-05-09T23:10:39.074814699Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+2025-05-09T23:10:39.074817229Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+2025-05-09T23:10:39.074818939Z     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
+2025-05-09T23:10:39.074821279Z   code: 'ERR_MODULE_NOT_FOUND'
+2025-05-09T23:10:39.074823109Z }
+2025-05-09T23:10:39.074824669Z 
+2025-05-09T23:10:39.074826429Z Node.js v20.19.1
+2025-05-09T23:10:42.844863877Z node:internal/modules/esm/resolve:873
+2025-05-09T23:10:42.844917218Z   throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+2025-05-09T23:10:42.844921568Z         ^
+2025-05-09T23:10:42.844924258Z 
+2025-05-09T23:10:42.844926998Z Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /app/dist/index.js
+2025-05-09T23:10:42.844930508Z     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-05-09T23:10:42.844932678Z     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-05-09T23:10:42.844934968Z     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-05-09T23:10:42.844937068Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+2025-05-09T23:10:42.844939189Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+2025-05-09T23:10:42.844941229Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+2025-05-09T23:10:42.844943809Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+2025-05-09T23:10:42.844945919Z     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
+2025-05-09T23:10:42.844948529Z   code: 'ERR_MODULE_NOT_FOUND'
+2025-05-09T23:10:42.844950619Z }
+2025-05-09T23:10:42.844952669Z 
+2025-05-09T23:10:42.844954719Z Node.js v20.19.1
+2025-05-09T23:10:43.174127544Z ==> Exited with status 1
+2025-05-09T23:10:43.324212957Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2025-05-09T23:10:58.595369158Z node:internal/modules/esm/resolve:873
+2025-05-09T23:10:58.595412719Z   throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+2025-05-09T23:10:58.595416489Z         ^
+2025-05-09T23:10:58.595418789Z 
+2025-05-09T23:10:58.595422089Z Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /app/dist/index.js
+2025-05-09T23:10:58.59542567Z     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-05-09T23:10:58.59542822Z     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-05-09T23:10:58.59543072Z     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-05-09T23:10:58.59543323Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+2025-05-09T23:10:58.59543564Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+2025-05-09T23:10:58.59543831Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+2025-05-09T23:10:58.59544113Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+2025-05-09T23:10:58.59544374Z     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
+2025-05-09T23:10:58.595471411Z   code: 'ERR_MODULE_NOT_FOUND'
+2025-05-09T23:10:58.595477781Z }
+2025-05-09T23:10:58.595480341Z 
+2025-05-09T23:10:58.595482671Z Node.js v20.19.1

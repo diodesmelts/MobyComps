@@ -13,25 +13,23 @@ RUN apt-get update && apt-get install -y \
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies, including dev dependencies for build
+# Install dependencies for build
 RUN npm ci
 
 # Copy source files
 COPY . .
 
 # Make sure the scripts directory is executable
-RUN chmod +x scripts/*.js
+RUN chmod +x scripts/*.js 2>/dev/null || true
 
-# Build the application - first create a test environment file
-RUN touch .env.test && \
-    echo "DATABASE_URL=postgresql://test:test@localhost:5432/test" > .env.test && \
-    echo "SESSION_SECRET=test_session_secret" >> .env.test
+# Build the client separately first
+RUN cd client && npx vite build
 
-# Build the application 
-RUN npm run build
+# Build our production server file (not using the Vite-dependent one)
+RUN npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/production.js
 
 # Production stage
-FROM node:20-slim AS production
+FROM node:20-slim
 
 # Set working directory
 WORKDIR /app
@@ -52,7 +50,6 @@ COPY --from=builder /app/dist ./dist
 
 # Copy needed static and configuration files
 COPY --from=builder /app/.env.example ./.env.example
-COPY --from=builder /app/dist/public ./dist/public
 
 # Expose the port
 EXPOSE 8080
@@ -61,9 +58,9 @@ EXPOSE 8080
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Add healthcheck - retry quickly in development, more patience in production
+# Add healthcheck
 HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
     CMD curl --fail http://localhost:8080/health || exit 1
 
-# Start the application
-CMD ["node", "dist/index.js"]
+# Start the production server
+CMD ["node", "dist/production.js"]

@@ -2,7 +2,7 @@ services:
   - type: web
     name: prize-competition-platform
     env: docker
-    dockerCommand: node dist/index.js
+    dockerCommand: node dist/production.js
     plan: standard
     autoDeploy: true
     healthCheckPath: /health
