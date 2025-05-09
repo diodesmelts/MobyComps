@@ -5,12 +5,20 @@ set -e
 echo "Current working directory: $(pwd)"
 
 # Install dependencies
-echo "Installing dependencies..."
-npm ci
+echo "Installing dependencies with dev dependencies included..."
+npm ci --include=dev
 
-# Build the application
-echo "Building the application..."
-npm run build
+# Ensure vital build packages are installed
+echo "Making sure vital build dependencies are available..."
+npm install --no-save @vitejs/plugin-react vite esbuild @replit/vite-plugin-cartographer @replit/vite-plugin-runtime-error-modal
+
+# Build the client application first
+echo "Building the client application..."
+npx vite build
+
+# Build the server application
+echo "Building the server application..."
+npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
 # Create the server directory structure
 echo "Creating server directory structure..."
