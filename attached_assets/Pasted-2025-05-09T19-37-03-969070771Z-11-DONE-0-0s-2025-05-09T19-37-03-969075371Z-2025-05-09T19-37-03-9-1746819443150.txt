@@ -1,0 +1,50 @@
+2025-05-09T19:37:03.969070771Z #11 DONE 0.0s
+2025-05-09T19:37:03.969075371Z 
+2025-05-09T19:37:03.969081151Z #12 [builder  7/12] RUN npm ci
+2025-05-09T19:37:04.683045218Z #12 0.823 npm error code EUSAGE
+2025-05-09T19:37:04.777271996Z #12 0.823 npm error
+2025-05-09T19:37:04.777323788Z #12 0.823 npm error The `npm ci` command can only install with an existing package-lock.json or
+2025-05-09T19:37:04.777331958Z #12 0.823 npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+2025-05-09T19:37:04.777338308Z #12 0.823 npm error later to generate a package-lock.json file, then try again.
+2025-05-09T19:37:04.777344148Z #12 0.823 npm error
+2025-05-09T19:37:04.777353638Z #12 0.823 npm error Clean install a project
+2025-05-09T19:37:04.777359579Z #12 0.823 npm error
+2025-05-09T19:37:04.777366019Z #12 0.823 npm error Usage:
+2025-05-09T19:37:04.777371899Z #12 0.823 npm error npm ci
+2025-05-09T19:37:04.777377499Z #12 0.823 npm error
+2025-05-09T19:37:04.777383579Z #12 0.823 npm error Options:
+2025-05-09T19:37:04.777389289Z #12 0.823 npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+2025-05-09T19:37:04.777395449Z #12 0.823 npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+2025-05-09T19:37:04.77740097Z #12 0.823 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+2025-05-09T19:37:04.77740644Z #12 0.823 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+2025-05-09T19:37:04.77741302Z #12 0.823 npm error [--no-bin-links] [--no-fund] [--dry-run]
+2025-05-09T19:37:04.7774195Z #12 0.823 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+2025-05-09T19:37:04.77742526Z #12 0.823 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+2025-05-09T19:37:04.77743089Z #12 0.823 npm error
+2025-05-09T19:37:04.7774366Z #12 0.823 npm error aliases: clean-install, ic, install-clean, isntall-clean
+2025-05-09T19:37:04.777441981Z #12 0.823 npm error
+2025-05-09T19:37:04.777447851Z #12 0.823 npm error Run "npm help ci" for more info
+2025-05-09T19:37:04.777459721Z #12 0.826 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-05-09T19_37_04_082Z-debug-0.log
+2025-05-09T19:37:04.777481092Z #12 ERROR: process "/bin/sh -c npm ci" did not complete successfully: exit code: 1
+2025-05-09T19:37:04.777485622Z ------
+2025-05-09T19:37:04.777489812Z  > [builder  7/12] RUN npm ci:
+2025-05-09T19:37:04.777493772Z 0.823 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+2025-05-09T19:37:04.777496972Z 0.823 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+2025-05-09T19:37:04.777500832Z 0.823 npm error [--no-bin-links] [--no-fund] [--dry-run]
+2025-05-09T19:37:04.777504392Z 0.823 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+2025-05-09T19:37:04.777508282Z 0.823 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+2025-05-09T19:37:04.777511612Z 0.823 npm error
+2025-05-09T19:37:04.777514842Z 0.823 npm error aliases: clean-install, ic, install-clean, isntall-clean
+2025-05-09T19:37:04.777519003Z 0.823 npm error
+2025-05-09T19:37:04.777522563Z 0.823 npm error Run "npm help ci" for more info
+2025-05-09T19:37:04.777526223Z 0.826 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-05-09T19_37_04_082Z-debug-0.log
+2025-05-09T19:37:04.777530553Z ------
+2025-05-09T19:37:04.780700141Z Dockerfile:13
+2025-05-09T19:37:04.780722242Z --------------------
+2025-05-09T19:37:04.780727082Z   11 |     COPY client ./client/
+2025-05-09T19:37:04.780730622Z   12 |     WORKDIR /app/client
+2025-05-09T19:37:04.780734012Z   13 | >>> RUN npm ci
+2025-05-09T19:37:04.780737512Z   14 |     RUN npm run build
+2025-05-09T19:37:04.780740582Z   15 |     
+2025-05-09T19:37:04.780744353Z --------------------
+2025-05-09T19:37:04.780748623Z error: failed to solve: process "/bin/sh -c npm ci" did not complete successfully: exit code: 1

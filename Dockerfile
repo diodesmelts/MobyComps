@@ -5,12 +5,12 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy client files and build
 COPY client ./client/
 WORKDIR /app/client
-RUN npm ci
+RUN npm install
 RUN npm run build
 
 # Copy server files
@@ -32,7 +32,7 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/drizzle.config.ts ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Expose port
 EXPOSE 5000
