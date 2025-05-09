@@ -73,7 +73,8 @@ app.use((req, res, next) => {
   });
 
   // Serve static files from client/dist directory
-  const clientDistPath = path.join(__dirname, '../client/dist');
+  const clientDistPath = path.resolve(process.cwd(), '../client/dist');
+  console.log(`Checking for client dist directory at: ${clientDistPath}`);
   
   // Check if the client/dist directory exists
   if (fs.existsSync(clientDistPath)) {
@@ -81,8 +82,29 @@ app.use((req, res, next) => {
     app.use(express.static(clientDistPath));
     
     // Fallback to index.html for SPA routes
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(clientDistPath, 'index.html'));
+    app.get('/', (req, res) => {
+      res.sendFile(path.resolve(clientDistPath, 'index.html'));
+    });
+    
+    // Handle other routes that should return index.html for SPA
+    app.get('/competitions', (req, res) => {
+      res.sendFile(path.resolve(clientDistPath, 'index.html'));
+    });
+    
+    app.get('/login', (req, res) => {
+      res.sendFile(path.resolve(clientDistPath, 'index.html'));
+    });
+    
+    app.get('/register', (req, res) => {
+      res.sendFile(path.resolve(clientDistPath, 'index.html'));
+    });
+    
+    app.get('/cart', (req, res) => {
+      res.sendFile(path.resolve(clientDistPath, 'index.html'));
+    });
+    
+    app.get('/admin', (req, res) => {
+      res.sendFile(path.resolve(clientDistPath, 'index.html'));
     });
   } else {
     log(`Client build directory not found at ${clientDistPath}`);
