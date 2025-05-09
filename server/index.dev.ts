@@ -8,7 +8,13 @@ const app = express();
 
 // CORS configuration
 app.use((req, res, next) => {
-  const corsOrigin = process.env.CORS_ORIGIN || '*';
+  // In development, we need to allow the Vite dev server to access our API
+  // The Vite server typically runs on port 3000 or 5173
+  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+  
+  // Log the CORS origin for debugging
+  console.log(`Using CORS origin: ${corsOrigin}`);
+  
   res.header('Access-Control-Allow-Origin', corsOrigin);
   res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -66,24 +72,23 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Serve static files in production
-  const distPath = path.resolve(import.meta.dirname, "../dist/public");
-
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+  // Serve static files from client/dist directory
+  const clientDistPath = path.join(__dirname, '../client/dist');
+  
+  // Check if the client/dist directory exists
+  if (fs.existsSync(clientDistPath)) {
+    log(`Serving static files from ${clientDistPath}`);
+    app.use(express.static(clientDistPath));
+    
+    // Fallback to index.html for SPA routes
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(clientDistPath, 'index.html'));
+    });
+  } else {
+    log(`Client build directory not found at ${clientDistPath}`);
   }
 
-  app.use(express.static(distPath));
-
-  // Fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
-  });
-
   // Use environment port or fallback to 5000
-  // Environment variables like PORT are often set by hosting platforms like Render
   const port = process.env.PORT || 5000;
   server.listen({
     port: Number(port),

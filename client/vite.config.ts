@@ -15,6 +15,16 @@ export default defineConfig({
         // This empty plugin replaces the cartographer plugin in production
       } : undefined,
   ].filter(Boolean),
+  // Add proxy configuration for development
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

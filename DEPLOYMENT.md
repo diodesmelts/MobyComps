@@ -1,79 +1,142 @@
-# Deployment Checklist
+# Deployment Instructions for Moby Comps
 
-Use this checklist to ensure your application is ready for deployment to Render.
+This document provides instructions for deploying the Moby Comps platform to a production environment using [Render](https://render.com/).
 
-## Pre-Deployment Checklist
+## Deployment Overview
 
-### Environment Variables
-- [ ] Create all required environment variables in Render dashboard
-- [ ] Double-check the `VITE_API_URL` format (no trailing slash)
-- [ ] Ensure `DATABASE_URL` includes `?sslmode=require` for production
-- [ ] Generate a strong `SESSION_SECRET` for production
-- [ ] Verify Stripe keys match environment (test/live)
+The application is structured as a monorepo with the following directories:
 
-### Database
-- [ ] Verify database connection with SSL enabled
-- [ ] Run migrations via build command or manually
-- [ ] Check if database initialization scripts are necessary
+- `client/`: React frontend
+- `server/`: Express API backend
+- `shared/`: Shared TypeScript types and schemas
 
-### Frontend
-- [ ] Build succeeds locally with `npm run build`
-- [ ] All API calls use environment variables for API URL
-- [ ] Static assets compile correctly
-- [ ] Check for hardcoded URLs or environment-specific code
+For production deployment, we use a **single Web Service** approach on Render, where:
 
-### Backend
-- [ ] CORS configuration allows frontend domain
-- [ ] Sessions configured for cross-domain if needed
-- [ ] Port configuration uses `process.env.PORT`
-- [ ] Database SSL mode enabled for production
-- [ ] Verify API endpoints use absolute URLs when needed
+1. The frontend is built into static files
+2. The Express server serves both the API and static files
 
-### Security
-- [ ] Remove any test credentials from codebase
-- [ ] Check for exposed secrets in code history
-- [ ] Ensure secure cookie settings for production
-- [ ] Set appropriate CSP headers if needed
+## Required Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `NODE_ENV` | Environment setting | `production` |
+| `PORT` | Port the server listens on (set by Render) | `10000` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgres://user:pass@host:port/database?sslmode=require` |
+| `SESSION_SECRET` | Secret for session cookies | `your-very-long-secret-key` |
+| `CORS_ORIGIN` | Frontend origin for CORS (if separate) | `https://your-app.com` |
+| `VITE_STRIPE_PUBLIC_KEY` | Stripe publishable key | `pk_live_...` |
+| `STRIPE_SECRET_KEY` | Stripe secret key | `sk_live_...` |
+
+## Render Deployment Configuration
+
+### Web Service Settings
+
+- **Build Command**:  
+  ```bash
+  cd client && npm install --include=dev && npm run build && cd ../server && npm install
+  ```
+  
+  **Note**: This is different from the default `build` script in package.json. You must use this exact command in your Render settings.
+
+- **Start Command**:  
+  ```bash
+  cd server && npm run start
+  ```
+
+### Advanced Options
+
+- Set Environment Variables as listed above
+- Configure Health Check Path: `/api/health` 
+- Add any required secrets
+
+## Database Configuration 
+
+The application uses PostgreSQL with the Drizzle ORM. Ensure your `DATABASE_URL` includes:
+
+- SSL mode for production: `?sslmode=require`
+- Appropriate connection limits
+- Correct user permissions
+
+## Client-Side Environment
+
+The client-side uses Vite's environment variable system with the `VITE_` prefix:
+
+- All frontend environment variables must start with `VITE_`
+- These are injected at build time, not runtime
 
 ## Post-Deployment Verification
 
-- [ ] Test authentication flow
-- [ ] Verify database connections and queries
-- [ ] Test Stripe payment processing
-- [ ] Verify session persistence
-- [ ] Check image uploading to Cloudinary
-- [ ] Test all CRUD operations
+1. Visit your deployed application URL
+2. Verify API endpoints function via `/api/health`
+3. Test user authentication flows
+4. Confirm Stripe integration works properly
+5. Verify database connections
 
-## Render.com Specific Settings
+## Troubleshooting
 
-### Web Service (Backend)
-- Build Command: `npm install && npm run build`
-- Start Command: `npm run start`
-- Auto-Deploy: Enabled
-- Branch: main
+### Common Issues
 
-### Static Site (Frontend-only option)
-- Build Command: `npm install && npm run build`
-- Publish Directory: `dist/public`
-- Auto-Deploy: Enabled
-- Branch: main
+1. **"Not Found" errors for static assets**:  
+   Check that the build output is in the correct directory structure.
 
-### PostgreSQL Database
-- Connection Pooling: Enabled
-- SSL Mode: Required
+2. **CORS errors**:  
+   Ensure `CORS_ORIGIN` is properly set and that cookies use `sameSite: 'none'` in production.
 
-## Troubleshooting Common Issues
+3. **Database connection issues**:  
+   Verify the `DATABASE_URL` is correct and includes SSL settings.
 
-1. **CORS errors**: Check CORS configuration and make sure `CORS_ORIGIN` is set correctly
-2. **Database connection failures**: Verify SSL settings and connection string
-3. **Session issues**: Check cookie settings and cross-domain configuration
-4. **API 404 errors**: Ensure proper API URL formatting in frontend
-5. **Blank page after deploy**: Check browser console for JavaScript errors
+4. **Session/cookie problems**:  
+   Make sure `SESSION_SECRET` is set and session configuration uses secure settings.
 
-## Rollback Plan
+### Logs
 
-If deployment fails or critical issues are found:
-1. Revert to previous version in Render dashboard
-2. Verify database integrity
-3. Check logs for errors
-4. Fix issues in development and redeploy
+You can view application logs in the Render dashboard or via the Render CLI.
+
+## Development vs Production Files
+
+The application uses different entry points for development and production:
+
+- Development: `server/index.dev.ts` - API only, works with Vite's dev server for frontend
+- Production: `server/index.prod.ts` - API + static file serving from build directory
+
+This separation ensures optimal development experience while providing proper production deployment.
+
+## Local Development
+
+For local development, we provide several convenience scripts:
+
+### Full Development Environment
+
+To run both the API server and client development server:
+
+```bash
+./dev.sh
+```
+
+This script starts both the server (port 5000) and client (port 3000) in development mode, with proper cleanup on exit.
+
+### API Server Only
+
+To run just the API server:
+
+```bash
+cd server && npm run dev
+```
+
+### Client Development Server Only
+
+To run just the client development server:
+
+```bash
+./client-dev.sh
+```
+
+or
+
+```bash
+cd client && npm run dev
+```
+
+### Development Proxy Configuration
+
+The client's Vite development server is configured with a proxy that forwards all `/api` requests to the server running on port 5000. This means you can access the full application at http://localhost:3000 during development.
