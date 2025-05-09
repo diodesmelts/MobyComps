@@ -36,6 +36,12 @@ RUN sed -i 's|import HomePage from "@/pages/home-page"|import HomePage from "./p
     sed -i 's|import AdminTicketSales from "@/pages/admin/ticket-sales"|import AdminTicketSales from "./pages/admin/ticket-sales"|g' src/App.tsx && \
     sed -i 's|import AdminTicketSalesDetail from "@/pages/admin/ticket-sales-detail"|import AdminTicketSalesDetail from "./pages/admin/ticket-sales-detail"|g' src/App.tsx
 
+# Fix CSS error
+RUN sed -i 's|@apply border-border;|@apply border-\\[hsl\\(var\\(--border\\)\\)\\];|g' src/index.css
+
+# Generate Tailwind content configuration
+RUN echo "module.exports = {content: ['./src/**/*.{js,jsx,ts,tsx}']}" > tailwind.config.js
+
 # Build the client
 RUN NODE_ENV=production npm run build
 
