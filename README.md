@@ -32,7 +32,18 @@ A dynamic online prize competition platform that offers an engaging and interact
 3. Cloudinary account for image hosting
 4. Stripe account for payment processing
 
-### Deployment Steps
+### Deployment Options
+
+#### Option 1: One-Click Deployment with Render Blueprint
+
+For the easiest deployment, use our Render Blueprint for one-click deployment:
+
+1. Fork this repository to your GitHub account
+2. Follow the guide in [RENDER_BLUEPRINT.md](docs/RENDER_BLUEPRINT.md)
+
+#### Option 2: Manual Deployment
+
+For more control over the deployment process:
 
 1. Fork this repository to your GitHub account
 2. Connect your GitHub repository to Render
@@ -42,9 +53,15 @@ A dynamic online prize competition platform that offers an engaging and interact
    - **Start Command**: `npm run start`
    - **Environment**: Node.js
    - **Environment Variables**: Copy from `.env.example` and set appropriate values
-
 5. Link your PostgreSQL database to the web service
 6. Deploy!
+
+For detailed step-by-step instructions, see the [DEPLOYMENT.md](DEPLOYMENT.md) guide.
+
+### Additional Deployment Guides
+
+- [Secrets Management Guide](docs/SECRETS_MANAGEMENT.md) - How to securely manage API keys and secrets
+- [Custom Domains Guide](docs/CUSTOM_DOMAINS.md) - How to set up custom domains for your application
 
 ### Environment Variables
 
