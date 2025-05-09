@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from 'fs';
 import { setupAuth } from "./auth";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./vite";
@@ -14,6 +15,11 @@ const __dirname = path.dirname(__filename);
 // Production-specific settings
 const isProd = process.env.NODE_ENV === "production";
 const clientDistPath = path.resolve(__dirname, "../client/dist");
+
+// For debugging
+console.log("Current directory:", __dirname);
+console.log("Looking for client build at:", clientDistPath);
+console.log("Directory exists:", fs.existsSync(clientDistPath));
 
 async function main() {
   const app = express();
