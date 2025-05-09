@@ -1,0 +1,18 @@
+{
+  "name": "moby-comps",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd server && npm run dev",
+    "build": "cd client && npm install && npm run build && cd ../server && npm install",
+    "start": "cd server && npm run start",
+    "db:push": "cd server && npm run db:push"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ]
+}
