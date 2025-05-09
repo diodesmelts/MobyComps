@@ -3,8 +3,8 @@ services:
     name: mobycomps
     env: node
     region: oregon
-    buildCommand: npm install -g vite && cd client && npm install && npx vite build && cd ../server && npm install
-    startCommand: cd server && NODE_ENV=production node server.js
+    buildCommand: chmod +x ./build-render.sh && ./build-render.sh
+    startCommand: chmod +x ./start-render.sh && ./start-render.sh
     envVars:
       - key: NODE_ENV
         value: production

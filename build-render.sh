@@ -51,7 +51,7 @@ echo "Installing client dependencies..."
 npm install
 
 echo "Building client application..."
-NODE_ENV=production npx vite build
+NODE_ENV=production npm run build
 
 # Process server directory
 cd ../server
