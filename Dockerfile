@@ -22,11 +22,34 @@ COPY . .
 # Make sure the scripts directory is executable
 RUN chmod +x scripts/*.js 2>/dev/null || true
 
-# Build the client separately first
-RUN cd client && npx vite build
+# Set up a custom vite.config for production build
+RUN echo "import { defineConfig } from 'vite'; \
+import react from '@vitejs/plugin-react'; \
+import path from 'path'; \
+export default defineConfig({ \
+  plugins: [react()], \
+  resolve: { \
+    alias: { \
+      '@': path.resolve('/app/client/src'), \
+      '@shared': path.resolve('/app/shared'), \
+      '@assets': path.resolve('/app/attached_assets'), \
+    }, \
+  }, \
+  root: '/app/client', \
+  build: { \
+    outDir: '/app/dist/public', \
+    emptyOutDir: true, \
+  }, \
+});" > /app/vite.prod.config.js
+
+# Build the client with the production config
+RUN npx vite build --config /app/vite.prod.config.js
 
 # Build our production server file (not using the Vite-dependent one)
-RUN npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/production.js
+RUN npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/production.js \
+    && cp -r shared dist/ \
+    && mkdir -p dist/uploads 2>/dev/null || true \
+    && echo '{"version":"1.0.0"}' > dist/package.json
 
 # Production stage
 FROM node:20-slim

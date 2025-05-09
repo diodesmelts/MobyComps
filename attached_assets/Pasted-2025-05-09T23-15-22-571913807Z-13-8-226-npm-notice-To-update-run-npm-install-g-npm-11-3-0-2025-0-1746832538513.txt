@@ -1,0 +1,50 @@
+2025-05-09T23:15:22.571913807Z #13 8.226 npm notice To update run: npm install -g npm@11.3.0
+2025-05-09T23:15:22.571915974Z #13 8.226 npm notice
+2025-05-09T23:15:23.022570058Z #13 DONE 8.7s
+2025-05-09T23:15:23.022588835Z 
+2025-05-09T23:15:23.022592393Z #14 [builder 6/9] COPY . .
+2025-05-09T23:15:23.142574301Z #14 DONE 0.3s
+2025-05-09T23:15:23.293358989Z 
+2025-05-09T23:15:23.293389792Z #15 [builder 7/9] RUN chmod +x scripts/*.js 2>/dev/null || true
+2025-05-09T23:15:23.293394046Z #15 DONE 0.0s
+2025-05-09T23:15:23.293396949Z 
+2025-05-09T23:15:23.293400548Z #16 [builder 8/9] RUN cd client && npx vite build
+2025-05-09T23:15:23.724919089Z #16 0.534 vite v5.4.14 building for production...
+2025-05-09T23:15:23.875802217Z #16 0.589 transforming...
+2025-05-09T23:15:24.089274016Z #16 0.860 ✓ 4 modules transformed.
+2025-05-09T23:15:24.089300943Z #16 0.867 x Build failed in 306ms
+2025-05-09T23:15:24.08930418Z #16 0.867 error during build:
+2025-05-09T23:15:24.089308623Z #16 0.867 [vite]: Rollup failed to resolve import "@/components/ui/toaster" from "/app/client/src/App.tsx".
+2025-05-09T23:15:24.089311214Z #16 0.867 This is most likely unintended because it can break your application at runtime.
+2025-05-09T23:15:24.089314402Z #16 0.867 If you do want to externalize this module explicitly add it to
+2025-05-09T23:15:24.089316623Z #16 0.867 `build.rollupOptions.external`
+2025-05-09T23:15:24.089318772Z #16 0.867     at viteWarn (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:65747:17)
+2025-05-09T23:15:24.089321064Z #16 0.867     at onRollupWarning (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:65779:5)
+2025-05-09T23:15:24.08932318Z #16 0.867     at onwarn (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:65442:7)
+2025-05-09T23:15:24.089325565Z #16 0.867     at file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+2025-05-09T23:15:24.089327703Z #16 0.867     at Object.logger [as onLog] (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+2025-05-09T23:15:24.089330014Z #16 0.867     at ModuleLoader.handleInvalidResolvedId (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+2025-05-09T23:15:24.089332209Z #16 0.867     at file:///app/node_modules/rollup/dist/es/shared/node-entry.js:20025:26
+2025-05-09T23:15:24.0893344Z #16 ERROR: process "/bin/sh -c cd client && npx vite build" did not complete successfully: exit code: 1
+2025-05-09T23:15:24.089336474Z ------
+2025-05-09T23:15:24.089344483Z  > [builder 8/9] RUN cd client && npx vite build:
+2025-05-09T23:15:24.089346799Z 0.867 This is most likely unintended because it can break your application at runtime.
+2025-05-09T23:15:24.089349292Z 0.867 If you do want to externalize this module explicitly add it to
+2025-05-09T23:15:24.089351555Z 0.867 `build.rollupOptions.external`
+2025-05-09T23:15:24.089353674Z 0.867     at viteWarn (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:65747:17)
+2025-05-09T23:15:24.08935574Z 0.867     at onRollupWarning (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:65779:5)
+2025-05-09T23:15:24.089357848Z 0.867     at onwarn (file:///app/node_modules/vite/dist/node/chunks/dep-CHZK6zbr.js:65442:7)
+2025-05-09T23:15:24.089359922Z 0.867     at file:///app/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+2025-05-09T23:15:24.089362024Z 0.867     at Object.logger [as onLog] (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+2025-05-09T23:15:24.089371636Z 0.867     at ModuleLoader.handleInvalidResolvedId (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+2025-05-09T23:15:24.08937322Z 0.867     at file:///app/node_modules/rollup/dist/es/shared/node-entry.js:20025:26
+2025-05-09T23:15:24.089374794Z ------
+2025-05-09T23:15:24.090476413Z Dockerfile:26
+2025-05-09T23:15:24.090492397Z --------------------
+2025-05-09T23:15:24.090495703Z   24 |     
+2025-05-09T23:15:24.090498321Z   25 |     # Build the client separately first
+2025-05-09T23:15:24.090500924Z   26 | >>> RUN cd client && npx vite build
+2025-05-09T23:15:24.090503365Z   27 |     
+2025-05-09T23:15:24.090506008Z   28 |     # Build our production server file (not using the Vite-dependent one)
+2025-05-09T23:15:24.090508346Z --------------------
+2025-05-09T23:15:24.090511091Z error: failed to solve: process "/bin/sh -c cd client && npx vite build" did not complete successfully: exit code: 1
