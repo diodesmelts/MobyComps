@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { debugStaticFiles } from "./debug-static.js";
+import { setupStaticHandler } from "./static-handler.js";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +39,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Add debug route for static files
+  debugStaticFiles(app);
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -53,6 +58,8 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
+    // Try both static handlers to ensure files are served
+    setupStaticHandler(app);
     serveStatic(app);
   }
 
