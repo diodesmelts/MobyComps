@@ -4,7 +4,6 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { CompetitionCard } from "@/components/ui/competition-card";
-import { WebSocketStatus } from "@/components/websocket-status";
 import { useCompetitions } from "@/hooks/use-competitions";
 import { Loader2, ArrowRight, Filter, Ticket, CalendarDays, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -213,13 +212,6 @@ export default function HomePage() {
         </section>
         
         {/* How It Works */}
-        {/* WebSocket Status */}
-        <section className="py-6 bg-white">
-          <div className="max-w-6xl mx-auto px-4">
-            <WebSocketStatus />
-          </div>
-        </section>
-        
         <section className="py-24 bg-gradient-to-br from-[#002147]/5 to-[#002147]/10 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-24 h-24 bg-[#C3DC6F]/20 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-32 h-32 bg-[#C3DC6F]/30 rounded-full translate-x-1/2 translate-y-1/2"></div>

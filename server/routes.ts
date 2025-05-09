@@ -1,6 +1,5 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { WebSocketServer, WebSocket } from 'ws';
 import { setupAuth } from "./auth";
 import { registerCompetitionRoutes } from "./routes/competitions";
 import { registerTicketRoutes } from "./routes/tickets";
@@ -13,20 +12,10 @@ import { storage } from "./storage";
 import { db } from "./db";
 import { tickets, entries, users } from "@shared/schema";
 import { eq, inArray, desc, and, sql } from "drizzle-orm";
-import { log } from "./logger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
   setupAuth(app);
-  
-  // Health check endpoint for deployment monitoring
-  app.get("/api/health", (req, res) => {
-    res.status(200).json({ 
-      status: "ok", 
-      timestamp: new Date().toISOString(), 
-      environment: process.env.NODE_ENV 
-    });
-  });
   
   // Register API routes
   registerCompetitionRoutes(app);
@@ -782,77 +771,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Create HTTP server
   const httpServer = createServer(app);
-  
-  // Set up WebSocket server on a distinct path to avoid conflicts with Vite's HMR websocket
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  log("WebSocket server initialized on path: /ws", "websocket");
-  
-  // Keep track of connected clients
-  const clients = new Set<WebSocket>();
-
-  // WebSocket connection handling
-  wss.on('connection', (ws) => {
-    log("New WebSocket client connected", "websocket");
-    
-    // Add client to the set
-    clients.add(ws);
-    
-    // Send initial message
-    ws.send(JSON.stringify({
-      type: 'connection',
-      message: 'Connected to Moby Comps WebSocket server',
-      timestamp: new Date().toISOString()
-    }));
-    
-    // Listen for messages from this client
-    ws.on('message', (message) => {
-      try {
-        const parsedMessage = JSON.parse(message.toString());
-        log(`Received message: ${JSON.stringify(parsedMessage)}`, "websocket");
-        
-        // Handle different message types
-        switch (parsedMessage.type) {
-          case 'ping':
-            ws.send(JSON.stringify({
-              type: 'pong',
-              timestamp: new Date().toISOString()
-            }));
-            break;
-          
-          default:
-            // Echo back the message for now
-            ws.send(JSON.stringify({
-              type: 'echo',
-              message: parsedMessage,
-              timestamp: new Date().toISOString()
-            }));
-            break;
-        }
-      } catch (error) {
-        log(`Error processing WebSocket message: ${error}`, "websocket");
-      }
-    });
-    
-    // Handle disconnection
-    ws.on('close', () => {
-      log("WebSocket client disconnected", "websocket");
-      clients.delete(ws);
-    });
-  });
-  
-  // Helper function to broadcast to all connected clients
-  const broadcastToAll = (data: any) => {
-    const message = JSON.stringify(data);
-    clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
-  };
-  
-  // Export the broadcast function via the app locals for use in other parts of the application
-  app.locals.broadcastWebSocketMessage = broadcastToAll;
   
   return httpServer;
 }

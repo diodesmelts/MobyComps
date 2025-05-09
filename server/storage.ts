@@ -77,21 +77,10 @@ export class DatabaseStorage implements IStorage {
   sessionStore: session.SessionStore;
   
   constructor() {
-    // Configure connection options for session store
-    const sessionDbOptions: any = {
-      connectionString: process.env.DATABASE_URL,
-    };
-    
-    // In production, ensure we use SSL if needed
-    if (process.env.NODE_ENV === 'production') {
-      // Only add SSL if not already in the connection string
-      if (!process.env.DATABASE_URL?.includes('sslmode=require')) {
-        sessionDbOptions.ssl = true;
-      }
-    }
-    
     this.sessionStore = new PostgresSessionStore({
-      conObject: sessionDbOptions,
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+      },
       createTableIfMissing: true,
     });
   }

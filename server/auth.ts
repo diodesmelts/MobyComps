@@ -45,11 +45,6 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  // Ensure we have a session secret, especially in production
-  if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
-    console.warn('Warning: SESSION_SECRET is not set in production. Using a default value is not recommended.');
-  }
-  
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "moby-comps-secret",
     resave: false,
@@ -57,8 +52,7 @@ export function setupAuth(app: Express) {
     store: storage.sessionStore,
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     }
   };
 
