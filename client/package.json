@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite --config vite.config.simple.js build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
