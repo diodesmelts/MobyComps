@@ -76,6 +76,15 @@
     @apply font-sans antialiased bg-background text-foreground text-base;
     letter-spacing: -0.01em;
   }
+  
+  /* Define utility classes for shadcn components */
+  .bg-background {
+    @apply bg-[hsl(var(--background))];
+  }
+  
+  .ring-offset-background {
+    @apply ring-offset-[hsl(var(--background))];
+  }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-extrabold;
