@@ -15,9 +15,15 @@ npm ci --include=dev || npm install --include=dev
 echo "Installing critical packages..."
 npm install vite @vitejs/plugin-react esbuild autoprefixer postcss tailwindcss tsx
 
-# Build the client using the existing vite build command
+# Build the client with a simplified config
 echo "Building client..."
-npx vite build
+if [ -f "vite.config.render.js" ]; then
+  echo "Using simplified Vite config for Render..."
+  npx vite build --config vite.config.render.js
+else
+  echo "Falling back to default Vite config..."
+  npx vite build
+fi
 
 # Try two different approaches for server building
 
