@@ -45,11 +45,23 @@ export default defineConfig({ \
 # Build the client with the production config
 RUN npx vite build --config /app/vite.prod.config.js
 
+# Add a debug script to verify what files were built
+RUN echo "Client build output:" && ls -la dist/public
+
+# Create a minimal index.html if it doesn't exist for some reason
+RUN if [ ! -f dist/public/index.html ]; then \
+    echo "WARNING: index.html not found, creating minimal version" && \
+    echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Prize Competitions</title></head><body><div id="root"></div><script type="module" src="/assets/index.js"></script></body></html>' > dist/public/index.html; \
+    fi
+
 # Build our production server file (not using the Vite-dependent one)
 RUN npx esbuild server/production.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/production.js \
     && cp -r shared dist/ \
     && mkdir -p dist/uploads 2>/dev/null || true \
     && echo '{"version":"1.0.0"}' > dist/package.json
+    
+# Debug file structure
+RUN echo "Final build output structure:" && find dist -type f | sort
 
 # Production stage
 FROM node:20-slim
@@ -70,9 +82,17 @@ RUN npm ci --omit=dev
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist/public ./public
+
+# Create additional directories
+RUN mkdir -p ./uploads
 
 # Copy needed static and configuration files
 COPY --from=builder /app/.env.example ./.env.example
+
+# Create a static index.html in multiple locations for redundancy
+RUN echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Prize Competitions</title></head><body><div id="root"></div><script type="module" src="/assets/index.js"></script></body></html>' > ./public/index.html && \
+    echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Prize Competitions</title></head><body><div id="root"></div><script type="module" src="/assets/index.js"></script></body></html>' > ./dist/public/index.html
 
 # Expose the port
 EXPOSE 8080
