@@ -121,26 +121,71 @@ RUN echo "const express = require('express');" > /app/server/simple-server.cjs &
     echo "// Body parsing middleware" >> /app/server/simple-server.cjs && \
     echo "app.use(express.json());" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
+    echo "// Test route - serve a simple test page directly" >> /app/server/simple-server.cjs && \
+    echo "app.get('/test-page', (req, res) => {" >> /app/server/simple-server.cjs && \
+    echo "  res.send(`" >> /app/server/simple-server.cjs && \
+    echo "    <!DOCTYPE html>" >> /app/server/simple-server.cjs && \
+    echo "    <html>" >> /app/server/simple-server.cjs && \
+    echo "      <head>" >> /app/server/simple-server.cjs && \
+    echo "        <title>Server Test Page</title>" >> /app/server/simple-server.cjs && \
+    echo "        <style>body { font-family: Arial; text-align: center; margin: 50px; }</style>" >> /app/server/simple-server.cjs && \
+    echo "      </head>" >> /app/server/simple-server.cjs && \
+    echo "      <body>" >> /app/server/simple-server.cjs && \
+    echo "        <h1>Express Server is Working!</h1>" >> /app/server/simple-server.cjs && \
+    echo "        <p>This test page is being served directly from the Express route handler.</p>" >> /app/server/simple-server.cjs && \
+    echo "        <p>Current time: ${new Date().toString()}</p>" >> /app/server/simple-server.cjs && \
+    echo "      </body>" >> /app/server/simple-server.cjs && \
+    echo "    </html>" >> /app/server/simple-server.cjs && \
+    echo "  `);" >> /app/server/simple-server.cjs && \
+    echo "});" >> /app/server/simple-server.cjs && \
+    echo "" >> /app/server/simple-server.cjs && \
     echo "// Health check endpoint" >> /app/server/simple-server.cjs && \
     echo "app.get('/health', (req, res) => {" >> /app/server/simple-server.cjs && \
     echo "  res.json({ status: 'ok' });" >> /app/server/simple-server.cjs && \
     echo "});" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
-    echo "// Serve static files" >> /app/server/simple-server.cjs && \
+    echo "// Serve test HTML file directly" >> /app/server/simple-server.cjs && \
+    echo "app.get('/test', (req, res) => {" >> /app/server/simple-server.cjs && \
+    echo "  const testPath = path.join(__dirname, '../client/test-index.html');" >> /app/server/simple-server.cjs && \
+    echo "  console.log('Serving test-index.html from:', testPath);" >> /app/server/simple-server.cjs && \
+    echo "  if (fs.existsSync(testPath)) {" >> /app/server/simple-server.cjs && \
+    echo "    res.sendFile(testPath);" >> /app/server/simple-server.cjs && \
+    echo "  } else {" >> /app/server/simple-server.cjs && \
+    echo "    res.status(404).send('Test file not found');" >> /app/server/simple-server.cjs && \
+    echo "  }" >> /app/server/simple-server.cjs && \
+    echo "});" >> /app/server/simple-server.cjs && \
+    echo "" >> /app/server/simple-server.cjs && \
+    echo "// Serve the client/dist directory first" >> /app/server/simple-server.cjs && \
     echo "const clientDistPath = path.resolve(__dirname, '../client/dist');" >> /app/server/simple-server.cjs && \
     echo "console.log('Using client dist path:', clientDistPath);" >> /app/server/simple-server.cjs && \
     echo "app.use(express.static(clientDistPath));" >> /app/server/simple-server.cjs && \
+    echo "" >> /app/server/simple-server.cjs && \
+    echo "// Also serve the client directory for test files" >> /app/server/simple-server.cjs && \
+    echo "const clientPath = path.resolve(__dirname, '../client');" >> /app/server/simple-server.cjs && \
+    echo "console.log('Using client path:', clientPath);" >> /app/server/simple-server.cjs && \
+    echo "app.use(express.static(clientPath));" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
     echo "// API routes would go here" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
     echo "// Fallback handler for SPA - serve index.html for any unmatched routes" >> /app/server/simple-server.cjs && \
     echo "app.get('*', (req, res) => {" >> /app/server/simple-server.cjs && \
+    echo "  // First try the React app's index.html" >> /app/server/simple-server.cjs && \
     echo "  const indexPath = path.join(clientDistPath, 'index.html');" >> /app/server/simple-server.cjs && \
-    echo "  console.log('Serving index.html from:', indexPath);" >> /app/server/simple-server.cjs && \
+    echo "  console.log('Attempting to serve index.html from:', indexPath);" >> /app/server/simple-server.cjs && \
+    echo "  " >> /app/server/simple-server.cjs && \
     echo "  if (fs.existsSync(indexPath)) {" >> /app/server/simple-server.cjs && \
+    echo "    console.log('Serving index.html from:', indexPath);" >> /app/server/simple-server.cjs && \
     echo "    res.sendFile(indexPath);" >> /app/server/simple-server.cjs && \
     echo "  } else {" >> /app/server/simple-server.cjs && \
-    echo "    res.status(404).send('Application files not found');" >> /app/server/simple-server.cjs && \
+    echo "    // If React app's index.html doesn't exist, try the test page" >> /app/server/simple-server.cjs && \
+    echo "    const testPath = path.join(clientPath, 'test-index.html');" >> /app/server/simple-server.cjs && \
+    echo "    console.log('React index.html not found, trying test page at:', testPath);" >> /app/server/simple-server.cjs && \
+    echo "    " >> /app/server/simple-server.cjs && \
+    echo "    if (fs.existsSync(testPath)) {" >> /app/server/simple-server.cjs && \
+    echo "      res.sendFile(testPath);" >> /app/server/simple-server.cjs && \
+    echo "    } else {" >> /app/server/simple-server.cjs && \
+    echo "      res.status(404).send('No application files found');" >> /app/server/simple-server.cjs && \
+    echo "    }" >> /app/server/simple-server.cjs && \
     echo "  }" >> /app/server/simple-server.cjs && \
     echo "});" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
@@ -155,6 +200,35 @@ RUN echo "const express = require('express');" > /app/server/simple-server.cjs &
     echo "  console.log(`Server running on port ${port}`);" >> /app/server/simple-server.cjs && \
     echo "});" >> /app/server/simple-server.cjs
 
+# Create a simple test index.html file to verify static serving works
+RUN echo "<!DOCTYPE html>" > /app/client/test-index.html && \
+    echo "<html>" >> /app/client/test-index.html && \
+    echo "<head>" >> /app/client/test-index.html && \
+    echo "  <meta charset='UTF-8'>" >> /app/client/test-index.html && \
+    echo "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>" >> /app/client/test-index.html && \
+    echo "  <title>Moby Comps Test Page</title>" >> /app/client/test-index.html && \
+    echo "  <style>" >> /app/client/test-index.html && \
+    echo "    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }" >> /app/client/test-index.html && \
+    echo "    h1 { color: #002147; }" >> /app/client/test-index.html && \
+    echo "  </style>" >> /app/client/test-index.html && \
+    echo "</head>" >> /app/client/test-index.html && \
+    echo "<body>" >> /app/client/test-index.html && \
+    echo "  <h1>Moby Comps Test Page</h1>" >> /app/client/test-index.html && \
+    echo "  <p>If you can see this page, the static file serving is working correctly.</p>" >> /app/client/test-index.html && \
+    echo "  <p>This indicates that your Express server is correctly serving files from the client directory.</p>" >> /app/client/test-index.html && \
+    echo "  <hr>" >> /app/client/test-index.html && \
+    echo "  <div>" >> /app/client/test-index.html && \
+    echo "    <h2>Debug Info:</h2>" >> /app/client/test-index.html && \
+    echo "    <p>Current Time: <span id='current-time'></span></p>" >> /app/client/test-index.html && \
+    echo "    <p>Page URL: <span id='page-url'></span></p>" >> /app/client/test-index.html && \
+    echo "  </div>" >> /app/client/test-index.html && \
+    echo "  <script>" >> /app/client/test-index.html && \
+    echo "    document.getElementById('current-time').textContent = new Date().toString();" >> /app/client/test-index.html && \
+    echo "    document.getElementById('page-url').textContent = window.location.href;" >> /app/client/test-index.html && \
+    echo "  </script>" >> /app/client/test-index.html && \
+    echo "</body>" >> /app/client/test-index.html && \
+    echo "</html>" >> /app/client/test-index.html
+
 # Build with the simplified configs
 RUN NODE_ENV=production npm run build
 
@@ -165,6 +239,7 @@ WORKDIR /app
 
 # Copy built client and server files
 COPY --from=builder /app/client/dist ./client/dist
+COPY --from=builder /app/client/test-index.html ./client/
 COPY --from=builder /app/server/simple-server.cjs ./server/
 COPY --from=builder /app/package*.json ./
 
