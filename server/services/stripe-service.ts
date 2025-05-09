@@ -59,15 +59,13 @@ export class StripeService {
       cartItemIds: cartItems.map(item => item.id.toString()).join(','),
     };
     
-    // Use direct URLs for success and cancel redirects rather than route patterns
-    const baseUrl = process.env.NODE_ENV === 'production'
-      ? process.env.RENDER_EXTERNAL_URL 
-        ? `https://${process.env.RENDER_EXTERNAL_URL}`
-        : ''
-      : 'http://localhost:5000';
+    const success_url = process.env.NODE_ENV === 'production'
+      ? `https://${process.env.RENDER_EXTERNAL_URL}/my-entries?success=true`
+      : 'http://localhost:5000/my-entries?success=true';
       
-    const success_url = `${baseUrl}/my-entries?success=true`;
-    const cancel_url = `${baseUrl}/cart?canceled=true`;
+    const cancel_url = process.env.NODE_ENV === 'production'
+      ? `https://${process.env.RENDER_EXTERNAL_URL}/cart?canceled=true`
+      : 'http://localhost:5000/cart?canceled=true';
     
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({

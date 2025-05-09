@@ -2,14 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: [
-    "./index.html", 
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./src/components/**/*.{js,ts,jsx,tsx}",
-    "./src/pages/**/*.{js,ts,jsx,tsx}",
-    "./src/app/**/*.{js,ts,jsx,tsx}",
-    "./src/layouts/**/*.{js,ts,jsx,tsx}"
-  ],
+  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontFamily: {
       sans: ['Open Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
@@ -55,7 +48,6 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        "ring-offset": "hsl(var(--background))",
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",

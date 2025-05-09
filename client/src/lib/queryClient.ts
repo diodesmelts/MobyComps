@@ -7,12 +7,39 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Helper to prefix API URLs with the correct base URL
+function getApiUrl(url: string): string {
+  const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+  
+  // If URL already starts with http(s), it's absolute, so return as is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // If we have a base URL and the request path doesn't already start with it
+  if (apiBaseUrl && !url.startsWith(apiBaseUrl)) {
+    // Make sure we don't double up on slashes
+    if (url.startsWith('/') && apiBaseUrl.endsWith('/')) {
+      return `${apiBaseUrl}${url.substring(1)}`;
+    }
+    if (!url.startsWith('/') && !apiBaseUrl.endsWith('/')) {
+      return `${apiBaseUrl}/${url}`;
+    }
+    return `${apiBaseUrl}${url}`;
+  }
+  
+  // Otherwise return the original URL
+  return url;
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const apiUrl = getApiUrl(url);
+  
+  const res = await fetch(apiUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +56,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    const apiUrl = getApiUrl(queryKey[0] as string);
+    const res = await fetch(apiUrl, {
       credentials: "include",
     });
 

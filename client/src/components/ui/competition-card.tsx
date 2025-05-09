@@ -75,8 +75,8 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
           <div className="mt-3 mb-5 p-3 border border-gray-100 rounded-md bg-gray-50">
             <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-200 mb-2">
               <div
-                className="competition-progress-indicator"
-                style={{ width: `${soldPercentage}%` }}
+                className="h-full w-full flex-1 competition-progress-indicator"
+                style={{ transform: `translateX(-${100 - soldPercentage}%)` }}
               />
             </div>
             <div className="flex justify-between text-xs text-gray-600">
@@ -86,14 +86,14 @@ export function CompetitionCard({ competition }: CompetitionCardProps) {
           </div>
 
           {/* CTA Button */}
-          <div className="mt-auto">
-            <Button className="w-full bg-[#002D5C] hover:bg-[#002D5C]/90 font-medium text-base py-3">
-              <span className="flex items-center justify-center">
+          <div className="mt-auto" onClick={(e) => e.stopPropagation()}>
+            <Button asChild className="w-full bg-[#002D5C] hover:bg-[#002D5C]/90 font-medium text-base py-3">
+              <Link href={competitionUrl} className="flex items-center justify-center">
                 Enter now
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-              </span>
+              </Link>
             </Button>
           </div>
         </div>
