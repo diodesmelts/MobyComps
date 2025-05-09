@@ -1,0 +1,76 @@
+11:31:19 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:19 PM [debug] Serving fallback for route: /favicon.ico
+11:31:19 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:19 PM [debug] Serving fallback for route: /assets/index.js
+11:31:19 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:19 PM [debug] Serving fallback for route: /app/dist/public/index
+11:31:11 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:11 PM [debug] Serving fallback for route: /favicon.ico
+11:31:10 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:10 PM [debug] Serving fallback for route: /assets/index.js
+11:31:10 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:10 PM [debug] Serving fallback for route: /app/dist/public/index.html
+11:31:08 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:08 PM [debug] Serving fallback for route: /favicon.ico
+11:31:07 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:07 PM [debug] Serving fallback for route: /assets/index.js
+11:31:07 PM [debug] Found index.html at /app/dist/public/index.html
+11:31:07 PM [debug] Serving fallback for route: /app/dist/public/index.html
+11:30:38 PM [debug] Found index.html at /app/dist/public/index.html
+11:30:38 PM [debug] Serving fallback for route: /favicon.ico
+     ==> Your service is live 🎉
+11:30:18 PM [express] serving on port 10000
+11:30:18 PM [express] Serving static files from /app/public
+11:30:18 PM [express] Serving static files from /app/dist/public
+11:30:18 PM [express] Serving static files from /app/dist/public
+11:30:18 PM [express] Serving static files from /app/public
+11:30:18 PM [express] Serving static files from /app/dist/public
+11:30:18 PM [debug] Files in dist/public directory: assets, index.html
+11:30:18 PM [debug] Files in dist directory: package.json, production.js, public, shared, uploads
+11:30:18 PM [debug] Files in root directory: .env.example, dist, node_modules, package-lock.json, package.json, public, uploads
+11:30:18 PM [debug] Server directory: /app/dist
+11:30:18 PM [debug] Current directory: /app
+(Use `node --trace-warnings ...` to show where the warning was created)
+To eliminate this warning, add "type": "module" to /app/dist/package.json.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+(node:1) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/dist/production.js is not specified and it doesn't parse as CommonJS.
+     ==> Deploying...
+}
+  [Symbol(kMessage)]: 'connect ECONNREFUSED 10.202.140.82:443'
+  },
+    port: 443
+    address: '10.202.140.82',
+    syscall: 'connect',
+    code: 'ECONNREFUSED',
+    errno: -111,
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+  [Symbol(kError)]: Error: connect ECONNREFUSED 10.202.140.82:443
+  [Symbol(kType)]: 'error',
+  },
+    [Symbol(kCapture)]: false
+    [Symbol(shapeMode)]: false,
+    _req: null,
+    _url: 'wss://dpg-d0f7mg3e5dus738fruig-a/v2',
+    _autoPong: true,
+    _redirects: 0,
+    _isServer: false,
+    _bufferedAmount: 0,
+    _socket: null,
+    _sender: null,
+    _receiver: null,
+    _readyState: 3,
+    _protocol: '',
+    _paused: false,
+    _extensions: {},
+    _errorEmitted: true,
+    _closeTimer: null,
+    _closeMessage: <Buffer >,
+     ==> Your service is live 🎉
+11:24:24 PM [express] serving on port 10000
+11:24:24 PM [express] Serving static files from /app/dist/public
+11:24:24 PM [express] Serving static files from /app/dist/public
+(Use `node --trace-warnings ...` to show where the warning was created)
+To eliminate this warning, add "type": "module" to /app/dist/package.json.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+(node:1) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/dist/production.js is not specified and it doesn't parse as CommonJS.
+     ==> Deploying...

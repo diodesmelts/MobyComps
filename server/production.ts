@@ -119,6 +119,9 @@ function serveStatic(app: express.Express) {
   });
 }
 
+// Serve static files first - this is important for correct order
+serveStatic(app);
+
 // Health check route
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -147,6 +150,175 @@ app.get('/debug-html', (req, res) => {
           <p>Node version: ${process.version}</p>
           <p>Environment: ${process.env.NODE_ENV}</p>
         </div>
+      </body>
+    </html>
+  `;
+  
+  res.setHeader('Content-Type', 'text/html');
+  res.send(html);
+});
+
+// Root route that serves a complete application as a fallback
+// This will only be hit if the static index.html wasn't found or served
+app.get('/', (req, res) => {
+  // Find the assets directory
+  let assetsDir = '';
+  try {
+    if (fs.existsSync(path.resolve(process.cwd(), 'dist/public/assets'))) {
+      const assets = fs.readdirSync(path.resolve(process.cwd(), 'dist/public/assets'));
+      if (assets.length > 0) {
+        // Find JS files
+        const jsFiles = assets.filter(file => file.endsWith('.js'));
+        assetsDir = 'dist/public/assets';
+        log(`Found assets in ${assetsDir}: ${jsFiles.join(', ')}`, "debug");
+      }
+    }
+  } catch (err) {
+    log(`Error reading assets: ${err}`, "error");
+  }
+
+  // Create a standalone application HTML
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>MobyComps Prize Competitions</title>
+        <style>
+          body, html { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f7;
+          }
+          header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          }
+          .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+          }
+          .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+          }
+          h1 { margin: 0; font-size: 1.5rem; }
+          h2 { margin-top: 0; color: #333; }
+          p { line-height: 1.6; color: #555; }
+          .btn {
+            display: inline-block;
+            background-color: #ff5500;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+          }
+          .footer {
+            background-color: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+          }
+        </style>
+      </head>
+      <body>
+        <header>
+          <h1>MobyComps Prize Competitions</h1>
+        </header>
+        
+        <div class="content">
+          <div class="card">
+            <h2>Welcome to MobyComps</h2>
+            <p>Your destination for exciting prize competitions. Win amazing prizes with just a few clicks!</p>
+            <p>Status: Server is running correctly!</p>
+            <p>This is a static fallback page. The main application will be available soon.</p>
+            <a href="/health/check" class="btn">View Server Status</a>
+          </div>
+          
+          <div class="card">
+            <h2>Server Information</h2>
+            <p>Server Time: ${new Date().toISOString()}</p>
+            <p>Node Version: ${process.version}</p>
+            <p>Environment: ${process.env.NODE_ENV}</p>
+            <p>Assets Directory: ${assetsDir || 'Not found'}</p>
+          </div>
+        </div>
+        
+        <div class="footer">
+          &copy; 2025 MobyComps - All rights reserved
+        </div>
+      </body>
+    </html>
+  `;
+  
+  res.setHeader('Content-Type', 'text/html');
+  res.send(html);
+});
+
+// A route that just shows the project structure
+app.get('/debug-structure', (req, res) => {
+  // List all directories and files recursively
+  function listFilesRecursively(dir, prefix = '') {
+    let result = [];
+    try {
+      const files = fs.readdirSync(dir);
+      for (const file of files) {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        if (stat.isDirectory()) {
+          result.push(`${prefix}📁 ${file}/`);
+          result = result.concat(listFilesRecursively(filePath, `${prefix}  `));
+        } else {
+          result.push(`${prefix}📄 ${file} (${(stat.size / 1024).toFixed(2)} KB)`);
+        }
+      }
+    } catch (err) {
+      result.push(`${prefix}❌ Error: ${err.message}`);
+    }
+    return result;
+  }
+
+  const rootDir = process.cwd();
+  const fileTree = listFilesRecursively(rootDir);
+  
+  // Create a simple HTML output
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Project Structure</title>
+        <style>
+          body { font-family: monospace; background: #f5f5f5; padding: 20px; }
+          h1 { color: #333; }
+          pre { 
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Project Directory Structure</h1>
+        <pre>${fileTree.join('\n')}</pre>
       </body>
     </html>
   `;
