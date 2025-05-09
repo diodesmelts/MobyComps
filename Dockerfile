@@ -36,13 +36,80 @@ RUN sed -i 's|import HomePage from "@/pages/home-page"|import HomePage from "./p
     sed -i 's|import AdminTicketSales from "@/pages/admin/ticket-sales"|import AdminTicketSales from "./pages/admin/ticket-sales"|g' src/App.tsx && \
     sed -i 's|import AdminTicketSalesDetail from "@/pages/admin/ticket-sales-detail"|import AdminTicketSalesDetail from "./pages/admin/ticket-sales-detail"|g' src/App.tsx
 
-# Fix CSS error
-RUN sed -i 's|@apply border-border;|@apply border-\\[hsl\\(var\\(--border\\)\\)\\];|g' src/index.css
+# Create a simplified index.css without theme variables
+RUN cat > src/index.css << 'EOF'
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 
-# Generate Tailwind content configuration
-RUN echo "module.exports = {content: ['./src/**/*.{js,jsx,ts,tsx}']}" > tailwind.config.js
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-# Build the client
+/* Base styles for production */
+body {
+  @apply bg-white text-gray-900 font-sans antialiased;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold;
+  letter-spacing: -0.02em;
+}
+
+.competition-progress-indicator {
+  background-color: #C3DC6F !important;
+}
+
+.oxford-blue {
+  @apply bg-[#002D5C] text-white;
+}
+
+.kiwi-green {
+  @apply bg-[#C3DC6F] text-[#002D5C];
+}
+
+.container {
+  @apply mx-auto max-w-[1400px] px-4 md:px-8;
+}
+EOF
+
+# Create simplified tailwind config
+RUN cat > tailwind.config.js << 'EOF'
+module.exports = {
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#002147',
+        secondary: '#C3DC6F',
+      }
+    },
+  },
+  plugins: []
+}
+EOF
+
+# Create simplified vite config
+RUN cat > vite.config.js << 'EOF'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@shared': path.resolve(__dirname, '../shared'),
+    },
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
+});
+EOF
+
+# Build with the simplified configs
 RUN NODE_ENV=production npm run build
 
 # Production environment
