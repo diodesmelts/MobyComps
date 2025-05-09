@@ -16,9 +16,10 @@ npm install --no-save typescript @types/react @types/react-dom @types/node
 echo "🔄 Installing all dependencies..."
 npm install --no-package-lock --include=dev
 
-# Build the client and server
+# Build the client and server and copy files to the right location
 echo "🔄 Building the application..."
-npm run build
+chmod +x scripts/fixed-build.sh
+./scripts/fixed-build.sh
 
 # Run database migrations - only if we have a DATABASE_URL
 if [ -n "$DATABASE_URL" ]; then

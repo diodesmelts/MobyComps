@@ -7,7 +7,8 @@ services:
       npm install --no-save @vitejs/plugin-react vite esbuild @tailwindcss/vite tailwindcss postcss autoprefixer &&
       npm install --no-save typescript @types/react @types/react-dom @types/node &&
       npm install --no-package-lock --include=dev &&
-      npm run build &&
+      chmod +x scripts/fixed-build.sh &&
+      ./scripts/fixed-build.sh &&
       npm run db:push
     startCommand: npm run start
     autoDeploy: true
