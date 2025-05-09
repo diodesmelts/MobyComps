@@ -1,0 +1,50 @@
+2025-05-09T20:39:15.268678455Z 
+2025-05-09T20:39:15.268684316Z #31 exporting cache to client directory
+2025-05-09T20:39:15.268689196Z #31 preparing build cache for export
+2025-05-09T20:39:38.821425499Z #31 writing cache manifest sha256:fe5c8614c9d34742f7c0b6824b06e6b6d90ff6f4f133922b2292f2b763441161 done
+2025-05-09T20:39:38.82145892Z #31 DONE 23.5s
+2025-05-09T20:39:39.679157158Z Pushing image to registry...
+2025-05-09T20:39:41.259572137Z Upload succeeded
+2025-05-09T20:39:42.898394372Z ==> Deploying...
+2025-05-09T20:39:47.329798284Z Node.js version: v20.19.1
+2025-05-09T20:39:47.330358517Z Current directory: /app
+2025-05-09T20:39:47.332340893Z Files in current directory: [ 'node_modules', 'package-lock.json', 'package.json', 'server' ]
+2025-05-09T20:39:47.334779129Z /app/node_modules/path-to-regexp/dist/index.js:73
+2025-05-09T20:39:47.334798759Z             throw new TypeError(`Missing parameter name at ${i}: ${DEBUG_URL}`);
+2025-05-09T20:39:47.334801889Z             ^
+2025-05-09T20:39:47.334904572Z 
+2025-05-09T20:39:47.334908322Z TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
+2025-05-09T20:39:47.334911532Z     at name (/app/node_modules/path-to-regexp/dist/index.js:73:19)
+2025-05-09T20:39:47.334914512Z     at lexer (/app/node_modules/path-to-regexp/dist/index.js:91:27)
+2025-05-09T20:39:47.334917872Z     at lexer.next (<anonymous>)
+2025-05-09T20:39:47.334920502Z     at Iter.peek (/app/node_modules/path-to-regexp/dist/index.js:106:38)
+2025-05-09T20:39:47.334923262Z     at Iter.tryConsume (/app/node_modules/path-to-regexp/dist/index.js:112:28)
+2025-05-09T20:39:47.334925902Z     at Iter.text (/app/node_modules/path-to-regexp/dist/index.js:128:30)
+2025-05-09T20:39:47.334928782Z     at consume (/app/node_modules/path-to-regexp/dist/index.js:152:29)
+2025-05-09T20:39:47.334931392Z     at parse (/app/node_modules/path-to-regexp/dist/index.js:183:20)
+2025-05-09T20:39:47.334934102Z     at /app/node_modules/path-to-regexp/dist/index.js:294:74
+2025-05-09T20:39:47.334936833Z     at Array.map (<anonymous>)
+2025-05-09T20:39:47.334939342Z 
+2025-05-09T20:39:47.334942073Z Node.js v20.19.1
+2025-05-09T20:39:48.295844278Z ==> Exited with status 1
+2025-05-09T20:39:48.311596277Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2025-05-09T20:39:48.484776812Z Node.js version: v20.19.1
+2025-05-09T20:39:48.485470098Z Current directory: /app
+2025-05-09T20:39:48.487575577Z Files in current directory: [ 'node_modules', 'package-lock.json', 'package.json', 'server' ]
+2025-05-09T20:39:48.489763377Z /app/node_modules/path-to-regexp/dist/index.js:73
+2025-05-09T20:39:48.489781428Z             throw new TypeError(`Missing parameter name at ${i}: ${DEBUG_URL}`);
+2025-05-09T20:39:48.489785038Z             ^
+2025-05-09T20:39:48.489787738Z 
+2025-05-09T20:39:48.489790388Z TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
+2025-05-09T20:39:48.489792708Z     at name (/app/node_modules/path-to-regexp/dist/index.js:73:19)
+2025-05-09T20:39:48.489795398Z     at lexer (/app/node_modules/path-to-regexp/dist/index.js:91:27)
+2025-05-09T20:39:48.489799138Z     at lexer.next (<anonymous>)
+2025-05-09T20:39:48.489801828Z     at Iter.peek (/app/node_modules/path-to-regexp/dist/index.js:106:38)
+2025-05-09T20:39:48.489804508Z     at Iter.tryConsume (/app/node_modules/path-to-regexp/dist/index.js:112:28)
+2025-05-09T20:39:48.489807098Z     at Iter.text (/app/node_modules/path-to-regexp/dist/index.js:128:30)
+2025-05-09T20:39:48.489809808Z     at consume (/app/node_modules/path-to-regexp/dist/index.js:152:29)
+2025-05-09T20:39:48.489812448Z     at parse (/app/node_modules/path-to-regexp/dist/index.js:183:20)
+2025-05-09T20:39:48.489814998Z     at /app/node_modules/path-to-regexp/dist/index.js:294:74
+2025-05-09T20:39:48.489817578Z     at Array.map (<anonymous>)
+2025-05-09T20:39:48.489819898Z 
+2025-05-09T20:39:48.489822589Z Node.js v20.19.1
