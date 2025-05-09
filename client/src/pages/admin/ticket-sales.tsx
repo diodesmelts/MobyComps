@@ -39,6 +39,7 @@ import {
   Tag,
   Ticket,
   Trophy,
+  Tool,
   User2
 } from "lucide-react";
 import { useAdminTicketSales, useAdminWinningTicketLookup, useAdminDrawCompetition } from "@/hooks/use-admin";
@@ -71,6 +72,56 @@ export default function AdminTicketSalesPage() {
   
   // Trigger a draw mutation
   const drawCompetition = useAdminDrawCompetition();
+  
+  // Function to fix ticket status discrepancies
+  const fixTicketStatusDiscrepancies = async () => {
+    try {
+      toast({
+        title: "Fixing ticket status issues",
+        description: "Running database repair process..."
+      });
+      
+      const response = await fetch('/api/admin/fix-ticket-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fix ticket status issues');
+      }
+      
+      const result = await response.json();
+      
+      toast({
+        title: "Status update complete",
+        description: result.message || `Fixed ${result.ticketsFixed} tickets across ${result.entriesProcessed} entries`,
+        variant: "success"
+      });
+      
+      // Refresh the ticket lookup data if we have competition and ticket selected
+      if (lookupCompetitionId && lookupTicketNumber) {
+        // Add random parameter to force refresh
+        setLookupTicketNumber(prevNumber => {
+          // Toggle between the current number and current number + 0.1 to force query refresh
+          const newNumber = prevNumber;
+          // Then immediately set it back
+          setTimeout(() => setLookupTicketNumber(lookupTicketNumber), 100);
+          return undefined;
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error fixing ticket status discrepancies:', error);
+      toast({
+        title: "Error fixing ticket status",
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+        variant: "destructive"
+      });
+    }
+  };
   
   // Filter ticket sales data
   const filteredSalesData = ticketSalesData
@@ -553,6 +604,17 @@ export default function AdminTicketSalesPage() {
                               : `This ticket was found in the system with status "${ticketLookupData.ticket.status}", but we couldn't find a user associated with it. ${ticketLookupData.ticket.status !== 'purchased' ? "This is expected since the ticket hasn't been purchased yet." : ""}`
                             }
                           </p>
+                          
+                          {ticketLookupData.entry && ticketLookupData.ticket.statusMismatch && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="mt-2 border-amber-500 text-amber-700 hover:bg-amber-50"
+                              onClick={() => fixTicketStatusDiscrepancies()}
+                            >
+                              <ToolIcon className="h-4 w-4 mr-1" /> Fix Ticket Status Issues
+                            </Button>
+                          )}
                         </div>
                       </div>
                     )}

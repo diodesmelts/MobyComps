@@ -383,6 +383,118 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Endpoint to fix ticket status discrepancies
+  app.post("/api/admin/fix-ticket-status", isAdmin, async (req, res) => {
+    try {
+      console.log(`⚙️ Admin requested to fix ticket status discrepancies`);
+      
+      // Find all entries to get the tickets that should be marked as purchased
+      const queryResult = await storage.db.execute(`
+        SELECT e.id, e.user_id, e.competition_id, e.ticket_ids, e.status, e.created_at
+        FROM entries e 
+        ORDER BY e.id ASC
+      `);
+      
+      console.log(`⚙️ Found ${queryResult.rows.length} entries to check`);
+      
+      const fixResults = {
+        entriesProcessed: 0,
+        ticketsFixed: 0,
+        errors: 0
+      };
+      
+      // Process each entry
+      for (const entry of queryResult.rows) {
+        fixResults.entriesProcessed++;
+        
+        try {
+          // Parse the ticket IDs from the entry
+          let ticketIdentifiers: number[] = [];
+          
+          try {
+            if (entry.ticket_ids === "999") {
+              // Skip test entries with dummy ticket ID
+              console.log(`⚙️ Skipping test entry #${entry.id} with dummy ticket ID 999`);
+              continue;
+            }
+            
+            ticketIdentifiers = entry.ticket_ids.split(',').map((id: string) => parseInt(id.trim()));
+            
+            if (ticketIdentifiers.some(isNaN)) {
+              console.warn(`⚠️ Entry #${entry.id} has invalid ticket IDs: ${entry.ticket_ids}`);
+              continue;
+            }
+          } catch (parseError) {
+            console.error(`❌ Error parsing ticket IDs for entry #${entry.id}:`, parseError);
+            fixResults.errors++;
+            continue;
+          }
+          
+          console.log(`⚙️ Processing entry #${entry.id} with tickets: ${ticketIdentifiers.join(',')}`);
+          
+          // First check if these are ticket IDs or ticket numbers
+          const ticketsById = await storage.db.execute(
+            `SELECT id, number, competition_id, status, user_id FROM tickets WHERE id = ANY($1)`,
+            [ticketIdentifiers]
+          );
+          
+          let ticketsToUpdate: any[] = [];
+          
+          if (ticketsById.rows.length === ticketIdentifiers.length) {
+            // These are ticket IDs, use them directly
+            ticketsToUpdate = ticketsById.rows;
+            console.log(`⚙️ Found ${ticketsToUpdate.length} tickets by ID`);
+          } else {
+            // Try to find by ticket number instead
+            const ticketsByNumber = await storage.db.execute(
+              `SELECT id, number, competition_id, status, user_id 
+               FROM tickets 
+               WHERE competition_id = $1 AND number = ANY($2)`,
+              [entry.competition_id, ticketIdentifiers]
+            );
+            
+            ticketsToUpdate = ticketsByNumber.rows;
+            console.log(`⚙️ Found ${ticketsToUpdate.length} tickets by number`);
+          }
+          
+          // Filter out tickets that are already purchased
+          const ticketsNeedingUpdate = ticketsToUpdate.filter((t: any) => t.status !== 'purchased');
+          
+          if (ticketsNeedingUpdate.length === 0) {
+            console.log(`⚙️ All tickets for entry #${entry.id} are already marked as purchased`);
+            continue;
+          }
+          
+          console.log(`⚙️ Updating ${ticketsNeedingUpdate.length} tickets for entry #${entry.id}`);
+          
+          // Update tickets to purchased status
+          const updateResult = await storage.db.execute(
+            `UPDATE tickets 
+             SET status = 'purchased', user_id = $1, purchased_at = $2 
+             WHERE id = ANY($3) AND status != 'purchased'
+             RETURNING id, number, status`,
+            [entry.user_id, entry.created_at, ticketsNeedingUpdate.map((t: any) => t.id)]
+          );
+          
+          console.log(`⚙️ Updated ${updateResult.rowCount} tickets:`, updateResult.rows);
+          fixResults.ticketsFixed += updateResult.rowCount;
+        } catch (entryError) {
+          console.error(`❌ Error processing entry #${entry.id}:`, entryError);
+          fixResults.errors++;
+        }
+      }
+      
+      res.json({
+        success: true,
+        ...fixResults,
+        message: `Processed ${fixResults.entriesProcessed} entries and fixed ${fixResults.ticketsFixed} tickets with ${fixResults.errors} errors`
+      });
+    } catch (error: any) {
+      console.error(`❌ Error fixing ticket status:`, error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
   // New endpoint to lookup winner by ticket number
   app.get("/api/admin/lookup-winner", isAdmin, async (req, res) => {
     try {
