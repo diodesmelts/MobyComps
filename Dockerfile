@@ -7,17 +7,37 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy client files and build
-COPY client ./client/
+# Copy all files first to ensure all needed files exist
+COPY . ./
+
+# Install client dependencies
 WORKDIR /app/client
 RUN npm install
-RUN npm run build
 
-# Copy server files
-WORKDIR /app
-COPY server ./server/
-COPY shared ./shared/
-COPY drizzle.config.ts ./
+# Fix import path issues before build
+RUN sed -i 's|import HomePage from "@/pages/home-page"|import HomePage from "./pages/home-page"|g' src/App.tsx && \
+    sed -i 's|import CompetitionsPage from "@/pages/competitions-page"|import CompetitionsPage from "./pages/competitions-page"|g' src/App.tsx && \
+    sed -i 's|import CompetitionDetail from "@/pages/competition-detail"|import CompetitionDetail from "./pages/competition-detail"|g' src/App.tsx && \
+    sed -i 's|import HowToPlayPage from "@/pages/how-to-play"|import HowToPlayPage from "./pages/how-to-play"|g' src/App.tsx && \
+    sed -i 's|import AboutUsPage from "@/pages/about-us"|import AboutUsPage from "./pages/about-us"|g' src/App.tsx && \
+    sed -i 's|import FAQsPage from "@/pages/faqs"|import FAQsPage from "./pages/faqs"|g' src/App.tsx && \
+    sed -i 's|import MyEntriesPage from "@/pages/my-entries"|import MyEntriesPage from "./pages/my-entries"|g' src/App.tsx && \
+    sed -i 's|import MyWinsPage from "@/pages/my-wins"|import MyWinsPage from "./pages/my-wins"|g' src/App.tsx && \
+    sed -i 's|import AuthPage from "@/pages/auth-page"|import AuthPage from "./pages/auth-page"|g' src/App.tsx && \
+    sed -i 's|import CheckoutPage from "@/pages/checkout-page"|import CheckoutPage from "./pages/checkout-page"|g' src/App.tsx && \
+    sed -i 's|import CartPage from "@/pages/cart-page"|import CartPage from "./pages/cart-page"|g' src/App.tsx && \
+    sed -i 's|import PaymentSuccessPage from "@/pages/payment-success-page"|import PaymentSuccessPage from "./pages/payment-success-page"|g' src/App.tsx && \
+    sed -i 's|import NotFound from "@/pages/not-found"|import NotFound from "./pages/not-found"|g' src/App.tsx && \
+    sed -i 's|import AdminDashboard from "@/pages/admin/dashboard"|import AdminDashboard from "./pages/admin/dashboard"|g' src/App.tsx && \
+    sed -i 's|import AdminCompetitions from "@/pages/admin/competitions"|import AdminCompetitions from "./pages/admin/competitions"|g' src/App.tsx && \
+    sed -i 's|import AdminUsers from "@/pages/admin/users"|import AdminUsers from "./pages/admin/users"|g' src/App.tsx && \
+    sed -i 's|import AdminSiteConfig from "@/pages/admin/site-config"|import AdminSiteConfig from "./pages/admin/site-config"|g' src/App.tsx && \
+    sed -i 's|import AdminSiteContent from "@/pages/admin/site-content"|import AdminSiteContent from "./pages/admin/site-content"|g' src/App.tsx && \
+    sed -i 's|import AdminTicketSales from "@/pages/admin/ticket-sales"|import AdminTicketSales from "./pages/admin/ticket-sales"|g' src/App.tsx && \
+    sed -i 's|import AdminTicketSalesDetail from "@/pages/admin/ticket-sales-detail"|import AdminTicketSalesDetail from "./pages/admin/ticket-sales-detail"|g' src/App.tsx
+
+# Build the client
+RUN NODE_ENV=production npm run build
 
 # Production environment
 FROM node:20-alpine
@@ -32,7 +52,7 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/drizzle.config.ts ./
 
 # Install production dependencies only
-RUN npm install --only=production
+RUN npm install --omit=dev
 
 # Expose port
 EXPOSE 5000
