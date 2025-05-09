@@ -28,7 +28,7 @@ document.head.appendChild(favicon);
 // Create custom font
 const fontLink = document.createElement('link');
 fontLink.rel = 'stylesheet';
-fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+fontLink.href = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap';
 document.head.appendChild(fontLink);
 
 createRoot(root).render(<App />);

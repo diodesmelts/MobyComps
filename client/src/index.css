@@ -28,6 +28,10 @@
 /* Custom classes */
 .competition-progress-indicator {
   background-color: #C3DC6F !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
 }
 
 :root {
