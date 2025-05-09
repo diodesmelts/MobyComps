@@ -1,9 +1,10 @@
 #!/bin/bash
-set -e  # Exit immediately if a command exits with a non-zero status
 
 # Install dependencies
-echo "Installing dependencies..."
 npm install
+
+# Install PostCSS and autoprefixer explicitly
+npm install autoprefixer postcss tailwindcss
 
 # Build the client
 echo "Building client..."
@@ -13,4 +14,4 @@ npx vite build
 echo "Building server..."
 npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
-echo "Build completed successfully!"
+echo "Build completed!"
