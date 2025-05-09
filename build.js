@@ -1,32 +1,57 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
+/*
+ * This script handles building the project for production
+ * It works around common issues with Render deployments
+ */
+
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
-// Print working directory
+// Log environment information
+console.log('Node version:', process.version);
 console.log('Current directory:', process.cwd());
-console.log('Directory contents:', fs.readdirSync('.'));
 
-// Check if postcss.config.js exists
-if (fs.existsSync('postcss.config.js')) {
-  console.log('postcss.config.js exists:', fs.readFileSync('postcss.config.js', 'utf8'));
+// Create a root package.json for Render if it doesn't exist
+if (!fs.existsSync(path.join(process.cwd(), 'package.json'))) {
+  console.log('Creating root package.json for Render...');
+  try {
+    const packageRender = fs.readFileSync(path.join(process.cwd(), 'package-render.json'), 'utf8');
+    fs.writeFileSync(path.join(process.cwd(), 'package.json'), packageRender);
+    console.log('Successfully created package.json from package-render.json');
+  } catch (err) {
+    console.error('Failed to create package.json:', err);
+  }
 }
 
-// Install dependencies
-console.log('Installing dependencies...');
-execSync('npm install', { stdio: 'inherit' });
+// Install Vite globally to ensure it's available
+try {
+  console.log('Installing Vite globally...');
+  execSync('npm install -g vite', { stdio: 'inherit' });
+} catch (error) {
+  console.log('Failed to install Vite globally, continuing anyway');
+}
 
-// Install autoprefixer and other required packages
-console.log('Installing autoprefixer and other required packages...');
-execSync('npm install autoprefixer postcss tailwindcss', { stdio: 'inherit' });
+// Install client dependencies and build
+try {
+  console.log('Installing client dependencies...');
+  execSync('cd client && npm install', { stdio: 'inherit' });
+  
+  console.log('Building client...');
+  execSync('cd client && npx vite build', { stdio: 'inherit' });
+} catch (error) {
+  console.error('Client build failed:', error.message);
+  process.exit(1);
+}
 
-// Build the client
-console.log('Building client...');
-execSync('npx vite build', { stdio: 'inherit' });
-
-// Build the server
-console.log('Building server...');
-execSync('npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', { stdio: 'inherit' });
+// Install server dependencies
+try {
+  console.log('Installing server dependencies...');
+  execSync('cd server && npm install', { stdio: 'inherit' });
+} catch (error) {
+  console.error('Server dependencies installation failed:', error.message);
+  process.exit(1);
+}
 
 console.log('Build completed successfully!');
