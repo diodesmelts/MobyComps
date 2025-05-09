@@ -12,7 +12,7 @@ COPY . .
 
 # Patch Vite config for compatibility
 WORKDIR /app/client
-RUN node patch-vite-config.js
+RUN node patch-vite-config.cjs
 
 # Install client dependencies and build
 RUN npm install

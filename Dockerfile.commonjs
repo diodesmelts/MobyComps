@@ -10,8 +10,11 @@ RUN npm install
 # Copy all files
 COPY . .
 
-# Install client dependencies and build
+# Patch Vite config for compatibility
 WORKDIR /app/client
+RUN node patch-vite-config.cjs
+
+# Install client dependencies and build
 RUN npm install
 RUN npm run build
 
