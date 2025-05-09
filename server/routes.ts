@@ -602,10 +602,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Create an entry for this purchase
             console.log(`🚨 Creating entry for competition ${item.competitionId}, tickets ${ticketNumbers}...`);
             
+            // Use ticket IDs (not numbers) for consistency
             const entry = await storage.createEntry({
               userId: userId,
               competitionId: item.competitionId,
-              ticketIds: ticketNumbers.join(','),
+              ticketIds: ticketIds.join(','), // Use ticket IDs, not ticket numbers
               status: 'active',
               stripePaymentId: 'process_last_cart_' + Date.now()
             });
@@ -713,11 +714,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`🧪 DEBUG - Using competition ID: ${entryCompetitionId} and ticket numbers: ${entryTicketIds}`);
       
+      // Here's where we need to ensure we're using proper ticket IDs (not numbers)
+      let ticketIdsToStore = entryTicketIds;
+      
+      // If we were given ticket numbers, we should convert them to ticket IDs
+      if (ticketNumbers && typeof ticketNumbers === 'string' && ticketNumbers.match(/^(\d+)(,\d+)*$/)) {
+        try {
+          const ticketNumbersArray = ticketNumbers.split(',').map(n => parseInt(n.trim()));
+          // Get the actual tickets by competition ID and numbers
+          const actualTickets = await storage.getTicketsByNumbers(entryCompetitionId, ticketNumbersArray);
+          
+          if (actualTickets && actualTickets.length > 0) {
+            // Use the actual ticket IDs, not the numbers
+            const actualTicketIds = actualTickets.map(t => t.id);
+            ticketIdsToStore = actualTicketIds.join(',');
+            console.log(`🧪 DEBUG - Converted ticket numbers to IDs: ${ticketNumbers} → ${ticketIdsToStore}`);
+            
+            // Also update the tickets to purchased status
+            await storage.purchaseTickets(actualTicketIds, userId);
+          }
+        } catch (conversionError) {
+          console.error(`❌ DEBUG - Error converting ticket numbers to IDs:`, conversionError);
+        }
+      }
+      
       // Create a test entry with the provided or default values
       const testEntry = await storage.createEntry({
         userId: userId,
         competitionId: entryCompetitionId,
-        ticketIds: entryTicketIds,
+        ticketIds: ticketIdsToStore,
         status: 'active',
         stripePaymentId: 'test_payment_' + Date.now()
       });

@@ -433,6 +433,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   async purchaseTickets(ticketIds: number[], userId: number): Promise<Ticket[]> {
+    console.log(`\n\n🚨 TICKET PURCHASE OPERATION: CRITICAL FLOW 🚨`);
     console.log(`🎫 purchaseTickets - Processing tickets ${JSON.stringify(ticketIds)} for user ${userId}`);
     
     // First, verify the tickets we're trying to purchase
@@ -442,15 +443,31 @@ export class DatabaseStorage implements IStorage {
       .where(inArray(tickets.id, ticketIds));
     
     console.log(`🎫 purchaseTickets - Found ${ticketsToUpdate.length} tickets to update`);
-    console.log(`🎫 purchaseTickets - Ticket details:`, ticketsToUpdate);
+    console.log(`🎫 purchaseTickets - Ticket details:`, JSON.stringify(ticketsToUpdate, null, 2));
     
     if (ticketsToUpdate.length === 0) {
-      console.warn(`❌ purchaseTickets - No tickets found with IDs: ${ticketIds}`);
+      console.error(`❌ CRITICAL ERROR: purchaseTickets - No tickets found with IDs: ${ticketIds}`);
+      
+      // Direct database query to try and find the tickets
+      try {
+        console.log(`🔍 Executing direct SQL to find tickets: SELECT * FROM tickets WHERE id = ANY($1)`, [ticketIds]);
+        const directResult = await db.execute(`SELECT * FROM tickets WHERE id = ANY($1)`, [ticketIds]);
+        console.log(`🔍 Direct SQL result:`, directResult.rows);
+        
+        // Also try to search by ticket number in case there was a mixup between ticket ID and number
+        console.log(`🔍 Executing SQL to find tickets by number: SELECT * FROM tickets WHERE number = ANY($1)`, [ticketIds]);
+        const ticketNumberResult = await db.execute(`SELECT * FROM tickets WHERE number = ANY($1)`, [ticketIds]);
+        console.log(`🔍 Ticket number search result:`, ticketNumberResult.rows);
+      } catch (sqlError) {
+        console.error(`❌ SQL error while searching for tickets:`, sqlError);
+      }
+      
       return [];
     }
     
     if (ticketsToUpdate.length !== ticketIds.length) {
       console.warn(`⚠️ purchaseTickets - Not all tickets were found. Expected ${ticketIds.length}, found ${ticketsToUpdate.length}`);
+      console.warn(`⚠️ Missing tickets: ${ticketIds.filter(id => !ticketsToUpdate.some(t => t.id === id))}`);
     }
     
     // Check if any tickets are already purchased
@@ -464,25 +481,61 @@ export class DatabaseStorage implements IStorage {
     
     try {
       console.log(`🎫 purchaseTickets - Updating tickets to purchased status...`);
-      const purchasedTickets = await db
-        .update(tickets)
-        .set({
-          status: 'purchased',
-          userId,
-          purchasedAt: now,
-          reservedAt: null,
-          reservedUntil: null,
-          sessionId: null,
-        })
-        .where(inArray(tickets.id, ticketIds))
-        .returning();
+      
+      // Execute a direct SQL query for maximum visibility into what's happening
+      const sqlQuery = `
+        UPDATE tickets 
+        SET 
+          status = 'purchased', 
+          user_id = $1, 
+          purchased_at = $2,
+          reserved_at = NULL,
+          reserved_until = NULL,
+          session_id = NULL
+        WHERE id = ANY($3)
+        RETURNING *
+      `;
+      
+      console.log(`🔍 Executing SQL: "${sqlQuery}" with params:`, [userId, now, ticketIds]);
+      const updateResult = await db.execute(sqlQuery, [userId, now, ticketIds]);
+      
+      // Log the raw SQL result
+      console.log(`🔍 Raw SQL update result:`, updateResult);
+      console.log(`🔍 Updated rows:`, updateResult.rowCount);
+      console.log(`🔍 Updated ticket data:`, JSON.stringify(updateResult.rows, null, 2));
+      
+      if (updateResult.rowCount === 0) {
+        console.error(`❌ CRITICAL ERROR: No tickets were updated! Transaction may have failed.`);
+      }
+      
+      // Map the result to the Ticket type
+      const purchasedTickets = updateResult.rows.map(row => ({
+        id: row.id,
+        competitionId: row.competition_id,
+        number: row.number,
+        status: row.status,
+        userId: row.user_id,
+        reservedAt: row.reserved_at,
+        reservedUntil: row.reserved_until,
+        purchasedAt: row.purchased_at,
+        sessionId: row.session_id
+      }));
       
       console.log(`✅ purchaseTickets - Successfully updated ${purchasedTickets.length} tickets to purchased status`);
-      console.log(`🎫 purchaseTickets - Updated ticket details:`, purchasedTickets);
+      
+      // Verify the update with a separate query
+      try {
+        console.log(`🔍 Verifying update with separate query...`);
+        const verifyQuery = `SELECT * FROM tickets WHERE id = ANY($1)`;
+        const verifyResult = await db.execute(verifyQuery, [ticketIds]);
+        console.log(`🔍 Verification result (should show purchased status):`, JSON.stringify(verifyResult.rows, null, 2));
+      } catch (verifyError) {
+        console.error(`❌ Error verifying ticket update:`, verifyError);
+      }
       
       return purchasedTickets;
     } catch (error) {
-      console.error(`❌ purchaseTickets - Error updating tickets:`, error);
+      console.error(`❌ CRITICAL ERROR: purchaseTickets - Error updating tickets:`, error);
       throw error;
     }
   }
