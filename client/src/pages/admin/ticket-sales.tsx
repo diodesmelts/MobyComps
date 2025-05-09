@@ -39,7 +39,7 @@ import {
   Tag,
   Ticket,
   Trophy,
-  Tool,
+  Wrench,
   User2
 } from "lucide-react";
 import { useAdminTicketSales, useAdminWinningTicketLookup, useAdminDrawCompetition } from "@/hooks/use-admin";
@@ -97,8 +97,7 @@ export default function AdminTicketSalesPage() {
       
       toast({
         title: "Status update complete",
-        description: result.message || `Fixed ${result.ticketsFixed} tickets across ${result.entriesProcessed} entries`,
-        variant: "success"
+        description: result.message || `Fixed ${result.ticketsFixed} tickets across ${result.entriesProcessed} entries`
       });
       
       // Refresh the ticket lookup data if we have competition and ticket selected
@@ -517,7 +516,7 @@ export default function AdminTicketSalesPage() {
                               </span>
                               
                               {/* Show status mismatch warning if needed */}
-                              {(ticketLookupData.ticket.statusMismatch) && (
+                              {(ticketLookupData.entry && ticketLookupData.ticket.status === 'available') && (
                                 <span className="text-xs text-amber-600 flex items-center mt-1">
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
                                   This ticket is in an active entry but status wasn't updated
@@ -612,7 +611,7 @@ export default function AdminTicketSalesPage() {
                               className="mt-2 border-amber-500 text-amber-700 hover:bg-amber-50"
                               onClick={() => fixTicketStatusDiscrepancies()}
                             >
-                              <ToolIcon className="h-4 w-4 mr-1" /> Fix Ticket Status Issues
+                              <Wrench className="h-4 w-4 mr-1" /> Fix Ticket Status Issues
                             </Button>
                           )}
                         </div>
