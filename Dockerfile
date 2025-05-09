@@ -103,6 +103,38 @@ RUN echo 'import { defineConfig } from "vite";' > vite.config.js && \
     echo '  },' >> vite.config.js && \
     echo '});' >> vite.config.js
 
+# Create a simple production server script
+RUN echo "const express = require('express');" > /app/server/simple-server.js && \
+    echo "const path = require('path');" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "const app = express();" >> /app/server/simple-server.js && \
+    echo "const port = process.env.PORT || 5000;" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "// Log environment info" >> /app/server/simple-server.js && \
+    echo "console.log('Node.js version:', process.version);" >> /app/server/simple-server.js && \
+    echo "console.log('Current directory:', process.cwd());" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "// Serve static files" >> /app/server/simple-server.js && \
+    echo "app.use(express.static(path.join(__dirname, '../client/dist')));" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "// API routes" >> /app/server/simple-server.js && \
+    echo "app.use(express.json());" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "// Health check endpoint" >> /app/server/simple-server.js && \
+    echo "app.get('/health', (req, res) => {" >> /app/server/simple-server.js && \
+    echo "  res.json({ status: 'ok' });" >> /app/server/simple-server.js && \
+    echo "});" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "// Serve the React app for all other routes" >> /app/server/simple-server.js && \
+    echo "app.get('*', (req, res) => {" >> /app/server/simple-server.js && \
+    echo "  res.sendFile(path.join(__dirname, '../client/dist/index.html'));" >> /app/server/simple-server.js && \
+    echo "});" >> /app/server/simple-server.js && \
+    echo "" >> /app/server/simple-server.js && \
+    echo "// Start the server" >> /app/server/simple-server.js && \
+    echo "app.listen(port, '0.0.0.0', () => {" >> /app/server/simple-server.js && \
+    echo "  console.log(`Server running on port ${port}`);" >> /app/server/simple-server.js && \
+    echo "});" >> /app/server/simple-server.js
+
 # Build with the simplified configs
 RUN NODE_ENV=production npm run build
 
@@ -113,13 +145,11 @@ WORKDIR /app
 
 # Copy built client and server files
 COPY --from=builder /app/client/dist ./client/dist
-COPY --from=builder /app/server ./server
-COPY --from=builder /app/shared ./shared
+COPY --from=builder /app/server/simple-server.js ./server/
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/drizzle.config.ts ./
 
-# Install production dependencies only
-RUN npm install --omit=dev
+# Install express only
+RUN npm install express
 
 # Expose port
 EXPOSE 5000
@@ -127,5 +157,5 @@ EXPOSE 5000
 # Set environment variable
 ENV NODE_ENV=production
 
-# Start the application
-CMD ["node", "server/server.js"]
+# Start the application with the CommonJS server
+CMD ["node", "server/simple-server.js"]
