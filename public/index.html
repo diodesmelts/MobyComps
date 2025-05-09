@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MobyComps - Prize Competitions Platform</title>
+    <style>
+        body, html { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #f9f9ff;
+        }
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .hero {
+            background: linear-gradient(135deg, #4F46E5 0%, #7A5FFF 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .btn-primary {
+            display: inline-block;
+            background-color: #FF7E33;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #FF6A14;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .content {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .competitions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .competition-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .competition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+        .card-image {
+            height: 200px;
+            background-color: #e0e0ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6366F1;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .card-content {
+            padding: 1.5rem;
+        }
+        .card-content h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+        .card-content p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .price {
+            font-weight: bold;
+            color: #FF7E33;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        section {
+            margin-bottom: 4rem;
+        }
+        section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #333;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        section h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #FF7E33;
+        }
+        .footer {
+            background-color: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #FF7E33;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav">
+            <a href="/" class="logo">MobyComps</a>
+            <div class="nav-links">
+                <a href="/competitions">Competitions</a>
+                <a href="/winners">Winners</a>
+                <a href="/how-it-works">How It Works</a>
+                <a href="/login">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>Win Amazing Prizes</h1>
+        <p>Join our prize competitions for a chance to win your dream items!</p>
+        <a href="/competitions" class="btn-primary">Browse Competitions</a>
+    </div>
+
+    <div class="content">
+        <section>
+            <h2>Featured Competitions</h2>
+            <div class="competitions">
+                <div class="competition-card">
+                    <div class="card-image">Tesla Model 3</div>
+                    <div class="card-content">
+                        <h3>Win a Tesla Model 3</h3>
+                        <p>Get a chance to drive home in this incredible electric vehicle!</p>
+                        <div class="price">Tickets from £2.99</div>
+                        <a href="/competition/1" class="btn-primary">Enter Now</a>
+                    </div>
+                </div>
+                <div class="competition-card">
+                    <div class="card-image">LEGO Harry Potter</div>
+                    <div class="card-content">
+                        <h3>LEGO® Harry Potter™ Collection</h3>
+                        <p>Win the ultimate collection of Harry Potter LEGO sets!</p>
+                        <div class="price">Tickets from £1.99</div>
+                        <a href="/competition/2" class="btn-primary">Enter Now</a>
+                    </div>
+                </div>
+                <div class="competition-card">
+                    <div class="card-image">Holiday Package</div>
+                    <div class="card-content">
+                        <h3>Luxury Holiday Package</h3>
+                        <p>Win a dream vacation for two to a destination of your choice!</p>
+                        <div class="price">Tickets from £3.49</div>
+                        <a href="/competition/3" class="btn-primary">Enter Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>How It Works</h2>
+            <div class="steps">
+                <p>1. Browse our competitions and find something you'd love to win</p>
+                <p>2. Purchase your tickets - the more you buy, the better your chances!</p>
+                <p>3. Answer a simple skill-based question to confirm your entry</p>
+                <p>4. Wait for the draw and check if you're our lucky winner!</p>
+                <a href="/how-it-works" class="btn-primary">Learn More</a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Recent Winners</h2>
+            <p>Our platform has already made many people happy with amazing prizes. You could be next!</p>
+            <a href="/winners" class="btn-primary">See All Winners</a>
+        </section>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 MobyComps - All rights reserved</p>
+        <p><a href="/debug-structure" style="color: #777; font-size: 0.8rem;">Debug Tools</a></p>
+    </div>
+
+    <script>
+        // Simple script to check if the server is working
+        console.log("Static HTML version loaded successfully");
+        
+        // Add event listeners to navigation buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // For now, prevent navigation and show a message
+                    if (!link.href.includes('debug')) {
+                        e.preventDefault();
+                        alert('This is a static HTML page for deployment testing. The full application will be available soon.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

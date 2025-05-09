@@ -46,15 +46,29 @@ function serveStatic(app: express.Express) {
         log(`Files in dist/public directory: ${publicFiles.join(', ')}`, "debug");
       }
     }
+    
+    if (fs.existsSync('public')) {
+      const publicFiles = fs.readdirSync('public');
+      log(`Files in public directory: ${publicFiles.join(', ')}`, "debug");
+    }
   } catch (err) {
     log(`Error listing directories: ${err}`, "error");
+  }
+  
+  // Serve from the root /public directory first as it contains our manual file
+  const publicDir = path.resolve(process.cwd(), 'public');
+  if (fs.existsSync(publicDir)) {
+    log(`Serving static files from ${publicDir}`, "express");
+    app.use(express.static(publicDir, { 
+      index: 'index.html',
+      extensions: ['html', 'htm']
+    }));
   }
   
   // These are all the possible locations where static files might be
   const staticPaths = [
     // Absolute paths for production environment
     path.resolve(process.cwd(), 'dist/public'),
-    path.resolve(process.cwd(), 'public'),
     // Relative to server directory
     path.resolve(__dirname, 'public'),
     path.resolve(__dirname, '../dist/public'),
@@ -63,30 +77,32 @@ function serveStatic(app: express.Express) {
   
   // Try each possible static path
   for (const staticPath of staticPaths) {
-    if (fs.existsSync(staticPath)) {
+    if (fs.existsSync(staticPath) && staticPath !== publicDir) {
       log(`Serving static files from ${staticPath}`, "express");
-      app.use(express.static(staticPath, { index: 'index.html' }));
+      app.use(express.static(staticPath, { 
+        index: 'index.html',
+        extensions: ['html', 'htm']
+      }));
     } else {
-      log(`Static path doesn't exist: ${staticPath}`, "debug");
+      log(`Static path doesn't exist or already served: ${staticPath}`, "debug");
     }
   }
   
-  // Serve public files at root and other paths
-  app.use(express.static(path.resolve(process.cwd(), 'dist/public')));
-  
   // Fallback route - serves index.html for client-side routing
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
     // Skip API routes
     if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
+      return next();
     }
     
     log(`Serving fallback for route: ${req.path}`, "debug");
     
     // Try to find index.html in any of the possible paths
+    // Look for fallback.html first, then index.html
     const possiblePaths = [
-      path.resolve(process.cwd(), 'dist/public/index.html'),
+      path.resolve(process.cwd(), 'public/fallback.html'),
       path.resolve(process.cwd(), 'public/index.html'),
+      path.resolve(process.cwd(), 'dist/public/index.html'),
       path.resolve(__dirname, 'public/index.html'),
       path.resolve(__dirname, '../dist/public/index.html'),
       path.resolve(__dirname, '../public/index.html')
@@ -94,28 +110,44 @@ function serveStatic(app: express.Express) {
     
     for (const indexPath of possiblePaths) {
       if (fs.existsSync(indexPath)) {
-        log(`Found index.html at ${indexPath}`, "debug");
+        log(`Found HTML at ${indexPath}`, "debug");
         return res.sendFile(indexPath);
       } else {
-        log(`index.html not found at ${indexPath}`, "debug");
+        log(`HTML not found at ${indexPath}`, "debug");
       }
     }
     
-    // If index.html not found anywhere, return more detailed error
-    res.status(404).send(`
+    // If no HTML file found anywhere, return the inline fallback HTML
+    const fallbackHtml = `
+      <!DOCTYPE html>
       <html>
-        <head><title>File Not Found</title></head>
+        <head>
+          <meta charset="UTF-8">
+          <title>MobyComps Prize Competitions</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; }
+            .container { border: 1px solid #ccc; padding: 20px; }
+            pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+          </style>
+        </head>
         <body>
-          <h1>index.html not found</h1>
-          <p>Current directory: ${process.cwd()}</p>
-          <p>Server directory: ${__dirname}</p>
-          <p>Checked paths:</p>
-          <ul>
-            ${possiblePaths.map(p => `<li>${p} (${fs.existsSync(p) ? 'exists' : 'not found'})</li>`).join('')}
-          </ul>
+          <h1>MobyComps Prize Competitions</h1>
+          <div class="container">
+            <p>The application is running but we couldn't find any HTML files to serve.</p>
+            <p>Server time: ${new Date().toISOString()}</p>
+            <p>Node version: ${process.version}</p>
+            <p>Environment: ${process.env.NODE_ENV}</p>
+            <p>For debugging information, visit <a href="/health/check">/health/check</a>.</p>
+            <h2>Checked paths:</h2>
+            <pre>${possiblePaths.map(p => `${p} (${fs.existsSync(p) ? 'exists' : 'not found'})`).join('\n')}</pre>
+          </div>
         </body>
       </html>
-    `);
+    `;
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(fallbackHtml);
   });
 }
 

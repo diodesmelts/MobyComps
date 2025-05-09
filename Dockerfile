@@ -82,7 +82,9 @@ RUN npm ci --omit=dev
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/dist/public ./public
+
+# Copy our static public files
+COPY --from=builder /app/public ./public
 
 # Create additional directories
 RUN mkdir -p ./uploads
@@ -90,9 +92,9 @@ RUN mkdir -p ./uploads
 # Copy needed static and configuration files
 COPY --from=builder /app/.env.example ./.env.example
 
-# Create a static index.html in multiple locations for redundancy
-RUN echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Prize Competitions</title></head><body><div id="root"></div><script type="module" src="/assets/index.js"></script></body></html>' > ./public/index.html && \
-    echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Prize Competitions</title></head><body><div id="root"></div><script type="module" src="/assets/index.js"></script></body></html>' > ./dist/public/index.html
+# Make sure the static files copied correctly
+RUN echo "Files in public directory:" && ls -la ./public && \
+    echo "Files in dist/public directory:" && ls -la ./dist/public 2>/dev/null || echo "dist/public not found"
 
 # Expose the port
 EXPOSE 8080
