@@ -2,8 +2,17 @@ services:
   - type: web
     name: prize-competition-platform
     env: node
+    plan: standard
     buildCommand: ./build.sh
     startCommand: npm run start
+    autoDeploy: true
+    healthCheckPath: /health
+    numInstances: 1
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetMemoryPercent: 80
+      targetCpuPercent: 80
     envVars:
       - key: NODE_ENV
         value: production
@@ -29,3 +38,7 @@ services:
 databases:
   - name: prize-competition-database
     plan: starter
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    postgresMajorVersion: 15

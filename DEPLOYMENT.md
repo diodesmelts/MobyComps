@@ -11,14 +11,26 @@
 ## Render Deployment Steps
 
 1. **Create a new web service**
-   - [ ] Connect to GitHub repository
+   - [ ] Log in to your Render dashboard (https://dashboard.render.com/)
+   - [ ] Click "New" and select "Web Service"
+   - [ ] Connect your GitHub repository
+   - [ ] Choose the repository with your code
+   - [ ] Name your web service "prize-competition-platform" (or your preferred name)
+   - [ ] Set the Environment to "Node"
+   - [ ] Set the Region closest to your target audience
    - [ ] Set build command to `./build.sh`
    - [ ] Set start command to `npm run start`
-   - [ ] Set Node.js environment
+   - [ ] Select instance type (at least Standard plan recommended for production)
 
 2. **Create PostgreSQL database**
-   - [ ] Create a PostgreSQL database on Render
-   - [ ] Link the database to your web service
+   - [ ] From your Render dashboard, click "New" and select "PostgreSQL"
+   - [ ] Name your database "prize-competition-database" (or your preferred name)
+   - [ ] Choose PostgreSQL version 15 (or latest stable)
+   - [ ] Select the region closest to your web service
+   - [ ] Choose an appropriate plan (at least Starter for production)
+   - [ ] Click "Create Database"
+   - [ ] Once created, find the "Internal Database URL" in the database dashboard
+   - [ ] Use this URL as the DATABASE_URL environment variable in your web service
 
 3. **Set environment variables**
    - [ ] Copy all environment variables from `.env.example`
