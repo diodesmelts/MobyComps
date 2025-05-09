@@ -37,77 +37,71 @@ RUN sed -i 's|import HomePage from "@/pages/home-page"|import HomePage from "./p
     sed -i 's|import AdminTicketSalesDetail from "@/pages/admin/ticket-sales-detail"|import AdminTicketSalesDetail from "./pages/admin/ticket-sales-detail"|g' src/App.tsx
 
 # Create a simplified index.css without theme variables
-RUN cat > src/index.css << 'EOF'
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Base styles for production */
-body {
-  @apply bg-white text-gray-900 font-sans antialiased;
-  letter-spacing: -0.01em;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  @apply font-bold;
-  letter-spacing: -0.02em;
-}
-
-.competition-progress-indicator {
-  background-color: #C3DC6F !important;
-}
-
-.oxford-blue {
-  @apply bg-[#002D5C] text-white;
-}
-
-.kiwi-green {
-  @apply bg-[#C3DC6F] text-[#002D5C];
-}
-
-.container {
-  @apply mx-auto max-w-[1400px] px-4 md:px-8;
-}
-EOF
+RUN echo '@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap");' > src/index.css && \
+    echo '' >> src/index.css && \
+    echo '@tailwind base;' >> src/index.css && \
+    echo '@tailwind components;' >> src/index.css && \
+    echo '@tailwind utilities;' >> src/index.css && \
+    echo '' >> src/index.css && \
+    echo '/* Base styles for production */' >> src/index.css && \
+    echo 'body {' >> src/index.css && \
+    echo '  @apply bg-white text-gray-900 font-sans antialiased;' >> src/index.css && \
+    echo '  letter-spacing: -0.01em;' >> src/index.css && \
+    echo '}' >> src/index.css && \
+    echo '' >> src/index.css && \
+    echo 'h1, h2, h3, h4, h5, h6 {' >> src/index.css && \
+    echo '  @apply font-bold;' >> src/index.css && \
+    echo '  letter-spacing: -0.02em;' >> src/index.css && \
+    echo '}' >> src/index.css && \
+    echo '' >> src/index.css && \
+    echo '.competition-progress-indicator {' >> src/index.css && \
+    echo '  background-color: #C3DC6F !important;' >> src/index.css && \
+    echo '}' >> src/index.css && \
+    echo '' >> src/index.css && \
+    echo '.oxford-blue {' >> src/index.css && \
+    echo '  @apply bg-[#002D5C] text-white;' >> src/index.css && \
+    echo '}' >> src/index.css && \
+    echo '' >> src/index.css && \
+    echo '.kiwi-green {' >> src/index.css && \
+    echo '  @apply bg-[#C3DC6F] text-[#002D5C];' >> src/index.css && \
+    echo '}' >> src/index.css && \
+    echo '' >> src/index.css && \
+    echo '.container {' >> src/index.css && \
+    echo '  @apply mx-auto max-w-[1400px] px-4 md:px-8;' >> src/index.css && \
+    echo '}' >> src/index.css
 
 # Create simplified tailwind config
-RUN cat > tailwind.config.js << 'EOF'
-module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
-  theme: {
-    extend: {
-      colors: {
-        primary: '#002147',
-        secondary: '#C3DC6F',
-      }
-    },
-  },
-  plugins: []
-}
-EOF
+RUN echo 'module.exports = {' > tailwind.config.js && \
+    echo '  content: ["./src/**/*.{js,jsx,ts,tsx}"],' >> tailwind.config.js && \
+    echo '  theme: {' >> tailwind.config.js && \
+    echo '    extend: {' >> tailwind.config.js && \
+    echo '      colors: {' >> tailwind.config.js && \
+    echo '        primary: "#002147",' >> tailwind.config.js && \
+    echo '        secondary: "#C3DC6F",' >> tailwind.config.js && \
+    echo '      }' >> tailwind.config.js && \
+    echo '    },' >> tailwind.config.js && \
+    echo '  },' >> tailwind.config.js && \
+    echo '  plugins: []' >> tailwind.config.js && \
+    echo '}' >> tailwind.config.js
 
 # Create simplified vite config
-RUN cat > vite.config.js << 'EOF'
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@shared': path.resolve(__dirname, '../shared'),
-    },
-  },
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-  },
-});
-EOF
+RUN echo 'import { defineConfig } from "vite";' > vite.config.js && \
+    echo 'import react from "@vitejs/plugin-react";' >> vite.config.js && \
+    echo 'import path from "path";' >> vite.config.js && \
+    echo '' >> vite.config.js && \
+    echo 'export default defineConfig({' >> vite.config.js && \
+    echo '  plugins: [react()],' >> vite.config.js && \
+    echo '  resolve: {' >> vite.config.js && \
+    echo '    alias: {' >> vite.config.js && \
+    echo '      "@": path.resolve(__dirname, "./src"),' >> vite.config.js && \
+    echo '      "@shared": path.resolve(__dirname, "../shared"),' >> vite.config.js && \
+    echo '    },' >> vite.config.js && \
+    echo '  },' >> vite.config.js && \
+    echo '  build: {' >> vite.config.js && \
+    echo '    outDir: "dist",' >> vite.config.js && \
+    echo '    emptyOutDir: true,' >> vite.config.js && \
+    echo '  },' >> vite.config.js && \
+    echo '});' >> vite.config.js
 
 # Build with the simplified configs
 RUN NODE_ENV=production npm run build
