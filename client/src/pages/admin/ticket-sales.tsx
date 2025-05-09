@@ -582,12 +582,12 @@ export default function AdminTicketSalesPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className={`${ticketLookupData.ticket.statusMismatch 
+                      <div className={`${(ticketLookupData.entry && ticketLookupData.ticket.status === 'available')
                         ? "bg-amber-50 border border-amber-200 text-amber-800" 
                         : "bg-gray-50 border border-gray-200 text-gray-700"} 
                         p-4 rounded-md flex items-start`}
                       >
-                        <CheckCircle2 className={`h-5 w-5 ${ticketLookupData.ticket.statusMismatch 
+                        <CheckCircle2 className={`h-5 w-5 ${(ticketLookupData.entry && ticketLookupData.ticket.status === 'available')
                           ? "text-amber-500" 
                           : "text-gray-400"} mt-0.5 mr-2 flex-shrink-0`} 
                         />
@@ -604,7 +604,7 @@ export default function AdminTicketSalesPage() {
                             }
                           </p>
                           
-                          {ticketLookupData.entry && ticketLookupData.ticket.statusMismatch && (
+                          {ticketLookupData.entry && ticketLookupData.ticket.status === 'available' && (
                             <Button 
                               size="sm" 
                               variant="outline"
@@ -660,7 +660,7 @@ export default function AdminTicketSalesPage() {
                     >
                       Clear
                     </Button>
-                    {ticketLookupData.user && (
+                    {ticketLookupData.user && ticketLookupData.user.id && (
                       <Button onClick={() => navigate(`/admin/users?id=${ticketLookupData.user.id}`)}>
                         View User Profile
                       </Button>
