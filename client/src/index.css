@@ -20,6 +20,9 @@
   .placeholder\:text-muted-foreground::placeholder {
     color: hsl(var(--muted-foreground));
   }
+  .font-heading {
+    font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+  }
 }
 
 /* Custom classes */

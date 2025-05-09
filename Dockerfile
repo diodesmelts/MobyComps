@@ -18,6 +18,8 @@ RUN node patch-vite-config.cjs
 RUN npm install
 # Set a longer build timeout for Tailwind CSS processing
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+# Copy tailwind.config.js to ensure Tailwind can find classes
+RUN cp tailwind.config.js vite.config.js ./
 RUN npm run build
 
 # Ensure index.html exists and is suitable for production
