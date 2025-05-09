@@ -106,6 +106,7 @@ RUN echo 'import { defineConfig } from "vite";' > vite.config.js && \
 # Create a simple production server script (using .cjs extension for CommonJS)
 RUN echo "const express = require('express');" > /app/server/simple-server.cjs && \
     echo "const path = require('path');" >> /app/server/simple-server.cjs && \
+    echo "const fs = require('fs');" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
     echo "const app = express();" >> /app/server/simple-server.cjs && \
     echo "const port = process.env.PORT || 5000;" >> /app/server/simple-server.cjs && \
@@ -113,11 +114,11 @@ RUN echo "const express = require('express');" > /app/server/simple-server.cjs &
     echo "// Log environment info" >> /app/server/simple-server.cjs && \
     echo "console.log('Node.js version:', process.version);" >> /app/server/simple-server.cjs && \
     echo "console.log('Current directory:', process.cwd());" >> /app/server/simple-server.cjs && \
+    echo "console.log('Files in current directory:', fs.readdirSync('.'));" >> /app/server/simple-server.cjs && \
+    echo "console.log('Files in client directory:', fs.existsSync('./client') ? fs.readdirSync('./client') : 'client dir not found');" >> /app/server/simple-server.cjs && \
+    echo "console.log('Files in client/dist directory:', fs.existsSync('./client/dist') ? fs.readdirSync('./client/dist') : 'client/dist dir not found');" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
-    echo "// Serve static files" >> /app/server/simple-server.cjs && \
-    echo "app.use(express.static(path.join(__dirname, '../client/dist')));" >> /app/server/simple-server.cjs && \
-    echo "" >> /app/server/simple-server.cjs && \
-    echo "// API routes" >> /app/server/simple-server.cjs && \
+    echo "// Body parsing middleware" >> /app/server/simple-server.cjs && \
     echo "app.use(express.json());" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
     echo "// Health check endpoint" >> /app/server/simple-server.cjs && \
@@ -125,9 +126,28 @@ RUN echo "const express = require('express');" > /app/server/simple-server.cjs &
     echo "  res.json({ status: 'ok' });" >> /app/server/simple-server.cjs && \
     echo "});" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
-    echo "// Serve the React app for all other routes" >> /app/server/simple-server.cjs && \
+    echo "// Serve static files" >> /app/server/simple-server.cjs && \
+    echo "const clientDistPath = path.resolve(__dirname, '../client/dist');" >> /app/server/simple-server.cjs && \
+    echo "console.log('Using client dist path:', clientDistPath);" >> /app/server/simple-server.cjs && \
+    echo "app.use(express.static(clientDistPath));" >> /app/server/simple-server.cjs && \
+    echo "" >> /app/server/simple-server.cjs && \
+    echo "// API routes would go here" >> /app/server/simple-server.cjs && \
+    echo "" >> /app/server/simple-server.cjs && \
+    echo "// Fallback handler for SPA - serve index.html for any unmatched routes" >> /app/server/simple-server.cjs && \
     echo "app.get('*', (req, res) => {" >> /app/server/simple-server.cjs && \
-    echo "  res.sendFile(path.join(__dirname, '../client/dist/index.html'));" >> /app/server/simple-server.cjs && \
+    echo "  const indexPath = path.join(clientDistPath, 'index.html');" >> /app/server/simple-server.cjs && \
+    echo "  console.log('Serving index.html from:', indexPath);" >> /app/server/simple-server.cjs && \
+    echo "  if (fs.existsSync(indexPath)) {" >> /app/server/simple-server.cjs && \
+    echo "    res.sendFile(indexPath);" >> /app/server/simple-server.cjs && \
+    echo "  } else {" >> /app/server/simple-server.cjs && \
+    echo "    res.status(404).send('Application files not found');" >> /app/server/simple-server.cjs && \
+    echo "  }" >> /app/server/simple-server.cjs && \
+    echo "});" >> /app/server/simple-server.cjs && \
+    echo "" >> /app/server/simple-server.cjs && \
+    echo "// Error handler" >> /app/server/simple-server.cjs && \
+    echo "app.use((err, req, res, next) => {" >> /app/server/simple-server.cjs && \
+    echo "  console.error('Server error:', err);" >> /app/server/simple-server.cjs && \
+    echo "  res.status(500).send('Server error');" >> /app/server/simple-server.cjs && \
     echo "});" >> /app/server/simple-server.cjs && \
     echo "" >> /app/server/simple-server.cjs && \
     echo "// Start the server" >> /app/server/simple-server.cjs && \
