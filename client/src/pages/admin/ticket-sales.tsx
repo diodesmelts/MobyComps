@@ -451,23 +451,39 @@ export default function AdminTicketSalesPage() {
                           </div>
                           <div>
                             <p className="text-sm text-gray-500">Status</p>
-                            <span 
-                              className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium
-                                ${ticketLookupData.ticket.status === 'purchased' 
-                                  ? 'bg-green-100 text-green-700' 
-                                  : ticketLookupData.ticket.status === 'reserved'
-                                    ? 'bg-amber-100 text-amber-700'
-                                    : 'bg-blue-100 text-blue-700'
-                                }
-                              `}
-                            >
-                              {ticketLookupData.ticket.status}
-                            </span>
+                            <div className="flex flex-col gap-1">
+                              <span 
+                                className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium
+                                  ${ticketLookupData.ticket.status === 'purchased' 
+                                    ? 'bg-green-100 text-green-700' 
+                                    : ticketLookupData.ticket.status === 'reserved'
+                                      ? 'bg-amber-100 text-amber-700'
+                                      : 'bg-blue-100 text-blue-700'
+                                  }
+                                `}
+                              >
+                                {ticketLookupData.ticket.status}
+                              </span>
+                              
+                              {/* Show status mismatch warning if needed */}
+                              {(ticketLookupData.ticket.statusMismatch) && (
+                                <span className="text-xs text-amber-600 flex items-center mt-1">
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  This ticket is in an active entry but status wasn't updated
+                                </span>
+                              )}
+                            </div>
                           </div>
                           {ticketLookupData.ticket.purchasedAt && (
                             <div>
                               <p className="text-sm text-gray-500">Purchased At</p>
                               <p className="font-medium">{formatDate(new Date(ticketLookupData.ticket.purchasedAt))}</p>
+                            </div>
+                          )}
+                          {ticketLookupData.entry && !ticketLookupData.ticket.purchasedAt && (
+                            <div>
+                              <p className="text-sm text-gray-500">Entry Created</p>
+                              <p className="font-medium">{formatDate(new Date(ticketLookupData.entry.createdAt))}</p>
                             </div>
                           )}
                         </div>
@@ -516,15 +532,26 @@ export default function AdminTicketSalesPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-md flex items-start">
-                        <CheckCircle2 className="h-5 w-5 text-amber-500 mt-0.5 mr-2 flex-shrink-0" />
+                      <div className={`${ticketLookupData.ticket.statusMismatch 
+                        ? "bg-amber-50 border border-amber-200 text-amber-800" 
+                        : "bg-gray-50 border border-gray-200 text-gray-700"} 
+                        p-4 rounded-md flex items-start`}
+                      >
+                        <CheckCircle2 className={`h-5 w-5 ${ticketLookupData.ticket.statusMismatch 
+                          ? "text-amber-500" 
+                          : "text-gray-400"} mt-0.5 mr-2 flex-shrink-0`} 
+                        />
                         <div>
-                          <h3 className="font-semibold">Ticket Owner Not Found</h3>
+                          <h3 className="font-semibold">
+                            {ticketLookupData.entry 
+                              ? "Ticket Status Discrepancy" 
+                              : "Ticket Owner Not Found"}
+                          </h3>
                           <p className="mt-1">
-                            This ticket was found in the system with status "{ticketLookupData.ticket.status}", 
-                            but we couldn't find a user associated with it. 
-                            {ticketLookupData.ticket.status !== 'purchased' && 
-                              " This is expected since the ticket hasn't been purchased yet."}
+                            {ticketLookupData.entry 
+                              ? `This ticket appears in entry #${ticketLookupData.entry.id} but its status is still "${ticketLookupData.ticket.status}" in the database. This could be due to an incomplete payment process.`
+                              : `This ticket was found in the system with status "${ticketLookupData.ticket.status}", but we couldn't find a user associated with it. ${ticketLookupData.ticket.status !== 'purchased' ? "This is expected since the ticket hasn't been purchased yet." : ""}`
+                            }
                           </p>
                         </div>
                       </div>

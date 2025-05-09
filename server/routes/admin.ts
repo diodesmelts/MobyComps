@@ -395,7 +395,7 @@ export function registerAdminRoutes(app: Express) {
       
       console.log(`🔍 Looking up winner for competition ID: ${competitionId}, ticket number: ${ticketNumber}`);
       
-      // First check if the ticket exists and is purchased
+      // First check if the ticket exists
       const ticket = await storage.getTicket(competitionId, ticketNumber);
       
       if (!ticket) {
@@ -407,50 +407,54 @@ export function registerAdminRoutes(app: Express) {
       
       console.log(`✅ Found ticket:`, ticket);
       
-      if (ticket.status !== 'purchased') {
-        return res.status(400).json({ 
-          error: "Ticket not purchased", 
-          message: `Ticket number ${ticketNumber} exists but has not been purchased. Current status: ${ticket.status}`,
-          ticket
-        });
-      }
-      
       // Get the competition details
       const competition = await storage.getCompetition(competitionId);
       if (!competition) {
         return res.status(404).json({ error: "Competition not found" });
       }
       
-      // Find the entry containing this ticket
-      // First approach: If the ticket has a userId, get the user directly
+      // Find the entry containing this ticket regardless of ticket status
+      // This helps with tickets that are in an entry but status wasn't updated
       let user = null;
       let entry = null;
       
+      // First approach: If the ticket has a userId, get the user directly
       if (ticket.userId) {
         user = await storage.getUser(ticket.userId);
         console.log(`✅ Found user from ticket:`, user);
       }
       
-      // If user not found through ticket directly, try to find through entries
-      if (!user) {
-        console.log(`🔍 Searching for entry with ticket ${ticketNumber}...`);
-        
-        // Get all entries for this competition
-        const entries = await storage.getCompetitionEntries(competitionId);
-        console.log(`✅ Found ${entries.length} entries for competition ${competitionId}`);
-        
-        // Find the entry that contains this ticket number
-        entry = entries.find(entry => {
-          const ticketIds = entry.ticketIds.split(',').map(id => parseInt(id.trim()));
+      // Try to find through entries (this is important for legacy tickets)
+      console.log(`🔍 Searching for entry with ticket ${ticketNumber}...`);
+      
+      // Get all entries for this competition
+      const entries = await storage.getCompetitionEntries(competitionId);
+      console.log(`✅ Found ${entries.length} entries for competition ${competitionId}`);
+      
+      // Find the entry that contains this ticket number
+      entry = entries.find(entry => {
+        // Try to parse the ticketIds string and look for our ticket number
+        try {
+          const ticketIdString = entry.ticketIds || '';
+          const ticketIds = ticketIdString.split(',').map(id => parseInt(id.trim()));
           return ticketIds.includes(ticketNumber);
-        });
-        
-        console.log(`${entry ? '✅ Found' : '❌ Could not find'} entry with ticket ${ticketNumber}`);
-        
-        // If we found an entry, get the user
-        if (entry && entry.userId) {
-          user = await storage.getUser(entry.userId);
-          console.log(`✅ Found user from entry:`, user);
+        } catch (err) {
+          console.error(`❌ Error parsing ticket IDs for entry ${entry.id}:`, err);
+          return false;
+        }
+      });
+      
+      console.log(`${entry ? '✅ Found' : '❌ Could not find'} entry with ticket ${ticketNumber}`);
+      
+      // If we found an entry, get the user
+      if (entry && entry.userId) {
+        user = await storage.getUser(entry.userId);
+        console.log(`✅ Found user from entry:`, user);
+
+        // If ticket has the wrong status but is in an entry, it should be considered purchased
+        // This handles the case of tickets that were purchased but not properly updated
+        if (ticket.status !== 'purchased' && entry) {
+          console.log(`⚠️ Ticket ${ticketNumber} has status "${ticket.status}" but is in an entry, treating as purchased`);
         }
       }
       
@@ -464,9 +468,12 @@ export function registerAdminRoutes(app: Express) {
           ticketPrice: competition.ticketPrice
         },
         ticket: {
+          id: ticket.id,
           number: ticket.number,
           status: ticket.status,
-          purchasedAt: ticket.purchasedAt
+          purchasedAt: ticket.purchasedAt,
+          // Indicate if there's a status mismatch (ticket should be purchased)
+          statusMismatch: (ticket.status !== 'purchased' && entry !== null)
         },
         entry: entry ? {
           id: entry.id,
