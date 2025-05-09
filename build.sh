@@ -5,9 +5,9 @@ set -e
 
 echo "🔄 Starting build process..."
 
-# Install dependencies
+# Explicitly specify that we want to use npm install and not npm ci
 echo "🔄 Installing dependencies..."
-npm install
+npm install --no-package-lock
 
 # Build the client and server
 echo "🔄 Building the application..."

@@ -1,0 +1,35 @@
+2025-05-09T22:03:23.734690027Z ==> Cloning from https://github.com/diodesmelts/MobyComps
+2025-05-09T22:03:25.1483582Z ==> Checking out commit 0e73d4d6475263e20afa6e2d589cb4c35367b703 in branch main
+2025-05-09T22:03:27.832833124Z ==> Using Node.js version 22.14.0 (default)
+2025-05-09T22:03:27.879546572Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-09T22:03:30.483293227Z ==> Using Bun version 1.1.0 (default)
+2025-05-09T22:03:30.483317867Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-09T22:03:30.568413997Z ==> Running build command './build.sh'...
+2025-05-09T22:03:30.578193568Z Starting build process...
+2025-05-09T22:03:30.578211348Z Building client application...
+2025-05-09T22:03:31.180677392Z npm error code EUSAGE
+2025-05-09T22:03:31.180993357Z npm error
+2025-05-09T22:03:31.181000247Z npm error The `npm ci` command can only install with an existing package-lock.json or
+2025-05-09T22:03:31.181003497Z npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+2025-05-09T22:03:31.181007197Z npm error later to generate a package-lock.json file, then try again.
+2025-05-09T22:03:31.181010017Z npm error
+2025-05-09T22:03:31.181014797Z npm error Clean install a project
+2025-05-09T22:03:31.181017677Z npm error
+2025-05-09T22:03:31.181020487Z npm error Usage:
+2025-05-09T22:03:31.181023707Z npm error npm ci
+2025-05-09T22:03:31.181027337Z npm error
+2025-05-09T22:03:31.181031267Z npm error Options:
+2025-05-09T22:03:31.181034937Z npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+2025-05-09T22:03:31.181038268Z npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+2025-05-09T22:03:31.181041688Z npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+2025-05-09T22:03:31.181044958Z npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+2025-05-09T22:03:31.181048788Z npm error [--no-bin-links] [--no-fund] [--dry-run]
+2025-05-09T22:03:31.181052078Z npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+2025-05-09T22:03:31.181055558Z npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+2025-05-09T22:03:31.181058858Z npm error
+2025-05-09T22:03:31.181062248Z npm error aliases: clean-install, ic, install-clean, isntall-clean
+2025-05-09T22:03:31.181065738Z npm error
+2025-05-09T22:03:31.181069288Z npm error Run "npm help ci" for more info
+2025-05-09T22:03:31.182422029Z npm error A complete log of this run can be found in: /opt/render/.cache/_logs/2025-05-09T22_03_30_683Z-debug-0.log
+2025-05-09T22:03:31.261561788Z ==> Build failed 😞
+2025-05-09T22:03:31.261577248Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
