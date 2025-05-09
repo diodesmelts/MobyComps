@@ -3,11 +3,17 @@
 # Exit on error
 set -e
 
-echo "🔄 Starting build process..."
+echo "🔄 Starting Render build process..."
 
-# Explicitly specify that we want to use npm install and not npm ci
-# Make sure to include ALL dependencies, including dev dependencies
-echo "🔄 Installing dependencies..."
+# First check if some key dev dependencies are installed
+echo "🔄 Checking for required dev dependencies..."
+if ! npm list @vitejs/plugin-react > /dev/null 2>&1; then
+  echo "🔄 Installing @vitejs/plugin-react..."
+  npm install --no-save @vitejs/plugin-react
+fi
+
+# Explicitly install all dependencies, including dev dependencies
+echo "🔄 Installing all dependencies..."
 npm install --no-package-lock --include=dev
 
 # Build the client and server

@@ -3,7 +3,7 @@ services:
     name: prize-competition-platform
     env: node
     plan: standard
-    buildCommand: npm install --no-package-lock && npm run build && npm run db:push
+    buildCommand: npm install --no-package-lock --include=dev && npm run build && npm run db:push
     startCommand: npm run start
     autoDeploy: true
     healthCheckPath: /health

@@ -1,0 +1,40 @@
+2025-05-09T22:06:19.069313459Z ==> Cloning from https://github.com/diodesmelts/MobyComps
+2025-05-09T22:06:20.240110288Z ==> Checking out commit b9e8659cb12677ac81280d63c8099d24dfd45f7b in branch main
+2025-05-09T22:06:23.126476642Z ==> Requesting Node.js version 20.x
+2025-05-09T22:06:23.495827219Z ==> Using Node.js version 20.19.1 via /opt/render/project/src/.node-version
+2025-05-09T22:06:23.542565284Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-09T22:06:27.467280142Z ==> Using Bun version 1.1.0 (default)
+2025-05-09T22:06:27.467309812Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-09T22:06:27.5517615Z ==> Running build command './build.sh'...
+2025-05-09T22:06:27.561388352Z 🔄 Starting build process...
+2025-05-09T22:06:27.561402262Z 🔄 Installing dependencies...
+2025-05-09T22:07:14.62248514Z 
+2025-05-09T22:07:14.622525211Z added 440 packages, and audited 441 packages in 47s
+2025-05-09T22:07:14.622619272Z 
+2025-05-09T22:07:14.622634283Z 57 packages are looking for funding
+2025-05-09T22:07:14.622641403Z   run `npm fund` for details
+2025-05-09T22:07:14.63938973Z 
+2025-05-09T22:07:14.63942271Z 2 moderate severity vulnerabilities
+2025-05-09T22:07:14.63942783Z 
+2025-05-09T22:07:14.639434271Z To address all issues (including breaking changes), run:
+2025-05-09T22:07:14.639440981Z   npm audit fix --force
+2025-05-09T22:07:14.639446291Z 
+2025-05-09T22:07:14.639452661Z Run `npm audit` for details.
+2025-05-09T22:07:14.698770153Z 🔄 Building the application...
+2025-05-09T22:07:14.886993304Z 
+2025-05-09T22:07:14.887033005Z > rest-express@1.0.0 build
+2025-05-09T22:07:14.887040105Z > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+2025-05-09T22:07:14.887047215Z 
+2025-05-09T22:07:15.175326289Z failed to load config from /opt/render/project/src/vite.config.ts
+2025-05-09T22:07:15.175683116Z error during build:
+2025-05-09T22:07:15.175694846Z Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /opt/render/project/src/vite.config.ts.timestamp-1746828435169-63a810f4f8e9a.mjs
+2025-05-09T22:07:15.175701926Z     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-05-09T22:07:15.175707257Z     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-05-09T22:07:15.175712757Z     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-05-09T22:07:15.175717997Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
+2025-05-09T22:07:15.175722627Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
+2025-05-09T22:07:15.175727227Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
+2025-05-09T22:07:15.175732317Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
+2025-05-09T22:07:15.175736837Z     at ModuleJob._link (node:internal/modules/esm/module_job:130:49)
+2025-05-09T22:07:15.197702523Z ==> Build failed 😞
+2025-05-09T22:07:15.197732333Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
