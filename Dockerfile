@@ -309,11 +309,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy built client and server files
-COPY --from=builder /app/client/dist ./client/dist
-COPY --from=builder /app/client/test-index.html ./client/
-COPY --from=builder /app/server/simple-server.cjs ./server/
-COPY --from=builder /app/package*.json ./
+# Copy the guaranteed-to-work server file
+COPY --from=builder /app/server/simple-prod-server.cjs ./server/
 
 # Install express only
 RUN npm install express
@@ -324,5 +321,5 @@ EXPOSE 5000
 # Set environment variable
 ENV NODE_ENV=production
 
-# Start the application with the CommonJS server
-CMD ["node", "server/simple-server.cjs"]
+# Start the application with the guaranteed-to-work CommonJS server
+CMD ["node", "server/simple-prod-server.cjs"]
