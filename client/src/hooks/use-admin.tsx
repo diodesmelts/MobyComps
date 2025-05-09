@@ -211,12 +211,36 @@ export function useAdminCompetitionTicketSales(competitionId: number) {
 // Hook to look up a specific ticket
 export function useAdminWinningTicketLookup(competitionId?: number, ticketNumber?: number) {
   return useQuery<{
-    competition: Competition;
-    ticket: Ticket;
-    user: User | null;
+    competition: {
+      id: number;
+      title: string;
+      status: string;
+      drawDate: string;
+      ticketPrice: number;
+    };
+    ticket: {
+      number: number;
+      status: string;
+      purchasedAt: string | null;
+    };
+    entry: {
+      id: number;
+      ticketIds: string;
+      createdAt: string;
+      stripePaymentId: string | null;
+    } | null;
+    user: {
+      id: number;
+      username: string;
+      email: string;
+      role: string;
+      firstName: string | null;
+      lastName: string | null;
+      phoneNumber: string | null;
+    } | null;
   }>({
     queryKey: [
-      `/api/admin/winning-ticket-lookup?competitionId=${competitionId}&ticketNumber=${ticketNumber}`
+      `/api/admin/lookup-winner?competitionId=${competitionId}&ticketNumber=${ticketNumber}`
     ],
     enabled: !!competitionId && !!ticketNumber,
   });
