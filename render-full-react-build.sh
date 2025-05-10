@@ -1,29 +1,24 @@
 #!/bin/bash
-# Script to deploy the FULL React app to Render
-set -e  # Exit on any error
-
-echo "=== STARTING FULL REACT DEPLOYMENT BUILD ==="
-echo "Node version: $(node -v)"
-echo "Current directory: $(pwd)"
+set -e
 
 # Install ALL dependencies including dev dependencies
 echo "Installing ALL dependencies..."
 npm ci --include=dev
 
-# Build the client application with Vite
-echo "Building React application with Vite..."
-npx vite build
+# Clean up any previous builds
+echo "Cleaning previous builds..."
+rm -rf dist dist-temp
 
-# Build to temp directory to avoid conflicts
-echo "Building to temporary directory..."
-rm -rf dist-temp
-mkdir -p dist-temp
-npx vite build --outDir dist-temp
+# Build the React app with proper file paths for production
+echo "Building React application with Vite..."
+npx vite build --outDir dist-temp --base='/'
+
+# Debug info
+echo "Vite build completed. Files generated:"
+find dist-temp -type f | sort
 
 # Prepare the final dist directory
 echo "Preparing final dist directory..."
-rm -rf dist
-mkdir -p dist
 mkdir -p dist/public
 
 # Copy the Vite build output to the correct location
@@ -32,18 +27,227 @@ cp -r dist-temp/* dist/public/
 
 # Debug output of what was copied
 echo "Contents of dist/public directory:"
-ls -la dist/public
+ls -la dist/public || echo "Error: No files in dist/public"
 
 # Check for important files
 if [ ! -f "dist/public/index.html" ]; then
-  echo "WARNING: index.html is missing from the build!"
-fi
+  echo "WARNING: index.html is missing from the build! Creating fallback..."
+  cat > dist/public/index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MobyComps - Prize Competitions</title>
+  <meta name="description" content="Win amazing prizes with MobyComps online competitions. Enter for your chance to win cars, gadgets, and more!">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f8fc;
+      color: #333;
+    }
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #4361ee;
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .competitions {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .competition-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .competition-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+    }
+    .competition-image {
+      width: 100%;
+      height: 200px;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+    }
+    .competition-details {
+      padding: 1.5rem;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    p {
+      line-height: 1.6;
+      color: #666;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #4361ee;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #3a56d4;
+    }
+    .price {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #2a2a2a;
+      margin: 1rem 0;
+    }
+    .progress {
+      background-color: #e0e0e0;
+      height: 8px;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+    .progress-bar {
+      background-color: #4361ee;
+      height: 100%;
+      border-radius: 4px;
+    }
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .error-notice {
+      background-color: #fff1f0;
+      border-left: 4px solid #ff4d4f;
+      padding: 1rem;
+      margin: 2rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    @media (max-width: 768px) {
+      .competitions {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>MobyComps</h1>
+    <p>Win Amazing Prizes</p>
+  </div>
 
-if [ ! -d "dist/public/assets" ]; then
-  echo "WARNING: assets directory is missing from the build!"
-else
-  echo "Assets directory contents:"
-  ls -la dist/public/assets
+  <div class="app-container">
+    <div class="error-notice">
+      <h3>Loading App...</h3>
+      <p>If this message persists, there might be an issue with loading the React application. Please try refreshing the page or check the deployment logs.</p>
+      <p>You can also try accessing these diagnostic endpoints:</p>
+      <ul>
+        <li><a href="/health">/health</a> - Basic health check</li>
+        <li><a href="/health/check">/health/check</a> - Detailed server information</li>
+        <li><a href="/debug-structure">/debug-structure</a> - File structure information</li>
+      </ul>
+    </div>
+
+    <h2>Active Competitions</h2>
+    <div class="competitions">
+      <div class="competition-card">
+        <div class="competition-image">Tesla Model 3 Image</div>
+        <div class="competition-details">
+          <h3>Win a Tesla Model 3</h3>
+          <p>Win a brand new Tesla Model 3. Competition ends when all tickets are sold.</p>
+          <div class="price">Ticket Price: £5.99</div>
+          <div class="progress">
+            <div class="progress-bar" style="width: 45%"></div>
+          </div>
+          <div class="progress-text">
+            <span>456 tickets sold</span>
+            <span>1000 tickets total</span>
+          </div>
+          <a href="#" class="btn">Enter Now</a>
+        </div>
+      </div>
+
+      <div class="competition-card">
+        <div class="competition-image">LEGO Hogwarts Castle Image</div>
+        <div class="competition-details">
+          <h3>LEGO® Harry Potter™ Hogwarts Castle</h3>
+          <p>Win the amazing LEGO® Harry Potter™ Hogwarts Castle with 6,020 pieces.</p>
+          <div class="price">Ticket Price: £2.99</div>
+          <div class="progress">
+            <div class="progress-bar" style="width: 25%"></div>
+          </div>
+          <div class="progress-text">
+            <span>123 tickets sold</span>
+            <span>500 tickets total</span>
+          </div>
+          <a href="#" class="btn">Enter Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if the app loads after 3 seconds
+    setTimeout(() => {
+      const errorNotice = document.querySelector('.error-notice');
+      if (errorNotice) {
+        errorNotice.style.display = 'block';
+      }
+    }, 3000);
+
+    // Try to load the app dynamically
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => resolve(script);
+        script.onerror = () => reject(new Error(`Script load error for ${src}`));
+        document.head.append(script);
+      });
+    }
+
+    // Look for Vite app scripts
+    fetch('/assets')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Could not check assets directory');
+        }
+        return response.text();
+      })
+      .then(html => {
+        const jsFiles = Array.from(html.matchAll(/href="([^"]+\.js)"/g)).map(m => m[1]);
+        if (jsFiles.length > 0) {
+          jsFiles.forEach(file => {
+            if (file.includes('index') || file.includes('main')) {
+              loadScript(file).catch(console.error);
+            }
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error checking for app scripts:', error);
+      });
+  </script>
+</body>
+</html>
+EOF
 fi
 
 # Create a server file that properly serves the React app
@@ -65,6 +269,14 @@ const __dirname = path.dirname(__filename);
 // Create Express app
 const app = express();
 const port = process.env.PORT || 8080;
+
+// Enable verbose logging
+const DEBUG = true;
+function logDebug(...args) {
+  if (DEBUG) {
+    console.log(...args);
+  }
+}
 
 // Initialize Stripe
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -130,6 +342,19 @@ app.use((req, res, next) => {
 
 // Determine directories
 const publicDir = path.resolve(__dirname, 'public');
+logDebug("Public directory path:", publicDir);
+logDebug("Public directory exists:", fs.existsSync(publicDir));
+
+if (fs.existsSync(publicDir)) {
+  logDebug("Contents of public directory:", fs.readdirSync(publicDir));
+  
+  const assetsDir = path.join(publicDir, 'assets');
+  if (fs.existsSync(assetsDir)) {
+    logDebug("Contents of assets directory:", fs.readdirSync(assetsDir));
+  } else {
+    logDebug("Assets directory does not exist");
+  }
+}
 
 // Serve static files with correct cache headers
 app.use(express.static(publicDir, {
@@ -360,7 +585,37 @@ app.get('*', (req, res) => {
     return res.status(404).json({ error: "API endpoint not found" });
   }
   
-  res.sendFile(path.join(publicDir, 'index.html'));
+  // Log the request
+  logDebug(`Serving index.html for path: ${req.path}`);
+  
+  // Check if index.html exists
+  const indexPath = path.join(publicDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(500).send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>MobyComps - Error</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+            h1 { color: #e74c3c; }
+            .error { background-color: #fef0f0; padding: 20px; border-radius: 8px; border-left: 5px solid #e74c3c; }
+          </style>
+        </head>
+        <body>
+          <h1>Application Error</h1>
+          <div class="error">
+            <p>The application could not be loaded because the index.html file is missing.</p>
+            <p>Please check the server logs for more information.</p>
+            <p><a href="/health/check">View server health information</a></p>
+            <p><a href="/debug-structure">View directory structure</a></p>
+          </div>
+        </body>
+      </html>
+    `);
+  }
 });
 
 // Start the server
@@ -368,6 +623,16 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`Serving static files from ${publicDir}`);
   console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+  
+  // Log additional debug info at startup
+  logDebug("Server started with settings:");
+  logDebug(`- Public directory: ${publicDir}`);
+  logDebug(`- Index.html exists: ${fs.existsSync(path.join(publicDir, 'index.html'))}`);
+  logDebug(`- Assets directory exists: ${fs.existsSync(path.join(publicDir, 'assets'))}`);
+  
+  if (fs.existsSync(path.join(publicDir, 'assets'))) {
+    logDebug(`- Assets contents: ${fs.readdirSync(path.join(publicDir, 'assets')).join(', ')}`);
+  }
 });
 EOF
 
@@ -397,161 +662,31 @@ echo "Installing server dependencies in dist directory..."
 cd dist
 npm install express express-session stripe @neondatabase/serverless connect-pg-simple
 
-# Create assets directory and add placeholder images
-echo "Creating placeholder assets..."
-mkdir -p public/assets
-
-# Create a placeholder hero banner image
-cat > public/assets/hero-banner.jpg << EOF
-This is a placeholder for the hero banner image
-EOF
-
-# Create a placeholder Tesla image
-cat > public/assets/tesla.jpg << EOF
-This is a placeholder for the Tesla image
-EOF
-
-# Create a placeholder Hogwarts image
-cat > public/assets/hogwarts.jpg << EOF
-This is a placeholder for the Hogwarts image
-EOF
-
-# Create a placeholder logo
-cat > public/assets/logo.png << EOF
-MobyComps Logo Placeholder
-EOF
-
-# Create a fallback index.html in case the copying failed
-echo "Creating fallback index.html..."
-cat > public/index.html << 'EOF'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MobyComps - Prize Competitions</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f7;
-      color: #333;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .header {
-      background-color: #4361ee;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    .card {
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .competition {
-      display: flex;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 20px;
-    }
-    .competition img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 4px;
-      background-color: #ddd;
-      margin-right: 15px;
-    }
-    .competition-details {
-      flex: 1;
-    }
-    h1, h2, h3 {
-      margin-top: 0;
-    }
-    p {
-      line-height: 1.6;
-    }
-    .button {
-      display: inline-block;
-      background-color: #4361ee;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 4px;
-      text-decoration: none;
-      margin-top: 10px;
-    }
-    .placeholder {
-      background-color: #ddd;
-      height: 100px;
-      border-radius: 8px;
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-    }
-    .error-card {
-      background-color: #fff0f0;
-      border-left: 4px solid #e74c3c;
-      padding: 15px;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>MobyComps</h1>
-    <p>Win Amazing Prizes</p>
-  </div>
+# Create placeholder assets if they don't exist in build
+if [ ! -d "public/assets" ]; then
+  echo "Creating placeholder assets directory..."
+  mkdir -p public/assets
   
-  <div class="container">
-    <div class="card">
-      <h2>Active Competitions</h2>
-      
-      <div class="competition">
-        <img src="/assets/tesla.jpg" alt="Tesla Model 3">
-        <div class="competition-details">
-          <h3>Win a Tesla Model 3</h3>
-          <p>Win a brand new Tesla Model 3. Competition ends when all tickets are sold.</p>
-          <p><strong>Ticket Price:</strong> £5.99</p>
-          <a href="#" class="button">Enter Now</a>
-        </div>
-      </div>
-      
-      <div class="competition">
-        <img src="/assets/hogwarts.jpg" alt="LEGO Hogwarts Castle">
-        <div class="competition-details">
-          <h3>LEGO® Harry Potter™ Hogwarts Castle</h3>
-          <p>Win the amazing LEGO® Harry Potter™ Hogwarts Castle with 6,020 pieces.</p>
-          <p><strong>Ticket Price:</strong> £2.99</p>
-          <a href="#" class="button">Enter Now</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="error-card">
-      <h3>Note: Static Version</h3>
-      <p>You're viewing a static version of the MobyComps platform. This is a fallback version and doesn't include full functionality.</p>
-      <p>If you're seeing this, please check the server logs for any errors in the React application deployment.</p>
-      <p>Try these diagnostic endpoints:</p>
-      <ul>
-        <li><a href="/health">/health</a> - Basic health check</li>
-        <li><a href="/health/check">/health/check</a> - Detailed server information</li>
-        <li><a href="/debug-structure">/debug-structure</a> - Directory structure information</li>
-      </ul>
-    </div>
-  </div>
-</body>
-</html>
+  # Create a placeholder hero banner image
+  cat > public/assets/hero-banner.jpg << EOF
+  This is a placeholder for the hero banner image
 EOF
+  
+  # Create a placeholder Tesla image
+  cat > public/assets/tesla.jpg << EOF
+  This is a placeholder for the Tesla image
+EOF
+  
+  # Create a placeholder Hogwarts image
+  cat > public/assets/hogwarts.jpg << EOF
+  This is a placeholder for the Hogwarts image
+EOF
+  
+  # Create a placeholder logo
+  cat > public/assets/logo.png << EOF
+  MobyComps Logo Placeholder
+EOF
+fi
 
 echo "=== BUILD COMPLETED SUCCESSFULLY ==="
 echo "Files in dist/public:"

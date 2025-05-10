@@ -1,0 +1,32 @@
+2025-05-10T00:26:41.573094165Z Deploy cancelled
+2025-05-10T00:26:54.76149212Z Deploy cancelled
+2025-05-10T00:27:44.055720582Z ==> Deploying...
+2025-05-10T00:27:59.87205418Z ==> Running 'chmod +x render-full-react-start.sh && ./render-full-react-start.sh'
+2025-05-10T00:27:59.890739767Z === STARTING FULL REACT APPLICATION ===
+2025-05-10T00:27:59.896384182Z Node version: v20.19.1
+2025-05-10T00:27:59.896401543Z Environment: production
+2025-05-10T00:27:59.897052738Z Current directory: /opt/render/project/src/dist
+2025-05-10T00:27:59.897100359Z Found server.js - starting server...
+2025-05-10T00:28:00.155789765Z Warning: STRIPE_SECRET_KEY not set. Payment features will be unavailable.
+2025-05-10T00:28:00.156217055Z Database URL found, connecting to PostgreSQL...
+2025-05-10T00:28:00.156519412Z Database connection established
+2025-05-10T00:28:00.156766058Z Using PostgreSQL session store
+2025-05-10T00:28:00.177711549Z Server running on port 10000
+2025-05-10T00:28:00.177726489Z Serving static files from /opt/render/project/src/dist/public
+2025-05-10T00:28:00.17774159Z NODE_ENV: production
+2025-05-10T00:28:04.891097748Z ==> Your service is live 🎉
+2025-05-10T00:32:25.747159448Z ==> Deploying...
+2025-05-10T00:32:43.872919971Z ==> Running 'chmod +x render-full-react-start.sh && ./render-full-react-start.sh'
+2025-05-10T00:32:43.892984077Z === STARTING FULL REACT APPLICATION ===
+2025-05-10T00:32:43.900053095Z Node version: v20.19.1
+2025-05-10T00:32:43.900070857Z Environment: production
+2025-05-10T00:32:43.900514151Z Current directory: /opt/render/project/src/dist
+2025-05-10T00:32:43.900537023Z Found server.js - starting server...
+2025-05-10T00:32:44.199350114Z Warning: STRIPE_SECRET_KEY not set. Payment features will be unavailable.
+2025-05-10T00:32:44.199876305Z Database URL found, connecting to PostgreSQL...
+2025-05-10T00:32:44.200268895Z Database connection established
+2025-05-10T00:32:44.200555657Z Using PostgreSQL session store
+2025-05-10T00:32:44.20562429Z Server running on port 10000
+2025-05-10T00:32:44.205651493Z Serving static files from /opt/render/project/src/dist/public
+2025-05-10T00:32:44.205662053Z NODE_ENV: production
+2025-05-10T00:32:47.072750516Z ==> Your service is live 🎉
