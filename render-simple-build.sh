@@ -5,20 +5,49 @@ echo "=== STARTING SIMPLIFIED BUILD PROCESS ==="
 echo "Node version: $(node -v)"
 echo "Running in directory: $(pwd)"
 
-# Install ALL dependencies including dev dependencies 
-echo "Installing ALL dependencies..."
-npm ci --include=dev
+# Install ALL dependencies including dev dependencies
+echo "Installing ALL dependencies with better error tracking..."
+npm ci --include=dev --verbose || {
+  echo "Failed to install dependencies with npm ci. Falling back to npm install..."
+  npm install --include=dev --verbose 
+}
 
-# Directly install critical dev dependencies
-echo "Installing critical dev dependencies..."
-npm install --no-save @vitejs/plugin-react esbuild
+# Make sure all critical dependencies are installed 
+echo "Installing critical dev dependencies directly..."
+npm install --no-save @vitejs/plugin-react vite esbuild tailwindcss postcss autoprefixer @tailwindcss/vite
 
-# Build the React app with Vite
+# Create a simplified vite.config.js for the build
+echo "Creating simplified vite.config.js for build..."
+cat > vite.config.simplified.js << 'EOF'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { join } from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true
+  },
+  resolve: {
+    alias: {
+      '@': join(__dirname, 'client'),
+      '@assets': join(__dirname, 'attached_assets'),
+      '@shared': join(__dirname, 'shared')
+    }
+  }
+});
+EOF
+
+# Try building the React app with Vite 
 echo "Building React application with Vite..."
-npx vite build
+npx vite build --config vite.config.simplified.js || {
+  echo "Vite build with simplified config failed, trying direct build..."
+  npx vite build
+}
 
-# Provide fallback if build fails
-if [ $? -ne 0 ]; then
+# Provide fallback if both build methods fail
+if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
   echo "Vite build failed, creating empty dist directory for fallback..."
   mkdir -p dist
 fi
@@ -50,10 +79,22 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import session from 'express-session';
 import Stripe from 'stripe';
+import { Pool } from '@neondatabase/serverless';
+import connectPg from 'connect-pg-simple';
+import ws from 'ws';
 
 // ES Module compatibility
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Configure Neon
+try {
+  const { neonConfig } = await import('@neondatabase/serverless');
+  neonConfig.webSocketConstructor = ws;
+  console.log("Neon Serverless configured");
+} catch (err) {
+  console.warn("Could not configure Neon:", err.message);
+}
 
 // Create Express app
 const app = express();
@@ -259,9 +300,12 @@ cat > dist/package.json << EOF
     "start": "node server.js"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "connect-pg-simple": "^9.0.1",
     "express": "^4.18.2",
     "express-session": "^1.18.0",
-    "stripe": "^14.16.0"
+    "stripe": "^14.16.0",
+    "ws": "^8.14.2"
   }
 }
 EOF
@@ -269,7 +313,7 @@ EOF
 # Install dependencies in the dist directory
 echo "Installing server dependencies in dist directory..."
 cd dist
-npm install express express-session stripe
+npm install express express-session stripe @neondatabase/serverless connect-pg-simple ws
 
 # Create placeholder assets if needed
 echo "Checking for placeholder assets..."
