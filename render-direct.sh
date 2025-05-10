@@ -1,300 +1,145 @@
 #!/bin/bash
-set -e
+# Direct deployment script for Render that bypasses all the complex build steps
 
-echo "===== DIRECT RENDER DEPLOYMENT ====="
+set -e  # Exit on any error
 
-# Store original directory
-ORIGINAL_DIR=$(pwd)
+echo "=== STARTING DIRECT DEPLOYMENT BUILD ==="
+echo "Node version: $(node -v)"
+echo "Current directory: $(pwd)"
 
-# Create a clean build directory
-echo "Creating clean build directory..."
-mkdir -p build-render
-cd build-render
+# Install dependencies 
+echo "Installing dependencies..."
+npm ci
 
-# Set up a minimal server and static files
-echo "Setting up server files..."
+# Create dist directory structure
+mkdir -p dist/public/assets
+mkdir -p dist/shared
+mkdir -p dist/uploads
 
-# Create package.json
-cat > package.json << 'EOL'
-{
-  "name": "mobycomps-platform",
-  "version": "1.0.0",
-  "type": "module",
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.19.2"
-  }
-}
-EOL
+# Build the client application
+echo "Building client..."
+npx vite build
 
-# Create server.js
-cat > server.js << 'EOL'
+# Copy the simplified server directly (most important part)
+echo "Setting up simplified server..."
+mkdir -p production-build 2>/dev/null || true
+
+# Create simplified server if it doesn't exist yet
+if [ ! -f "production-build/simple-server.js" ]; then
+  echo "Creating simplified server..."
+  cat > production-build/simple-server.js << 'EOF'
 import express from 'express';
-import fs from 'fs';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+// ES Module compatibility
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PORT = process.env.PORT || 8080;
-const app = express();
 
-// Middleware
+// Create Express app
+const app = express();
+const port = process.env.PORT || 8080;
+
+// Parse JSON bodies
 app.use(express.json());
 
-// Health check endpoint (required by Render)
+// Determine directories
+const rootDir = path.resolve(__dirname, '..');
+const publicDir = path.resolve(rootDir, 'dist', 'public');
+
+// Serve static files
+app.use(express.static(publicDir, {
+  maxAge: '1d',
+  etag: true
+}));
+
+// Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok' });
 });
 
-// Debug info endpoint
-app.get('/debug', (req, res) => {
-  try {
-    const publicDir = path.join(__dirname, 'public');
-    const info = {
-      env: process.env.NODE_ENV,
-      nodeVersion: process.version,
-      port: PORT,
-      directory: __dirname,
-      publicDir: publicDir,
-      publicDirExists: fs.existsSync(publicDir),
-      files: fs.existsSync(publicDir) ? fs.readdirSync(publicDir) : []
-    };
-    res.json(info);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// API stubs to prevent frontend errors
-app.get('/api/competitions', (req, res) => {
-  res.json({ competitions: [], total: 0 });
-});
-
-app.get('/api/user', (req, res) => {
-  res.status(401).json({ message: 'Not authenticated' });
-});
-
-app.get('/api/cart', (req, res) => {
-  res.json({ items: [] });
-});
-
-app.get('/api/site-config/hero-banner', (req, res) => {
-  res.json({});
-});
-
-app.get('/api/admin/site-config/site-logo', (req, res) => {
-  res.status(401).json({ error: 'Unauthorized' });
-});
-
-// Static files
-const publicDir = path.join(__dirname, 'public');
-if (fs.existsSync(publicDir)) {
-  app.use(express.static(publicDir));
-}
-
-// SPA catch-all route
-app.get('*', (req, res) => {
-  const indexPath = path.join(publicDir, 'index.html');
+// Debug info
+app.get('/health/check', (req, res) => {
+  const info = {
+    timestamp: new Date().toISOString(),
+    node: process.version,
+    env: process.env.NODE_ENV,
+    dir: {
+      current: process.cwd(),
+      public: publicDir,
+    },
+    files: {
+      publicExists: fs.existsSync(publicDir),
+      indexExists: fs.existsSync(path.join(publicDir, 'index.html')),
+      assetsExists: fs.existsSync(path.join(publicDir, 'assets'))
+    }
+  };
   
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    // Fallback HTML if index.html doesn't exist
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>MobyComps Prize Platform</title>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>
-            body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.5; }
-            h1 { color: #1a73e8; }
-            .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .btn { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 10px; }
-            .status { padding: 4px 8px; border-radius: 4px; font-size: 14px; display: inline-block; }
-            .online { background: #e6f4ea; color: #137333; }
-            pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow: auto; }
-          </style>
-        </head>
-        <body>
-          <h1>MobyComps Prize Platform</h1>
-          
-          <div class="card">
-            <h2>Deployment Status</h2>
-            <p>Server status: <span class="status online">ONLINE</span></p>
-            <p>The server is now running. This is a placeholder page that appears when the full application isn't available.</p>
-            <a href="/debug" class="btn">View Debug Info</a>
-          </div>
-          
-          <div class="card">
-            <h2>Available Endpoints</h2>
-            <ul>
-              <li><a href="/health">Health Check</a></li>
-              <li><a href="/debug">Debug Information</a></li>
-              <li><a href="/api/competitions">API: Competitions</a></li>
-            </ul>
-          </div>
-          
-          <div class="card">
-            <h2>Environment Details</h2>
-            <pre id="env-info">Loading...</pre>
-          </div>
-          
-          <script>
-            // Fetch debug information
-            fetch('/debug')
-              .then(response => response.json())
-              .then(data => {
-                document.getElementById('env-info').textContent = JSON.stringify(data, null, 2);
-              })
-              .catch(error => {
-                document.getElementById('env-info').textContent = 'Error loading debug information: ' + error.message;
-              });
-          </script>
-        </body>
-      </html>
-    `);
+  if (info.files.assetsExists) {
+    try {
+      info.assets = fs.readdirSync(path.join(publicDir, 'assets'))
+        .filter(file => file.endsWith('.js') || file.endsWith('.css'));
+    } catch (err) {
+      info.assets = `Error: ${err.message}`;
+    }
   }
+  
+  res.json(info);
+});
+
+// Always serve index.html for any other request (SPA routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 // Start the server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running on port ${port}`);
+  console.log(`Serving files from ${publicDir}`);
 });
-EOL
+EOF
+fi
 
-# Create public directory and health check file
-mkdir -p public/health
-echo '{"status":"ok","timestamp":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}'> public/health/index.json
+# Copy the server
+cp production-build/simple-server.js dist/server.js
 
-# Create a simple index.html
-cat > public/index.html << 'EOL'
+# Create a package.json for the dist directory
+echo "Creating package.json..."
+cat > dist/package.json << EOF
+{
+  "name": "mobycomps",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
+EOF
+
+# Create a super simple index.html that directly loads assets if needed
+if [ ! -f "dist/public/index.html" ] || grep -q "window.location.href = '/fallback.html'" "dist/public/index.html"; then
+  echo "Creating direct index.html..."
+  cat > dist/public/index.html << EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MobyComps Prize Platform</title>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.5; }
-    h1 { color: #1a73e8; }
-    .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .btn { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 10px; }
-    .status { padding: 4px 8px; border-radius: 4px; font-size: 14px; display: inline-block; }
-    .online { background: #e6f4ea; color: #137333; }
-    pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow: auto; }
-  </style>
+  <title>MobyComps - Prize Competitions</title>
+  <script type="module" src="/assets/index.js"></script>
+  <link rel="stylesheet" href="/assets/index.css">
 </head>
 <body>
-  <h1>MobyComps Prize Platform</h1>
-  
-  <div class="card">
-    <h2>Deployment Status</h2>
-    <p>Server status: <span class="status online">ONLINE</span></p>
-    <p>The server is running successfully on Render!</p>
-    <p>This static deployment establishes a foundation for further development.</p>
-    <a href="/debug" class="btn">View Debug Info</a>
-  </div>
-  
-  <div class="card">
-    <h2>Next Steps</h2>
-    <p>Now that the server is up and running, you can:</p>
-    <ol>
-      <li>Incrementally add API endpoints</li>
-      <li>Set up database connections</li>
-      <li>Gradually incorporate frontend components</li>
-    </ol>
-  </div>
-  
-  <div class="card">
-    <h2>Environment Details</h2>
-    <pre id="env-info">Loading...</pre>
-  </div>
-  
-  <script>
-    // Fetch debug information
-    fetch('/debug')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('env-info').textContent = JSON.stringify(data, null, 2);
-      })
-      .catch(error => {
-        document.getElementById('env-info').textContent = 'Error loading debug information: ' + error.message;
-      });
-  </script>
+  <div id="root"></div>
 </body>
 </html>
-EOL
+EOF
+fi
 
-# Install Express
-echo "Installing Express..."
-npm install express
+echo "=== BUILD COMPLETED ==="
+echo "Files in dist:"
+find dist -type f | sort
 
-# Create a .env.sample file to document environment variables
-cat > .env.sample << 'EOL'
-# Server Configuration
-PORT=8080
-NODE_ENV=production
-
-# Database Configuration
-DATABASE_URL=postgres://user:password@host:port/database
-
-# Session Configuration
-SESSION_SECRET=your_session_secret
-
-# External Services
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-EOL
-
-# Create a README.md for the deployment
-cat > README.md << 'EOL'
-# MobyComps Prize Platform - Render Deployment
-
-This is a simplified deployment of the MobyComps Prize Platform, optimized for Render hosting.
-
-## Environment Variables
-
-The application requires the following environment variables:
-
-- `PORT`: The port on which the server will run (default: 8080)
-- `NODE_ENV`: The environment mode (e.g., 'production', 'development')
-- `DATABASE_URL`: PostgreSQL connection string
-- `SESSION_SECRET`: Secret for session encryption
-- `CLOUDINARY_*`: Cloudinary credentials for image uploads
-- `STRIPE_*`: Stripe credentials for payment processing
-
-## API Endpoints
-
-- `/health`: Health check endpoint for Render monitoring
-- `/debug`: Debug information about the current environment
-- `/api/*`: API endpoints (currently stubs)
-
-## Running Locally
-
-```bash
-npm install
-npm start
-```
-EOL
-
-# Show the final structure
-echo "Final build directory structure:"
-find . -type f | sort
-
-# Copy everything back to the original directory
-cd $ORIGINAL_DIR
-echo "Copying build files to root directory..."
-cp -r build-render/* .
-
-echo "===== DEPLOYMENT READY ====="
+echo "=== DEPLOYMENT READY ==="

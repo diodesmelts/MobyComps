@@ -1,0 +1,50 @@
+2025-05-10T00:00:29.419864903Z     _receiver: null,
+2025-05-10T00:00:29.419869004Z     _sender: null,
+2025-05-10T00:00:29.419884015Z     _socket: null,
+2025-05-10T00:00:29.419887285Z     _bufferedAmount: 0,
+2025-05-10T00:00:29.419889865Z     _isServer: false,
+2025-05-10T00:00:29.419892175Z     _redirects: 0,
+2025-05-10T00:00:29.419894846Z     _autoPong: true,
+2025-05-10T00:00:29.419897566Z     _url: 'wss://dpg-d0f7mg3e5dus738fruig-a/v2',
+2025-05-10T00:00:29.419900066Z     _req: null,
+2025-05-10T00:00:29.419902986Z     [Symbol(shapeMode)]: false,
+2025-05-10T00:00:29.419906006Z     [Symbol(kCapture)]: false
+2025-05-10T00:00:29.419908476Z   },
+2025-05-10T00:00:29.419911247Z   [Symbol(kType)]: 'error',
+2025-05-10T00:00:29.419914537Z   [Symbol(kError)]: Error: connect ECONNREFUSED 10.202.140.82:443
+2025-05-10T00:00:29.419917257Z       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+2025-05-10T00:00:29.419919697Z     errno: -111,
+2025-05-10T00:00:29.419922128Z     code: 'ECONNREFUSED',
+2025-05-10T00:00:29.419924588Z     syscall: 'connect',
+2025-05-10T00:00:29.419927478Z     address: '10.202.140.82',
+2025-05-10T00:00:29.419930198Z     port: 443
+2025-05-10T00:00:29.419932558Z   },
+2025-05-10T00:00:29.419934858Z   [Symbol(kMessage)]: 'connect ECONNREFUSED 10.202.140.82:443'
+2025-05-10T00:00:29.419937289Z }
+2025-05-10T00:00:37.829097044Z ==> Detected service running on port 10000
+2025-05-10T00:00:38.18895334Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2025-05-10T00:02:09.86179726Z ==> Deploying...
+2025-05-10T00:02:15.478666318Z 12:02:15 AM [debug] Current directory: /app
+2025-05-10T00:02:15.47870591Z 12:02:15 AM [debug] Server directory: /app/dist
+2025-05-10T00:02:15.47870943Z 12:02:15 AM [debug] Files in root directory: .env.example, dist, node_modules, package-lock.json, package.json, public, uploads
+2025-05-10T00:02:15.47871662Z 12:02:15 AM [debug] Files in dist directory: package.json, production.js, public, shared, uploads
+2025-05-10T00:02:15.47871912Z 12:02:15 AM [debug] Files in dist/public directory: assets, fallback.html, index.html, index.html.bak
+2025-05-10T00:02:15.47872214Z 12:02:15 AM [debug] Files in public directory: fallback.html, index.html
+2025-05-10T00:02:15.47872496Z 12:02:15 AM [express] Serving static files from /app/public
+2025-05-10T00:02:15.478843803Z 12:02:15 AM [express] Serving static files from /app/dist/public
+2025-05-10T00:02:15.479165881Z 12:02:15 AM [express] Serving static files from /app/dist/public
+2025-05-10T00:02:15.479437657Z 12:02:15 AM [express] Serving static files from /app/dist/public
+2025-05-10T00:02:15.480022561Z 12:02:15 AM [debug] Static path doesn't exist or already served: /app/public
+2025-05-10T00:02:15.480887092Z 12:02:15 AM [debug] Current directory: /app
+2025-05-10T00:02:15.480896092Z 12:02:15 AM [debug] Server directory: /app/dist
+2025-05-10T00:02:15.480899912Z 12:02:15 AM [debug] Files in root directory: .env.example, dist, node_modules, package-lock.json, package.json, public, uploads
+2025-05-10T00:02:15.481126737Z 12:02:15 AM [debug] Files in dist directory: package.json, production.js, public, shared, uploads
+2025-05-10T00:02:15.481326452Z 12:02:15 AM [debug] Files in dist/public directory: assets, fallback.html, index.html, index.html.bak
+2025-05-10T00:02:15.48164283Z 12:02:15 AM [debug] Files in public directory: fallback.html, index.html
+2025-05-10T00:02:15.482902Z 12:02:15 AM [express] Serving static files from /app/public
+2025-05-10T00:02:15.48291048Z 12:02:15 AM [express] Serving static files from /app/dist/public
+2025-05-10T00:02:15.48291333Z 12:02:15 AM [express] Serving static files from /app/dist/public
+2025-05-10T00:02:15.48291549Z 12:02:15 AM [express] Serving static files from /app/dist/public
+2025-05-10T00:02:15.4829182Z 12:02:15 AM [debug] Static path doesn't exist or already served: /app/public
+2025-05-10T00:02:15.489699232Z 12:02:15 AM [express] serving on port 10000
+2025-05-10T00:02:20.668930412Z ==> Your service is live 🎉
