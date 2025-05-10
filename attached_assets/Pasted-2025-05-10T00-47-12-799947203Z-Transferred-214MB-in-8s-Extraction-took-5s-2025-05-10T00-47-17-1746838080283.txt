@@ -1,0 +1,50 @@
+2025-05-10T00:47:12.799947203Z ==> Transferred 214MB in 8s. Extraction took 5s.
+2025-05-10T00:47:17.025598385Z ==> Requesting Node.js version 20.x
+2025-05-10T00:47:17.768467232Z ==> Using Node.js version 20.19.1 via /opt/render/project/src/.node-version
+2025-05-10T00:47:17.802698594Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-05-10T00:47:18.045813793Z ==> Using Bun version 1.1.0 (default)
+2025-05-10T00:47:18.045829473Z ==> Docs on specifying a bun version: https://render.com/docs/bun-version
+2025-05-10T00:47:18.103742998Z ==> Running build command 'chmod +x render-full-react-build.sh && ./render-full-react-build.sh'...
+2025-05-10T00:47:18.112060391Z Installing ALL dependencies...
+2025-05-10T00:47:26.647843074Z 
+2025-05-10T00:47:26.647869975Z added 505 packages, and audited 506 packages in 8s
+2025-05-10T00:47:26.647889645Z 
+2025-05-10T00:47:26.647899165Z 65 packages are looking for funding
+2025-05-10T00:47:26.647907395Z   run `npm fund` for details
+2025-05-10T00:47:26.688610872Z 
+2025-05-10T00:47:26.688642693Z 7 moderate severity vulnerabilities
+2025-05-10T00:47:26.688645663Z 
+2025-05-10T00:47:26.688648913Z To address issues that do not require attention, run:
+2025-05-10T00:47:26.688651473Z   npm audit fix
+2025-05-10T00:47:26.688653573Z 
+2025-05-10T00:47:26.688655963Z To address all issues (including breaking changes), run:
+2025-05-10T00:47:26.688658793Z   npm audit fix --force
+2025-05-10T00:47:26.688660953Z 
+2025-05-10T00:47:26.688663773Z Run `npm audit` for details.
+2025-05-10T00:47:26.776095773Z Cleaning previous builds...
+2025-05-10T00:47:26.791141686Z Building React application with Vite...
+2025-05-10T00:47:27.938631411Z vite v5.4.14 building for production...
+2025-05-10T00:47:28.002707535Z transforming...
+2025-05-10T00:47:28.358448586Z Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+2025-05-10T00:47:28.358472397Z   npx update-browserslist-db@latest
+2025-05-10T00:47:28.358475577Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2025-05-10T00:47:36.890646726Z ✓ 2880 modules transformed.
+2025-05-10T00:47:37.607711035Z rendering chunks...
+2025-05-10T00:47:37.621147735Z computing gzip size...
+2025-05-10T00:47:37.742659563Z dist-temp/index.html                             0.63 kB │ gzip:   0.38 kB
+2025-05-10T00:47:37.742691314Z dist-temp/assets/payment-cards-DIq1cwyQ.png     24.73 kB
+2025-05-10T00:47:37.742781126Z dist-temp/assets/index-BiBIu6rO.css            100.97 kB │ gzip:  16.26 kB
+2025-05-10T00:47:37.742931329Z dist-temp/assets/index-CBvW0g6x.js           1,114.10 kB │ gzip: 311.29 kB
+2025-05-10T00:47:37.743039961Z 
+2025-05-10T00:47:37.743047671Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-05-10T00:47:37.743053011Z - Using dynamic import() to code-split the application
+2025-05-10T00:47:37.743057671Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-05-10T00:47:37.743060672Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2025-05-10T00:47:37.743408079Z ✓ built in 9.78s
+2025-05-10T00:47:37.844973712Z Vite build completed. Files generated:
+2025-05-10T00:47:37.84630182Z find: ‘dist-temp’: No such file or directory
+2025-05-10T00:47:37.84632023Z Preparing final dist directory...
+2025-05-10T00:47:37.848635338Z Copying Vite build output to dist/public...
+2025-05-10T00:47:37.858440542Z cp: cannot stat 'dist-temp/*': No such file or directory
+2025-05-10T00:47:37.859897163Z ==> Build failed 😞
+2025-05-10T00:47:37.859921763Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

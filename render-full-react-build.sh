@@ -7,23 +7,34 @@ npm ci --include=dev
 
 # Clean up any previous builds
 echo "Cleaning previous builds..."
-rm -rf dist dist-temp
+rm -rf dist
 
 # Build the React app with proper file paths for production
 echo "Building React application with Vite..."
-npx vite build --outDir dist-temp --base='/'
+npx vite build
 
 # Debug info
 echo "Vite build completed. Files generated:"
-find dist-temp -type f | sort
+ls -la dist || echo "Warning: dist directory not found!"
+find dist -type f | sort || echo "No files found in dist"
 
-# Prepare the final dist directory
-echo "Preparing final dist directory..."
+# Prepare the public directory structure
+echo "Preparing public directory structure..."
 mkdir -p dist/public
 
 # Copy the Vite build output to the correct location
 echo "Copying Vite build output to dist/public..."
-cp -r dist-temp/* dist/public/
+if [ -d "dist/assets" ]; then
+  echo "Found assets directory, copying..."
+  cp -r dist/assets dist/public/
+  echo "Assets copied successfully."
+fi
+
+if [ -f "dist/index.html" ]; then
+  echo "Found index.html, copying..."
+  cp dist/index.html dist/public/
+  echo "index.html copied successfully."
+fi
 
 # Debug output of what was copied
 echo "Contents of dist/public directory:"
