@@ -211,8 +211,123 @@ app.get('/debug-structure', (req, res) => {
   `);
 });
 
-// Always serve index.html for client-side routing
+// Basic API endpoints for health checks and minimal functionality
+// These are simplified versions of the full API routes
+
+// User authentication endpoint
+app.get('/api/user', (req, res) => {
+  if (req.session.user) {
+    res.json(req.session.user);
+  } else {
+    res.status(401).json({ message: "Not authenticated" });
+  }
+});
+
+// Cart endpoint
+app.get('/api/cart', (req, res) => {
+  res.json({ items: [] });
+});
+
+// Competitions endpoint - would connect to database in full implementation
+app.get('/api/competitions', (req, res) => {
+  // In production, this would fetch from the database
+  res.json({ 
+    competitions: [
+      {
+        id: 1,
+        title: "Win a Tesla Model 3", 
+        description: "Win a brand new Tesla Model 3. Competition ends when all tickets are sold.",
+        imageUrl: "/assets/tesla.jpg",
+        maxTickets: 1000,
+        ticketPrice: 5.99,
+        ticketsSold: 456,
+        drawDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        status: "live",
+        category: "electronics",
+        featured: true,
+        quizQuestion: "What color is a red apple?",
+        quizAnswer: "red"
+      },
+      {
+        id: 2,
+        title: "LEGO® Harry Potter™ Hogwarts Castle", 
+        description: "Win the amazing LEGO® Harry Potter™ Hogwarts Castle with 6,020 pieces.",
+        imageUrl: "/assets/hogwarts.jpg",
+        maxTickets: 500,
+        ticketPrice: 2.99,
+        ticketsSold: 123,
+        drawDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        status: "live",
+        category: "kids",
+        featured: true,
+        quizQuestion: "What is the name of Harry Potter's school?",
+        quizAnswer: "hogwarts"
+      }
+    ], 
+    total: 2 
+  });
+});
+
+// Site config endpoints
+app.get('/api/site-config/hero-banner', (req, res) => {
+  res.json({
+    id: 1,
+    key: "hero-banner",
+    value: JSON.stringify({
+      title: "Win Amazing Prizes",
+      subtitle: "Enter our competitions for your chance to win!",
+      buttonText: "Browse Competitions",
+      buttonLink: "/competitions",
+      imageUrl: "/assets/hero-banner.jpg"
+    }),
+    updatedAt: new Date(),
+    updatedBy: 1
+  });
+});
+
+app.get('/api/admin/site-config/site-logo', (req, res) => {
+  res.json({
+    id: 2,
+    key: "site-logo",
+    value: JSON.stringify({
+      logoUrl: "/assets/logo.png",
+      altText: "MobyComps"
+    }),
+    updatedAt: new Date(),
+    updatedBy: 1
+  });
+});
+
+// Stripe payment intent creation - simplified
+app.post('/api/create-payment-intent', async (req, res) => {
+  if (!stripe) {
+    return res.status(500).json({ error: "Stripe not configured" });
+  }
+  
+  try {
+    const { amount = 1000 } = req.body;
+    
+    // Create payment intent with Stripe
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency: "gbp",
+      payment_method_types: ["card"]
+    });
+    
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error("Error creating payment intent:", error);
+    res.status(500).json({ error: "Failed to create payment intent" });
+  }
+});
+
+// Always serve index.html for client-side routing for non-API routes
 app.get('*', (req, res) => {
+  // Skip for API routes, which we've already handled
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: "API endpoint not found" });
+  }
+  
   res.sendFile(path.join(publicDir, 'index.html'));
 });
 
@@ -249,6 +364,30 @@ EOF
 echo "Installing server dependencies in dist directory..."
 cd dist
 npm install express express-session stripe @neondatabase/serverless connect-pg-simple
+
+# Create assets directory and add placeholder images
+echo "Creating placeholder assets..."
+mkdir -p public/assets
+
+# Create a placeholder hero banner image
+cat > public/assets/hero-banner.jpg << EOF
+This is a placeholder for the hero banner image
+EOF
+
+# Create a placeholder Tesla image
+cat > public/assets/tesla.jpg << EOF
+This is a placeholder for the Tesla image
+EOF
+
+# Create a placeholder Hogwarts image
+cat > public/assets/hogwarts.jpg << EOF
+This is a placeholder for the Hogwarts image
+EOF
+
+# Create a placeholder logo
+cat > public/assets/logo.png << EOF
+MobyComps Logo Placeholder
+EOF
 
 echo "=== BUILD COMPLETED SUCCESSFULLY ==="
 echo "Files in dist/public:"
