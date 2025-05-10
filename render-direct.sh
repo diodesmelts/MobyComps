@@ -7,9 +7,9 @@ echo "=== STARTING DIRECT DEPLOYMENT BUILD ==="
 echo "Node version: $(node -v)"
 echo "Current directory: $(pwd)"
 
-# Install dependencies 
-echo "Installing dependencies..."
-npm ci
+# Install ALL dependencies including dev dependencies
+echo "Installing ALL dependencies including dev dependencies..."
+npm ci --include=dev
 
 # Create dist directory structure
 mkdir -p dist/public/assets
