@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: mobycomps-full
+    env: node
+    region: oregon  # or choose another region
+    buildCommand: "chmod +x render-full-react.sh && ./render-full-react.sh"
+    startCommand: "chmod +x render-full-react-start.sh && ./render-full-react-start.sh"
+    healthCheckPath: /health
+    autoDeploy: true
+    plan: free  # or starter/standard
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: NODE_VERSION
+        value: 20.x
+      - key: DATABASE_URL
+        sync: false  # This should be set manually via the Render dashboard
+      - key: STRIPE_SECRET_KEY
+        sync: false  # Set this manually in the Render dashboard
+      - key: VITE_STRIPE_PUBLIC_KEY
+        sync: false  # Set this manually in the Render dashboard
+      - key: SESSION_SECRET
+        generateValue: true
+    buildFilter:
+      paths:
+        - client/**
+        - server/**
+        - shared/**
+        - public/**
+        - render-full-react.sh
+        - render-full-react-start.sh
+        - vite.config.ts
+        - package.json
+        - package-lock.json

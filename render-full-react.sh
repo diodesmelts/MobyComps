@@ -22,6 +22,9 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import session from 'express-session';
+import Stripe from 'stripe';
+import { Pool } from '@neondatabase/serverless';
+import connectPg from 'connect-pg-simple';
 
 // ES Module compatibility
 const __filename = fileURLToPath(import.meta.url);
@@ -31,8 +34,34 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Setup session middleware without database for now
-app.use(session({
+// Initialize Stripe
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn("Warning: STRIPE_SECRET_KEY not set. Payment features will be unavailable.");
+}
+
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" })
+  : null;
+
+// Database connection
+let pool;
+let PostgresSessionStore;
+
+if (process.env.DATABASE_URL) {
+  console.log("Database URL found, connecting to PostgreSQL...");
+  try {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    PostgresSessionStore = connectPg(session);
+    console.log("Database connection established");
+  } catch (err) {
+    console.error("Error connecting to database:", err);
+  }
+} else {
+  console.warn("Warning: DATABASE_URL not set. Database features will be unavailable.");
+}
+
+// Setup session middleware
+const sessionOptions = {
   secret: process.env.SESSION_SECRET || 'moby-comps-session-secret',
   resave: false,
   saveUninitialized: false,
@@ -40,7 +69,18 @@ app.use(session({
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     secure: process.env.NODE_ENV === 'production'
   }
-}));
+};
+
+// Use PostgreSQL session store if available
+if (pool && PostgresSessionStore) {
+  sessionOptions.store = new PostgresSessionStore({
+    pool,
+    createTableIfMissing: true,
+  });
+  console.log("Using PostgreSQL session store");
+}
+
+app.use(session(sessionOptions));
 
 // Parse JSON bodies
 app.use(express.json());
@@ -197,15 +237,18 @@ cat > dist/package.json << EOF
   },
   "dependencies": {
     "express": "^4.18.2",
-    "express-session": "^1.18.0"
+    "express-session": "^1.18.0",
+    "stripe": "^14.16.0",
+    "@neondatabase/serverless": "^0.9.0",
+    "connect-pg-simple": "^9.0.1"
   }
 }
 EOF
 
-# Install express and express-session in the dist directory
+# Install dependencies in the dist directory
 echo "Installing server dependencies in dist directory..."
 cd dist
-npm install express express-session
+npm install express express-session stripe @neondatabase/serverless connect-pg-simple
 
 echo "=== BUILD COMPLETED SUCCESSFULLY ==="
 echo "Files in dist/public:"
