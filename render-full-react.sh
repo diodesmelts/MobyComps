@@ -14,6 +14,37 @@ npm ci --include=dev
 echo "Building React application with Vite..."
 npx vite build
 
+# Save the build to a separate directory first
+echo "Saving the Vite build..."
+mkdir -p build-output
+cp -r dist/* build-output/
+
+# Make sure dist directory exists and is clean
+mkdir -p dist
+mkdir -p dist/public
+
+# Copy the Vite build output to the correct location
+echo "Copying Vite build output to dist/public..."
+if [ -d "build-output/assets" ]; then
+  echo "Found assets directory, copying to dist/public..."
+  cp -r build-output/assets dist/public/
+  ls -la dist/public/assets || echo "Warning: Assets not copied correctly"
+fi
+
+if [ -f "build-output/index.html" ]; then
+  echo "Found index.html, copying to dist/public..."
+  cp build-output/index.html dist/public/
+  ls -la dist/public/index.html || echo "Warning: index.html not copied correctly"
+fi
+
+# Copy any other build outputs
+find build-output -maxdepth 1 -type f -not -name "index.html" -exec cp {} dist/public/ \; 2>/dev/null || true
+echo "All build files copied to dist/public directory"
+
+# Debug output of what was copied
+echo "Contents of dist/public:"
+ls -la dist/public
+
 # Create a server file that properly serves the React app
 echo "Creating optimized server for React app..."
 cat > dist/server.js << 'EOF'
@@ -387,6 +418,138 @@ EOF
 # Create a placeholder logo
 cat > public/assets/logo.png << EOF
 MobyComps Logo Placeholder
+EOF
+
+# Create a fallback index.html in case the copying failed
+echo "Creating fallback index.html..."
+cat > public/index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MobyComps - Prize Competitions</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f7;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background-color: #4361ee;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .competition {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+    .competition img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+      background-color: #ddd;
+      margin-right: 15px;
+    }
+    .competition-details {
+      flex: 1;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    p {
+      line-height: 1.6;
+    }
+    .button {
+      display: inline-block;
+      background-color: #4361ee;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+    .placeholder {
+      background-color: #ddd;
+      height: 100px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+    }
+    .error-card {
+      background-color: #fff0f0;
+      border-left: 4px solid #e74c3c;
+      padding: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>MobyComps</h1>
+    <p>Win Amazing Prizes</p>
+  </div>
+  
+  <div class="container">
+    <div class="card">
+      <h2>Active Competitions</h2>
+      
+      <div class="competition">
+        <img src="/assets/tesla.jpg" alt="Tesla Model 3">
+        <div class="competition-details">
+          <h3>Win a Tesla Model 3</h3>
+          <p>Win a brand new Tesla Model 3. Competition ends when all tickets are sold.</p>
+          <p><strong>Ticket Price:</strong> £5.99</p>
+          <a href="#" class="button">Enter Now</a>
+        </div>
+      </div>
+      
+      <div class="competition">
+        <img src="/assets/hogwarts.jpg" alt="LEGO Hogwarts Castle">
+        <div class="competition-details">
+          <h3>LEGO® Harry Potter™ Hogwarts Castle</h3>
+          <p>Win the amazing LEGO® Harry Potter™ Hogwarts Castle with 6,020 pieces.</p>
+          <p><strong>Ticket Price:</strong> £2.99</p>
+          <a href="#" class="button">Enter Now</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="error-card">
+      <h3>Note: Static Version</h3>
+      <p>You're viewing a static version of the MobyComps platform. This is a fallback version and doesn't include full functionality.</p>
+      <p>If you're seeing this, please check the server logs for any errors in the React application deployment.</p>
+      <p>Try these diagnostic endpoints:</p>
+      <ul>
+        <li><a href="/health">/health</a> - Basic health check</li>
+        <li><a href="/health/check">/health/check</a> - Detailed server information</li>
+        <li><a href="/debug-structure">/debug-structure</a> - Directory structure information</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
 EOF
 
 echo "=== BUILD COMPLETED SUCCESSFULLY ==="
